@@ -1,14 +1,11 @@
-## CU Hyperloop
-![texasBullWorm](img/Alaskan_Bull_Worm.webp)
+## ASEN 4018 Team ARDVARC
 
-# Welcome to the CU Hyperloop Software Repository
+# Welcome to the ROS Download and Tutorial
 # Table of Contents
 1. [Installing Ubuntu 20.04 on UTM for MacOS](#virtual-machine-instructions)
 2. [Installing Ubuntu 20.04 on VMware for Windows](#installing-ubuntu-2004-on-vmware-for-windows)
-3. [Download Arduino IDE (Non MAC)](#download-arduino-ide-do-not-follow-if-you-have-an-m-chip-mac)
-3. [Download Arduino IDE (MAC)](#download-arduino-ide-for-m-chip-mac)
-4. [ROS Setup](#ros-setup)
-5. [ROS Tutorials](#ROS-Tutorials)
+3. [ROS Setup](#ros-setup)
+4. [ROS Tutorials](#ROS-Tutorials)
 
 # Virtual Machine Instructions
 ## Setting Up Ubuntu 20.04 VM on macOS using UTM
@@ -79,7 +76,7 @@
   
 **Summary**:
 
-1. Name the VM "HyperloopVM"
+1. Name the VM "ARDVARCVM"
 2. Click `Continue`
 
 ---
@@ -88,7 +85,7 @@
 
 1. Start your VM by selecting it and clicking `Start`.
 2. You should see the Ubuntu installer. Follow the on-screen instructions to complete the installation (all default options will work).
-3. Make sure to set the computer password to `cuhyperloop`
+3. Make sure to set the computer password to `ardvarc`
 4. After the installation is complete, the VM should reboot into an ubunutu terminal. If it does not, close the vm, unmount the install iso and try again, it should work.
 
 ### Step 6: Install Desktop GUI
@@ -148,33 +145,6 @@ This guide provides step-by-step instructions for installing Ubuntu 20.04 LTS on
 You should now have Ubuntu 20.04 running on a VMware virtual machine on your Windows system.
 
 ---
-
-## Download Arduino IDE (DO NOT FOLLOW IF YOU HAVE AN M-CHIP MAC)
-1. Follow All the directions on this [tutorial link.](https://lucidar.me/en/arduino/how-to-install-arduino-ide-2-0-on-ubuntu/) 
-2. If you are adding the shortcut and the exec is correct try this command to grant the exec access to the Arduino ide:
-```
-chmod +x <path_to_arduino_ide_exc>
-```
-3. Go the the Teensyduino [website](https://www.pjrc.com/teensy/td_download.html) and follow the Teensyduino download instructions.
-4. Go to [here](#install-ide-packages)
-
-## Download Arduino IDE (FOR M-CHIP MAC)
-1. Go [here](https://www.arduino.cc/en/software) and install the `Linux Arm 64 Bits`
-Arduino IDE 1.8.19. DO NOT INSTALL the new IDE for mac, it will not work.
-2. Follow these instructions `https://docs.arduino.cc/software/ide-v1/tutorials/Linux`
-3. Go the the Teensyduino [website](https://www.pjrc.com/teensy/td_download.html) and follow the Teensyduino download instructions FOR ARDUINO 1.8.x.
-4. Go to [here](#install-ide-packages)
-
-
-## Install IDE Packages
-
-1. Go to the Arduino lib foulder in GitHub and download libraries.zip
-2. Open the Arduino IDE and go to File > Preferences.
-3. Look for "Sketchbook location" to find the file location of the Arduino folder.
-4. Go into a folder explore and find the Arduino folder.
-5. Export the libraries folder from the zip into the Arduino folder.
-6. Make sure the imported libraries folder is the only libraries folder in the Arduino folder.
-7. Restart the Arduino IDE and all of the libraries should show up under the libraries tab.
 
 # ROS Setup
 
