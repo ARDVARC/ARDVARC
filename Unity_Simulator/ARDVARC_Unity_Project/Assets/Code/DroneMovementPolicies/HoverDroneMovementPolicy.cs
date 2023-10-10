@@ -1,6 +1,8 @@
 using AALG3.Structs;
 using UnityEngine;
 using Unity.Robotics;
+using RosMessageTypes;
+using RosMessageTypes.ARDVARCExp;
 
 namespace AALG3.DroneMovementPolicy
 {
@@ -57,7 +59,7 @@ namespace AALG3.DroneMovementPolicy
             var weightedYawAngleError = -YawAngleError() * NK_yaw;
             var N = weightedYawRateError + weightedYawAngleError;
 
-            // LogWeightedValues();
+            LogWeightedValues();
 
             return DroneModel.CalculateDesiredRotorSpeedsFromLMNZ(new LMNZ(L, M, N, Z));
 
@@ -91,6 +93,13 @@ namespace AALG3.DroneMovementPolicy
 
             void LogWeightedValues()
             {
+                if (!Application.isEditor)
+                {
+                    return;
+                }
+                
+                DebugHelper.PublishROSUpdate(droneModel.ModelState.GlobalPositionEstimate.ToTestMessage());
+                
                 DebugHelper.DroneWeightsWriter.WriteLine(
                     $"{Time.time}, " +
                     $"{weightedVerticalPositionError}, " +

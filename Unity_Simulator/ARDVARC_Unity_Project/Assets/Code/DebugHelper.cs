@@ -2,13 +2,14 @@ using UnityEngine;
 using System.IO;
 using System;
 using AALG3.RGVMovementPolicy;
+using RosMessageTypes.ARDVARCExp;
 
 namespace AALG3
 {
     public static class DebugHelper
     {
-        public static readonly StreamWriter DroneWeightsWriter = new ($"./Assets/DataDump/DroneWeights/{DateTime.Now:yyyy-dd-M--HH-mm-ss}.csv");
-        static Simulation Simulation;
+        public static readonly StreamWriter DroneWeightsWriter = new ($"{Application.dataPath}/DataDump/DroneWeights/{DateTime.Now:yyyy-dd-M--HH-mm-ss}_datadump.csv");
+        static Simulation Simulation = null!;
         
         public static void Setup(Simulation simulation)
         {
@@ -47,8 +48,15 @@ namespace AALG3
             );
         }
         
+        public static void Teardown()
+        {
+            DroneWeightsWriter.Dispose();
+        }
+        
         public static Vector3 CurrentWind() => Simulation.Wind.CurrentWind();
         
         public static bool RGV1IsMoving() => Simulation.RGVs[0].movementPolicy is not StandardRGVMovementPolicy standardRGVMovementPolicy || standardRGVMovementPolicy.IsMoving();
+        
+        public static void PublishROSUpdate(TestMsg msg) => Simulation.SceneManager.ros.Publish("test", msg);
     }
 }

@@ -5,48 +5,42 @@ using System.Collections.Generic;
 using System.Text;
 using Unity.Robotics.ROSTCPConnector.MessageGeneration;
 
-namespace RosMessageTypes.Assets
+namespace RosMessageTypes.ARDVARCExp
 {
     [Serializable]
-    public class DumbMsgMsg : Message
+    public class TestMsg : Message
     {
-        public const string k_RosMessageName = "Assets/DumbMsg";
+        public const string k_RosMessageName = "ARDVARC_exp/Test";
         public override string RosMessageName => k_RosMessageName;
 
-        public int x;
-        public int y;
+        public Geometry.Vector3Msg pos;
 
-        public DumbMsgMsg()
+        public TestMsg()
         {
-            this.x = 0;
-            this.y = 0;
+            this.pos = new Geometry.Vector3Msg();
         }
 
-        public DumbMsgMsg(int x, int y)
+        public TestMsg(Geometry.Vector3Msg pos)
         {
-            this.x = x;
-            this.y = y;
+            this.pos = pos;
         }
 
-        public static DumbMsgMsg Deserialize(MessageDeserializer deserializer) => new DumbMsgMsg(deserializer);
+        public static TestMsg Deserialize(MessageDeserializer deserializer) => new TestMsg(deserializer);
 
-        private DumbMsgMsg(MessageDeserializer deserializer)
+        private TestMsg(MessageDeserializer deserializer)
         {
-            deserializer.Read(out this.x);
-            deserializer.Read(out this.y);
+            this.pos = Geometry.Vector3Msg.Deserialize(deserializer);
         }
 
         public override void SerializeTo(MessageSerializer serializer)
         {
-            serializer.Write(this.x);
-            serializer.Write(this.y);
+            serializer.Write(this.pos);
         }
 
         public override string ToString()
         {
-            return "DumbMsgMsg: " +
-            "\nx: " + x.ToString() +
-            "\ny: " + y.ToString();
+            return "TestMsg: " +
+            "\npos: " + pos.ToString();
         }
 
 #if UNITY_EDITOR

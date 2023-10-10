@@ -6,7 +6,7 @@ using AALG3.Structs;
 using Random = System.Random;
 using System.Linq;
 using Unity.Robotics.ROSTCPConnector;
-using RosMessageTypes.Assets;
+using RosMessageTypes.ARDVARCExp;
 
 namespace AALG3
 {
@@ -28,12 +28,15 @@ namespace AALG3
         {
             // Time.fixedDeltaTime = 0.002f;
             // Time.captureDeltaTime = 60;
-            // ros = ROSConnection.GetOrCreateInstance();
-            // ros.RegisterPublisher<DumbMsgMsg>("test");
-            // ros.Publish("test", new DumbMsgMsg());
-            // Debug.Break();
             Simulation = new Simulation(this, new Random(Simulation.DEFAULT_SIMULATION_SEED));
-            // DebugHelper.Setup(Simulation);
+            if (Application.isEditor)
+            {
+                ros = ROSConnection.GetOrCreateInstance();
+                ros.RegisterPublisher<TestMsg>("test");
+                ros.Publish("test", new TestMsg());
+                Debug.Break();
+                DebugHelper.Setup(Simulation);
+            }
             foreach (var i in Enumerable.Range(1, SHRUB_COUNT))
             {
                 Instantiate(
@@ -58,6 +61,14 @@ namespace AALG3
             Simulation?.OnDrawGizmos();
             Gizmos.color = Color.black;
             Gizmos.DrawLine(Vector3.zero, new Vector3(0, 40, 0));
+        }
+        
+        void OnApplicationQuit()
+        {
+            if (Application.isEditor)
+            {
+                DebugHelper.Teardown();
+            }
         }
     
         public RGV MakeRGV(Vector3 startPosition, Vector3 startDirection, Random random)
