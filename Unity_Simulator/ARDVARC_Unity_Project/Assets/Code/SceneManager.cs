@@ -6,7 +6,7 @@ using AALG3.Structs;
 using Random = System.Random;
 using System.Linq;
 using Unity.Robotics.ROSTCPConnector;
-using RosMessageTypes.ARDVARCExp;
+using RosMessageTypes.Geometry;
 
 namespace AALG3
 {
@@ -32,8 +32,8 @@ namespace AALG3
             if (Application.isEditor)
             {
                 ros = ROSConnection.GetOrCreateInstance();
-                ros.RegisterPublisher<TestMsg>("test");
-                ros.Publish("test", new TestMsg());
+                ros.RegisterPublisher<Vector3Msg>("test");
+                ros.Publish("test", new Vector3Msg());
                 Debug.Break();
                 DebugHelper.Setup(Simulation);
             }

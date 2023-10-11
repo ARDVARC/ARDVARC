@@ -1,8 +1,6 @@
 using AALG3.Structs;
 using UnityEngine;
-using Unity.Robotics;
-using RosMessageTypes;
-using RosMessageTypes.ARDVARCExp;
+using RosMessageTypes.Geometry;
 
 namespace AALG3.DroneMovementPolicy
 {

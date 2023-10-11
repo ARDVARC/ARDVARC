@@ -74,3 +74,4 @@ crashlytics-build.properties
 
 # Data dump
 *_datadump.csv
+*_datadump.csv.meta
