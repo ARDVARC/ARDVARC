@@ -11,7 +11,7 @@ namespace AALG3
         internal const float PLAY_AREA_SIZE = 45.72f;
         internal const float PLAY_AREA_MARGIN = 4;
 
-        SceneManager SceneManager { get; }
+        public SceneManager SceneManager { get; }
         public List<RGV> RGVs { get; }
         public List<Drone> Drones { get; }
         public Wind Wind { get; }
