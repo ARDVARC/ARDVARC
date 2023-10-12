@@ -8,7 +8,7 @@ clc, clear
 
 %% Set Constants
           % orbitDetermination inputs
-          RGVabsPos = [5,5,0]; %[m]
+          RGVabsPos = [0,0,0]; %[m]
           numPoints = 50;
           orbRad = 1; %[m]
           errorRad = 1; %[m]
