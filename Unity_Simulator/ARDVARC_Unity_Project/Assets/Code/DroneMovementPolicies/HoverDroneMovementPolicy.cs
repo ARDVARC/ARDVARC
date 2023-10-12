@@ -1,6 +1,7 @@
 using AALG3.Structs;
 using UnityEngine;
 using RosMessageTypes.Geometry;
+using RosMessageTypes.RosArdvarcUnitySim;
 
 namespace AALG3.DroneMovementPolicy
 {
@@ -96,7 +97,13 @@ namespace AALG3.DroneMovementPolicy
                     return;
                 }
                 
-                DebugHelper.PublishROSUpdate(droneModel.ModelState.GlobalPositionEstimate.ToTestMessage());
+                DebugHelper.PublishROSUpdate(
+                    new UAS_StateMsg(
+                        droneModel.ModelState.GlobalPositionEstimate.ToPointMsg(),
+                        Quaternion.Euler(droneModel.ModelState.GlobalEulerEstimate).ToQuaternionMsg(),
+                        Extensions.ToTwistMsg(droneModel.ModelState.LocalVelocityEstimate, droneModel.ModelState.LocalAngularVelocityEstimate)
+                    )
+                );
                 
                 DebugHelper.DroneWeightsWriter.WriteLine(
                     $"{Time.time}, " +

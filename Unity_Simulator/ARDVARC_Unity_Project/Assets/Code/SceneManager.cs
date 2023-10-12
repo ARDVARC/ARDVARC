@@ -7,6 +7,7 @@ using Random = System.Random;
 using System.Linq;
 using Unity.Robotics.ROSTCPConnector;
 using RosMessageTypes.Geometry;
+using RosMessageTypes.RosArdvarcUnitySim;
 
 namespace AALG3
 {
@@ -32,8 +33,8 @@ namespace AALG3
             if (Application.isEditor)
             {
                 ros = ROSConnection.GetOrCreateInstance();
-                ros.RegisterPublisher<Vector3Msg>("test");
-                ros.Publish("test", new Vector3Msg());
+                ros.RegisterPublisher<UAS_StateMsg>("uas_state");
+                ros.Publish("uas_state", new UAS_StateMsg());
                 Debug.Break();
                 DebugHelper.Setup(Simulation);
             }
