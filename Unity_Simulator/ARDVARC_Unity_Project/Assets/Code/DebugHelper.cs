@@ -3,6 +3,7 @@ using System.IO;
 using System;
 using AALG3.RGVMovementPolicy;
 using RosMessageTypes.Geometry;
+using RosMessageTypes.RosArdvarcUnitySim;
 
 namespace AALG3
 {
@@ -57,6 +58,6 @@ namespace AALG3
         
         public static bool RGV1IsMoving() => Simulation.RGVs[0].movementPolicy is not StandardRGVMovementPolicy standardRGVMovementPolicy || standardRGVMovementPolicy.IsMoving();
         
-        public static void PublishROSUpdate(Vector3Msg msg) => Simulation.SceneManager.ros.Publish("test", msg);
+        public static void PublishROSUpdate(UAS_StateMsg msg) => Simulation.SceneManager.ros.Publish("uas_state", msg);
     }
 }
