@@ -1,3 +1,0 @@
-geometry_msgs/Point pos
-geometry_msgs/Quaternion orientation
-geometry_msgs/Twist twist
