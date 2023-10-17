@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AALG3.Structs
+namespace ARDVARC_Unity_Project.Structs
 {
     public struct DroneModelState
     {

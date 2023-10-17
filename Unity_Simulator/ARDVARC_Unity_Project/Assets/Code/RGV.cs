@@ -1,10 +1,10 @@
 using UnityEngine;
-using AALG3.RGVMovementPolicy;
+using ARDVARC_Unity_Project.RGVMovementPolicy;
 using System.Collections.Generic;
 using System.Linq;
-using AALG3.DroneMovementPolicy;
+using ARDVARC_Unity_Project.DroneMovementPolicy;
 
-namespace AALG3
+namespace ARDVARC_Unity_Project
 {
     public class RGV
     {

@@ -1,6 +1,6 @@
-using AALG3.Structs;
+using ARDVARC_Unity_Project.Structs;
 
-namespace AALG3.DroneMovementPolicy
+namespace ARDVARC_Unity_Project.DroneMovementPolicy
 {
     public interface IDroneMovementPolicy
     {

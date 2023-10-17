@@ -1,4 +1,4 @@
-namespace AALG3.RGVMovementPolicy
+namespace ARDVARC_Unity_Project.RGVMovementPolicy
 {
     public interface IRGVMovementPolicy
     {

@@ -51,5 +51,9 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "ARDVARC_Unity_Project.sln"
+    "dotnet.defaultSolution": "ARDVARC_Unity_Project.sln",
+    "cSpell.words": [
+        "datadump",
+        "grav"
+    ]
 }

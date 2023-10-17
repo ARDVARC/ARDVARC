@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using AALG3.RGVMovementPolicy;
+using ARDVARC_Unity_Project.RGVMovementPolicy;
 using UnityEngine;
 using Random = System.Random;
 
-namespace AALG3
+namespace ARDVARC_Unity_Project
 {
     public class Simulation
     {

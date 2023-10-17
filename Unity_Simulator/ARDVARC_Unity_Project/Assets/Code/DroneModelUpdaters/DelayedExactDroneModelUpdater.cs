@@ -1,7 +1,7 @@
-using AALG3.Structs;
+using ARDVARC_Unity_Project.Structs;
 using UnityEngine;
 
-namespace AALG3.DroneModelUpdaters
+namespace ARDVARC_Unity_Project.DroneModelUpdaters
 {
     public class DelayedExactDroneModelUpdater: IDroneModelUpdater
     {

@@ -444,7 +444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 641ce2680e1358c4c934fdb342c6a942, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RGVPrefab: {fileID: 5570060028854206054, guid: 62106fbe947ae97468da876db0b9a8ea, type: 3}
+  RGVPrefab: {fileID: 8589557188125896184, guid: c5f9bc3cf9c4bfe4ca604bec4e0d1830, type: 3}
   DronePrefab: {fileID: 7338827476782169109, guid: 3f52e3e48efa99b4f97611b22c714ed2, type: 3}
   ShrubPrefab: {fileID: 8299798344811315682, guid: 1f511a1c3fae7d2489504ef6fbbb7f18, type: 3}
   ros: {fileID: 0}

@@ -1,13 +1,13 @@
-using AALG3.Structs;
+using ARDVARC_Unity_Project.Structs;
 using UnityEngine;
 using RosMessageTypes.Geometry;
 using RosMessageTypes.RosArdvarcUnitySim;
 
-namespace AALG3.DroneMovementPolicy
+namespace ARDVARC_Unity_Project.DroneMovementPolicy
 {
     public class HoverDroneMovementPolicy: IDroneMovementPolicy
     {
-        public const float ZK_y = 200, ZK_v = 200, ZK_grav = 9.81f/4, ZK_z = 80;
+        public const float ZK_y = 200, ZK_v = 200, ZK_grav = 9.81f/4;
         public const float LK_roll_rate = 40, LK_roll = 60, LK_x = 20, LK_u = 60, LK_target_u = 0;
         public const float MK_pitch_rate = 250, MK_pitch = 15, MK_z = 100, MK_w = 60, MK_pitch_deadband = 0;
         public const float NK_yaw_rate = 60, NK_yaw = 1.2f;
@@ -36,10 +36,9 @@ namespace AALG3.DroneMovementPolicy
             BoundPlusMinus180(ref roll);
 
             var weightedVerticalPositionError = localVectorToTarget.y * ZK_y;
-            var weightedVericalVelocityError = -(droneModel.ModelState.LocalVelocityEstimate.y - 0) * ZK_v;
-            var gravityError = ZK_grav / Drone.ROTOR_SPEED_TO_FORCE;
-            var weightedForwardPositionErrorForZ = (flatLocalVectorToTarget.z < 0 ? 2 : 1) * -flatLocalVectorToTarget.z * Mathf.Min(ZK_z, Mathf.Max(-ZK_z, pitch != 0 ? 1/pitch : 0));
-            var Z = weightedVerticalPositionError + weightedVericalVelocityError + gravityError + weightedForwardPositionErrorForZ;
+            var weightedVerticalVelocityError = -(droneModel.ModelState.LocalVelocityEstimate.y - 0) * ZK_v;
+            var gravityError = ZK_grav / Mathf.Abs(Mathf.Cos(Mathf.Deg2Rad * pitch)) / Drone.ROTOR_SPEED_TO_FORCE;
+            var Z = weightedVerticalPositionError + weightedVerticalVelocityError + gravityError;
 
             var weightedRollRateError = (droneModel.ModelState.LocalAngularVelocityEstimate.z - 0) * LK_roll_rate;
             var weightedRollAngleError = (roll - 0) * LK_roll;
@@ -108,7 +107,7 @@ namespace AALG3.DroneMovementPolicy
                 DebugHelper.DroneWeightsWriter.WriteLine(
                     $"{Time.time}, " +
                     $"{weightedVerticalPositionError}, " +
-                    $"{weightedVericalVelocityError}, " +
+                    $"{weightedVerticalVelocityError}, " +
                     $"{Z}, " +
                     $"{weightedRollRateError}, " +
                     $"{weightedRollAngleError}, " +
@@ -134,8 +133,7 @@ namespace AALG3.DroneMovementPolicy
                     $"{droneModel.ModelState.LocalAngularVelocityEstimate.z}, " +
                     $"{DebugHelper.CurrentWind().magnitude}, " +
                     $"{(DebugHelper.RGV1IsMoving() ? 1 : 0)}, " +
-                    $"{gravityError}, " +
-                    $"{weightedForwardPositionErrorForZ}"
+                    $"{gravityError}"
                 );
             }
         }

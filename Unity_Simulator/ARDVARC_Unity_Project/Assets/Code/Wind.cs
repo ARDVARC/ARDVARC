@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AALG3
+namespace ARDVARC_Unity_Project
 {
     public class Wind
     {

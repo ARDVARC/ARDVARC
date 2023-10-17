@@ -1,15 +1,15 @@
 using UnityEngine;
-using AALG3.RGVMovementPolicy;
-using AALG3.DroneMovementPolicy;
-using AALG3.DroneModelUpdaters;
-using AALG3.Structs;
+using ARDVARC_Unity_Project.RGVMovementPolicy;
+using ARDVARC_Unity_Project.DroneMovementPolicy;
+using ARDVARC_Unity_Project.DroneModelUpdaters;
+using ARDVARC_Unity_Project.Structs;
 using Random = System.Random;
 using System.Linq;
 using Unity.Robotics.ROSTCPConnector;
 using RosMessageTypes.Geometry;
 using RosMessageTypes.RosArdvarcUnitySim;
 
-namespace AALG3
+namespace ARDVARC_Unity_Project
 {
     public class SceneManager : MonoBehaviour
     {

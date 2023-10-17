@@ -1,11 +1,11 @@
 using UnityEngine;
 using System.IO;
 using System;
-using AALG3.RGVMovementPolicy;
+using ARDVARC_Unity_Project.RGVMovementPolicy;
 using RosMessageTypes.Geometry;
 using RosMessageTypes.RosArdvarcUnitySim;
 
-namespace AALG3
+namespace ARDVARC_Unity_Project
 {
     public static class DebugHelper
     {
@@ -44,8 +44,7 @@ namespace AALG3
                 "Roll Rate, " +
                 "Wind Speed, " +
                 "RGV1 Moving?, " +
-                "Gravity Error, " +
-                "Weighted Forward Position Error For Z"
+                "Gravity Error"
             );
         }
         

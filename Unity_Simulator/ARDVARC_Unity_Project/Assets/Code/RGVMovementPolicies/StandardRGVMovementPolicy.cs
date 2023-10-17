@@ -1,7 +1,7 @@
 using UnityEngine;
 using Random = System.Random;
 
-namespace AALG3.RGVMovementPolicy
+namespace ARDVARC_Unity_Project.RGVMovementPolicy
 {
     public class StandardRGVMovementPolicy : IRGVMovementPolicy
     {

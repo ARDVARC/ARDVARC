@@ -1,9 +1,9 @@
 using UnityEngine;
-using AALG3.DroneMovementPolicy;
-using AALG3.Structs;
+using ARDVARC_Unity_Project.DroneMovementPolicy;
+using ARDVARC_Unity_Project.Structs;
 using System;
 
-namespace AALG3
+namespace ARDVARC_Unity_Project
 {
     public class DroneModel
     {
