@@ -57,8 +57,6 @@ namespace ARDVARC_Unity_Project.DroneMovementPolicy
             var weightedYawAngleError = -YawAngleError() * NK_yaw;
             var N = weightedYawRateError + weightedYawAngleError;
 
-            LogWeightedValues();
-
             return DroneModel.CalculateDesiredRotorSpeedsFromLMNZ(new LMNZ(L, M, N, Z));
 
             float YawAngleError()
@@ -87,54 +85,6 @@ namespace ARDVARC_Unity_Project.DroneMovementPolicy
                 {
                     angle -= 360;
                 }
-            }
-
-            void LogWeightedValues()
-            {
-                if (!Application.isEditor)
-                {
-                    return;
-                }
-                
-                DebugHelper.PublishROSUpdate(
-                    new UAS_StateMsg(
-                        droneModel.ModelState.GlobalPositionEstimate.ToPointMsg(),
-                        Quaternion.Euler(droneModel.ModelState.GlobalEulerEstimate).ToQuaternionMsg(),
-                        Extensions.ToTwistMsg(droneModel.ModelState.LocalVelocityEstimate, droneModel.ModelState.LocalAngularVelocityEstimate)
-                    )
-                );
-                
-                DebugHelper.DroneWeightsWriter.WriteLine(
-                    $"{Time.time}, " +
-                    $"{weightedVerticalPositionError}, " +
-                    $"{weightedVerticalVelocityError}, " +
-                    $"{Z}, " +
-                    $"{weightedRollRateError}, " +
-                    $"{weightedRollAngleError}, " +
-                    $"{weightedHorizontalPositionError}, " +
-                    $"{weightedHorizontalVelocityError}, " +
-                    $"{L}, " +
-                    $"{weightedPitchRateError}, " +
-                    $"{weightedPitchAngleError}, " +
-                    $"{weightedForwardPositionError}, " +
-                    $"{weightedForwardVelocityError}, " +
-                    $"{M}, " +
-                    $"{weightedYawRateError}, " +
-                    $"{weightedYawAngleError}, " +
-                    $"{N}, " +
-                    $"{pitch}, " +
-                    $"{yaw}, " +
-                    $"{roll}, " +
-                    $"{droneModel.ModelState.LocalVelocityEstimate.z}, " +
-                    $"{droneModel.ModelState.LocalVelocityEstimate.x}, " +
-                    $"{droneModel.ModelState.LocalVelocityEstimate.y}, " +
-                    $"{droneModel.ModelState.LocalAngularVelocityEstimate.x}, " +
-                    $"{droneModel.ModelState.LocalAngularVelocityEstimate.y}, " +
-                    $"{droneModel.ModelState.LocalAngularVelocityEstimate.z}, " +
-                    $"{DebugHelper.CurrentWind().magnitude}, " +
-                    $"{(DebugHelper.RGV1IsMoving() ? 1 : 0)}, " +
-                    $"{gravityError}"
-                );
             }
         }
         

@@ -21,7 +21,7 @@ namespace ARDVARC_Unity_Project
             RGVId = ++RGVcounter;
         }
 
-        public void Update() => movementPolicy.Move(this);
+        public void FixedUpdate() => movementPolicy.Move(this);
         
         public void OnDrawGizmos()
         {

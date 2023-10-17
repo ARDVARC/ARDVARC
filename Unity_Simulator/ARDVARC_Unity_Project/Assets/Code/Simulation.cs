@@ -33,16 +33,16 @@ namespace ARDVARC_Unity_Project
             Random = random;
         }
     
-        public void Update()
+        public void FixedUpdate()
         {
             foreach (var rgv in RGVs)
             {
-                rgv.Update();
+                rgv.FixedUpdate();
             }
             
             foreach (var drone in Drones)
             {
-                drone.Update(this);
+                drone.FixedUpdate(this);
                 Wind.Push(drone);
             }
         }

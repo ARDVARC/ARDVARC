@@ -13,14 +13,16 @@ namespace ARDVARC_Unity_Project
         public GameObject GameObject { get; }
         public DroneModel Model { get; }
         public IDroneModelUpdater ModelUpdater { get; }
+        public Camera PrimarySensor { get; }
         public Drone(GameObject gameObject, DroneModel model, IDroneModelUpdater modelUpdater, Simulation simulation)
         {
             GameObject = gameObject;
             Model = model;
             ModelUpdater = modelUpdater;
+            PrimarySensor = gameObject.transform.GetChild(0).GetComponent<Camera>();
         }
 
-        public void Update(Simulation simulation) {
+        public void FixedUpdate(Simulation simulation) {
             // Update model
             ModelUpdater.TryUpdateModel(this, simulation);
         
