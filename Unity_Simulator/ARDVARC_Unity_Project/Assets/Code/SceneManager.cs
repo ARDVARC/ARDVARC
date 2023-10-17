@@ -9,7 +9,6 @@ using Unity.Robotics.ROSTCPConnector;
 using RosMessageTypes.RosArdvarcUnitySim;
 using RosMessageTypes.Sensor;
 using RosMessageTypes.Std;
-using Microsoft.Unity.VisualStudio.Editor;
 using System;
 
 namespace ARDVARC_Unity_Project
