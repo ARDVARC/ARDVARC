@@ -14,12 +14,15 @@ namespace ARDVARC_Unity_Project
         public DroneModel Model { get; }
         public IDroneModelUpdater ModelUpdater { get; }
         public Camera PrimarySensor { get; }
+        public Texture2D PrimarySensorOutputTexture { get; }
+        public const int PRIMARY_SENSOR_HEIGHT = 256, PRIMARY_SENSOR_WIDTH = 256;
         public Drone(GameObject gameObject, DroneModel model, IDroneModelUpdater modelUpdater, Simulation simulation)
         {
             GameObject = gameObject;
             Model = model;
             ModelUpdater = modelUpdater;
             PrimarySensor = gameObject.transform.GetChild(0).GetComponent<Camera>();
+            PrimarySensorOutputTexture = new Texture2D(PRIMARY_SENSOR_WIDTH, PRIMARY_SENSOR_HEIGHT, TextureFormat.BGRA32, false);
         }
 
         public void FixedUpdate(Simulation simulation) {

@@ -9,7 +9,6 @@ using Unity.Robotics.ROSTCPConnector;
 using RosMessageTypes.RosArdvarcUnitySim;
 using RosMessageTypes.Sensor;
 using RosMessageTypes.Std;
-using System;
 
 namespace ARDVARC_Unity_Project
 {
@@ -63,6 +62,7 @@ namespace ARDVARC_Unity_Project
             var drone = Simulation.Drones[0];
             var droneModelState = drone.Model.ModelState;
             var primarySensor = drone.PrimarySensor;
+            var primarySensorOutputTexture = drone.PrimarySensorOutputTexture;
             var rgv1 = Simulation.RGVs[0];
             var rgv1Transform = rgv1.gameObject.transform;
             var rgv2 = Simulation.RGVs[1];
@@ -93,15 +93,12 @@ namespace ARDVARC_Unity_Project
                 )
             );
             
-            var tempTexture = new RenderTexture(256, 256, 0, RenderTextureFormat.BGRA32);
+            var tempTexture = RenderTexture.GetTemporary(Drone.PRIMARY_SENSOR_WIDTH, Drone.PRIMARY_SENSOR_HEIGHT, 0, RenderTextureFormat.BGRA32);
             primarySensor.targetTexture = tempTexture;
             primarySensor.Render();
             RenderTexture.active = tempTexture;
-            var image = new Texture2D(256, 256, TextureFormat.BGRA32, false);
-            image.SetPixel(0,0,Color.white);
-            image.ReadPixels(new Rect(0, 0, 256, 256), 0, 0);
-            Graphics.CopyTexture(tempTexture, image);
-            image.Apply();
+            primarySensorOutputTexture.ReadPixels(new Rect(0, 0, Drone.PRIMARY_SENSOR_WIDTH, Drone.PRIMARY_SENSOR_HEIGHT), 0, 0);
+            primarySensorOutputTexture.Apply();
             ros.Publish(
                 "primary_sensor",
                 new ImageMsg(
@@ -110,11 +107,12 @@ namespace ARDVARC_Unity_Project
                     (uint)primarySensor.targetTexture.width,
                     "bgra8",
                     0,
-                    1024,
-                    image.GetRawTextureData()
+                    4 * Drone.PRIMARY_SENSOR_HEIGHT,
+                    primarySensorOutputTexture.GetRawTextureData()
                 )
             );
             primarySensor.targetTexture = null;
+            RenderTexture.ReleaseTemporary(tempTexture);
         }
         
         void OnDrawGizmos()
