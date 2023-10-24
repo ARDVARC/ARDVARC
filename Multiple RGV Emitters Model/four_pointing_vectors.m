@@ -1,10 +1,9 @@
 clc
 clear
 close all
-
 % INPUTS
-d = 0.1;
-noise_deg = 0.01;
+r = 0.215;
+noise_deg = 1;
 
 uas_ = [0 0 10];
 rgv_ = [10 1 0];
@@ -12,53 +11,63 @@ emitter_count = 4;
 
 N = 1000;
 
-% PREP
-emitter_angles = linspace(0,2*pi,emitter_count)';
-emitters__ = rgv_ + d*[sin(emitter_angles) cos(emitter_angles) zeros(emitter_count,1)];
-knowns_true = knowns.get_knowns_from(uas_,emitters__);
+plot_for_conditions(1, 2, 'r', r, noise_deg, uas_, rgv_, 4, N);
+plot_for_conditions(1, 2, 'g', r, noise_deg, uas_, rgv_, 5, N);
+plot_for_conditions(1, 2, 'b', r, noise_deg, uas_, rgv_, 6, N);
+plot_for_conditions(1, 2, 'y', r, noise_deg, uas_, rgv_, 7, N);
+plot_for_conditions(1, 2, 'k', r, noise_deg, uas_, rgv_, 8, N);
+figure(1)
+grid minor
+legend(Location="best");
+figure(2)
+grid minor
+legend(Location="best");
 
-res = zeros(N,emitter_count*3);
-mean_error = zeros(1,N);
-centers = zeros(N,3);
-center_error = zeros(1,N);
-mean_noise = zeros(1,N);
-for i = 1:N
-    [knowns_predicted, mean_noise(i)] = knowns_true.shake(noise_deg);
-
-    emitters_predicted__ = simulate_once(knowns_predicted);
-    res(i,:) = emitters_predicted__(:);
-    centers(i,:) = sum(emitters_predicted__,1)/emitter_count;
-    center_error(i) = norm(centers(i,:) - rgv_);
-    mean_error(i) = mean(vecnorm(emitters_predicted__ - emitters__, 2, 2));
+function plot_for_conditions(fignum1, fignum2, color, d, noise_deg, uas_, rgv_, emitter_count, N)
+    % PREP
+    emitter_angles = linspace(0,2*pi,emitter_count)';
+    emitters__ = rgv_ + d*[sin(emitter_angles) cos(emitter_angles) zeros(emitter_count,1)];
+    knowns_true = knowns.get_knowns_from(uas_,emitters__);
     
-    % plot_no_error(1, env);
+    res = zeros(N,emitter_count*3);
+    mean_error = zeros(1,N);
+    centers = zeros(N,3);
+    center_error = zeros(1,N);
+    mean_noise = zeros(1,N);
+    for i = 1:N
+        [knowns_predicted, mean_noise(i)] = knowns_true.shake(noise_deg);
+    
+        emitters_predicted__ = simulate_once(knowns_predicted);
+        res(i,:) = emitters_predicted__(:);
+        centers(i,:) = sum(emitters_predicted__,1)/emitter_count;
+        center_error(i) = norm(centers(i,:) - rgv_);
+        mean_error(i) = mean(vecnorm(emitters_predicted__ - emitters__, 2, 2));
+    end
+    figure(fignum1)
+    hold on
+    scatter(rad2deg(mean_noise), mean_error, color+".", DisplayName=sprintf("n=%i", emitter_count))
+    xlabel("Mean Pointing Vector Angle Error [deg]")
+    ylabel("Mean Emitter Position Error [m]")
+    xlim([0 noise_deg])
+    coeffs = polyfit(rad2deg(mean_noise), mean_error, 1);
+    a = coeffs(1);
+    b = coeffs(2);
+    fplot(@(x) a*x+b, color+":", DisplayName=sprintf("Fit n=%i, (y=%.2fx+%.2f)", emitter_count, a, b))
+    disp("Mean Emitter Position Error: " + mean(mean_error))
+    shg;
+    figure(fignum2)
+    hold on
+    scatter(rad2deg(mean_noise), center_error, color+".", DisplayName=sprintf("n=%i", emitter_count))
+    xlabel("Mean Pointing Vector Angle Error [deg]")
+    ylabel("Emitter Position Center Error [m]")
+    xlim([0 noise_deg])
+    coeffs = polyfit(rad2deg(mean_noise), center_error, 1);
+    a = coeffs(1);
+    b = coeffs(2);
+    fplot(@(x) a*x+b, color+":", DisplayName=sprintf("Fit n=%i, (y=%.2fx+%.2f)", emitter_count, a, b))
+    disp("Mean Center Error: " + mean(center_error))
+    shg;
 end
-figure
-hold on
-grid minor
-scatter(rad2deg(mean_noise), mean_error, '.k')
-xlabel("Mean Pointing Vector Angle Error [deg]")
-ylabel("Mean Emitter Position Error [m]")
-xlim([0 noise_deg])
-coeffs = polyfit(rad2deg(mean_noise), mean_error, 1);
-a = coeffs(1);
-b = coeffs(2);
-fplot(@(x) a*x+b, 'r:')
-disp("Mean Emitter Position Error: " + mean(mean_error))
-figure
-hold on
-grid minor
-scatter(rad2deg(mean_noise), center_error, '.k')
-xlabel("Mean Pointing Vector Angle Error [deg]")
-ylabel("Emitter Position Center Error [m]")
-xlim([0 noise_deg])
-coeffs = polyfit(rad2deg(mean_noise), center_error, 1);
-a = coeffs(1);
-b = coeffs(2);
-fplot(@(x) a*x+b, 'r:')
-disp("Mean Center Error: " + mean(center_error))
-
-% plot_no_error(10, knowns_true, emitters__)
 
 %%
 function make_me_zero = fsolve_me(x, k)
@@ -88,7 +97,7 @@ function res = simulate_once(k)
     end
     % SOLVE
     options = optimset('Display','off','Algorithm','levenberg-marquardt');
-    res = fsolve(@(x) fsolve_me(x, k), zeros(1, 16), options);
+    res = fsolve(@(x) fsolve_me(x, k), zeros(1, k.emitter_count*4), options);
     
     lambda_1 = res(k.emitter_count*3+1);
     res = reshape(res(1:k.emitter_count*3), [], 3);
