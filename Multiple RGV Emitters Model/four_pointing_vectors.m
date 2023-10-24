@@ -3,29 +3,39 @@ clear
 close all
 % INPUTS
 r = 0.215;
-noise_deg = 1;
+noise_deg = 0.5;
 
 uas_ = [0 0 10];
-rgv_ = [10 1 0];
-emitter_count = 4;
+rgv_ = [2 0 0];
 
 N = 1000;
 
-plot_for_conditions(1, 2, 'r', r, noise_deg, uas_, rgv_, 4, N);
-plot_for_conditions(1, 2, 'g', r, noise_deg, uas_, rgv_, 5, N);
-plot_for_conditions(1, 2, 'b', r, noise_deg, uas_, rgv_, 6, N);
-plot_for_conditions(1, 2, 'y', r, noise_deg, uas_, rgv_, 7, N);
-plot_for_conditions(1, 2, 'k', r, noise_deg, uas_, rgv_, 8, N);
+plot_for_conditions(1, 2, "#0072BD", r, noise_deg, uas_, rgv_, 4, N);
+plot_for_conditions(1, 2, "#D95319", r, noise_deg, uas_, rgv_, 5, N);
+plot_for_conditions(1, 2, "#EDB120", r, noise_deg, uas_, rgv_, 6, N);
+plot_for_conditions(1, 2, "#7E2F8E", r, noise_deg, uas_, rgv_, 7, N);
+plot_for_conditions(1, 2, "#77AC30", r, noise_deg, uas_, rgv_, 8, N);
 figure(1)
 grid minor
 legend(Location="best");
+xlabel("Mean Pointing Vector Angle Error [deg]")
+ylabel("Mean Emitter Position Error [m]")
+xlim([0 noise_deg])
+ylim([0 inf])
+title("Emitter Position Error vs Angle Error For Different Emitter Counts")
 figure(2)
 grid minor
 legend(Location="best");
+xlabel("Mean Pointing Vector Angle Error [deg]")
+ylabel("Emitter Position Center Error [m]")
+xlim([0 noise_deg])
+ylim([0 inf])
+title("Emitter Center Error vs Angle Error For Different Emitter Counts")
 
 function plot_for_conditions(fignum1, fignum2, color, d, noise_deg, uas_, rgv_, emitter_count, N)
     % PREP
-    emitter_angles = linspace(0,2*pi,emitter_count)';
+    emitter_angles = linspace(0,2*pi,emitter_count+1)';
+    emitter_angles = emitter_angles(1:end-1);
     emitters__ = rgv_ + d*[sin(emitter_angles) cos(emitter_angles) zeros(emitter_count,1)];
     knowns_true = knowns.get_knowns_from(uas_,emitters__);
     
@@ -45,26 +55,20 @@ function plot_for_conditions(fignum1, fignum2, color, d, noise_deg, uas_, rgv_, 
     end
     figure(fignum1)
     hold on
-    scatter(rad2deg(mean_noise), mean_error, color+".", DisplayName=sprintf("n=%i", emitter_count))
-    xlabel("Mean Pointing Vector Angle Error [deg]")
-    ylabel("Mean Emitter Position Error [m]")
-    xlim([0 noise_deg])
+    scatter(rad2deg(mean_noise), mean_error, 4, 'filled', Color=color, DisplayName=sprintf("n=%i", emitter_count), MarkerFaceAlpha = 0.3)
     coeffs = polyfit(rad2deg(mean_noise), mean_error, 1);
     a = coeffs(1);
     b = coeffs(2);
-    fplot(@(x) a*x+b, color+":", DisplayName=sprintf("Fit n=%i, (y=%.2fx+%.2f)", emitter_count, a, b))
+    fplot(@(x) a*x+b, Color=color, DisplayName=sprintf("Fit n=%i, (y=%.2fx+%.2f)", emitter_count, a, b), LineStyle="--", LineWidth=1)
     disp("Mean Emitter Position Error: " + mean(mean_error))
     shg;
     figure(fignum2)
     hold on
-    scatter(rad2deg(mean_noise), center_error, color+".", DisplayName=sprintf("n=%i", emitter_count))
-    xlabel("Mean Pointing Vector Angle Error [deg]")
-    ylabel("Emitter Position Center Error [m]")
-    xlim([0 noise_deg])
+    scatter(rad2deg(mean_noise), center_error, 4, 'filled', Color=color, DisplayName=sprintf("n=%i", emitter_count), MarkerFaceAlpha = 0.3)
     coeffs = polyfit(rad2deg(mean_noise), center_error, 1);
     a = coeffs(1);
     b = coeffs(2);
-    fplot(@(x) a*x+b, color+":", DisplayName=sprintf("Fit n=%i, (y=%.2fx+%.2f)", emitter_count, a, b))
+    fplot(@(x) a*x+b, Color=color, DisplayName=sprintf("Fit n=%i, (y=%.2fx+%.2f)", emitter_count, a, b), LineStyle="--", LineWidth=1)
     disp("Mean Center Error: " + mean(center_error))
     shg;
 end
@@ -97,7 +101,7 @@ function res = simulate_once(k)
     end
     % SOLVE
     options = optimset('Display','off','Algorithm','levenberg-marquardt');
-    res = fsolve(@(x) fsolve_me(x, k), zeros(1, k.emitter_count*4), options);
+    res = fsolve(@(x) fsolve_me(x, k), [repmat(k.uas_, 1, k.emitter_count) zeros(1, k.emitter_count)], options);
     
     lambda_1 = res(k.emitter_count*3+1);
     res = reshape(res(1:k.emitter_count*3), [], 3);
@@ -109,23 +113,25 @@ function res = simulate_once(k)
     end
 end
 
-function plot_no_error(fignum, k, emitters__)
-    arguments
-        fignum (1,1) double
-        k (1,1) knowns
-        emitters__ (:,3) double
-    end
-    % PLOT IN 3D
-    figure(fignum)
-    scatter3(k.uas_(1), k.uas_(2), k.uas_(3), 'filled', 'r')
-    hold on
-    grid minor
-    axis equal
-    for i = 1:4
-        plot3([k.uas_(1), k.uas_(1) + k.pointing_vectors__(i,1)], [k.uas_(2), k.uas_(2) + k.pointing_vectors__(i,2)], [k.uas_(3), k.uas_(3) + k.pointing_vectors__(i,3)], 'k')
-        scatter3(emitters__(i,1), emitters__(i,2), emitters__(i,3), 'filled', 'k')
-    end
-    xlabel("X")
-    ylabel("Y")
-    zlabel("Z")
-end
+% function plot_no_error(fignum, k, emitters__, true_emitters__)
+%     arguments
+%         fignum (1,1) double
+%         k (1,1) knowns
+%         emitters__ (:,3) double
+%         true_emitters__ (:,3) double
+%     end
+%     % PLOT IN 3D
+%     figure(fignum)
+%     scatter3(k.uas_(1), k.uas_(2), k.uas_(3), 'filled', 'r')
+%     hold on
+%     grid minor
+%     axis equal
+%     for i = 1:k.emitter_count
+%         plot3([k.uas_(1), k.uas_(1) + k.pointing_vectors__(i,1)], [k.uas_(2), k.uas_(2) + k.pointing_vectors__(i,2)], [k.uas_(3), k.uas_(3) + k.pointing_vectors__(i,3)], 'k')
+%         scatter3(emitters__(i,1), emitters__(i,2), emitters__(i,3), 'filled', 'k')
+%         scatter3(true_emitters__(i,1), true_emitters__(i,2), true_emitters__(i,3), 'filled', 'b')
+%     end
+%     xlabel("X")
+%     ylabel("Y")
+%     zlabel("Z")
+% end

@@ -43,8 +43,8 @@ classdef knowns
             random_rotations_about_pointing_vectors___ = axang2rotm([this.pointing_vectors__ rand(this.emitter_count, 1)*2*pi]);
             random_orthogonal_vectors_big___ = pagemtimes(random_rotations_about_pointing_vectors___, orthogonal_vectors_big___);
             random_orthogonal_vectors__ = reshape(random_orthogonal_vectors_big___(:,1,:), 3, this.emitter_count)';
-            noise = rand(this.emitter_count, 1)*deg2rad(angle_deg);
-            mean_noise = mean(noise);
+            mean_noise = rand(1)*deg2rad(angle_deg);
+            noise = repmat(mean_noise, this.emitter_count, 1);
             axangs__ = [random_orthogonal_vectors__ noise];
             rotms___ = axang2rotm(axangs__);
             pointing_vectors_big___ = zeros(3, 3, this.emitter_count);
