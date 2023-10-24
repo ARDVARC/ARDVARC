@@ -25,7 +25,7 @@ classdef knowns
             
             k.distances__ = zeros(k.emitter_count);
             for i = 1:k.emitter_count
-                for j = i:k.emitter_count
+                for j = 1:k.emitter_count
                     k.distances__(i,j) = norm(emitters__(i,:)-emitters__(j,:));
                 end
             end

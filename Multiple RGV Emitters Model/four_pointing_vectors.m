@@ -10,11 +10,11 @@ rgv_ = [2 0 0];
 
 N = 1000;
 
-plot_for_conditions(1, 2, "#0072BD", r, noise_deg, uas_, rgv_, 4, N);
-plot_for_conditions(1, 2, "#D95319", r, noise_deg, uas_, rgv_, 5, N);
-plot_for_conditions(1, 2, "#EDB120", r, noise_deg, uas_, rgv_, 6, N);
-plot_for_conditions(1, 2, "#7E2F8E", r, noise_deg, uas_, rgv_, 7, N);
-plot_for_conditions(1, 2, "#77AC30", r, noise_deg, uas_, rgv_, 8, N);
+plot_for_conditions(1, 2, [0 0.4470 0.7410], r, noise_deg, uas_, rgv_, 4, N);
+plot_for_conditions(1, 2, [0.8500 0.3250 0.0980], r, noise_deg, uas_, rgv_, 5, N);
+plot_for_conditions(1, 2, [0.9290 0.6940 0.1250], r, noise_deg, uas_, rgv_, 6, N);
+plot_for_conditions(1, 2, [0.4940 0.1840 0.5560], r, noise_deg, uas_, rgv_, 7, N);
+plot_for_conditions(1, 2, [0.4660 0.6740 0.1880], r, noise_deg, uas_, rgv_, 8, N);
 figure(1)
 grid minor
 legend(Location="best");
@@ -55,7 +55,7 @@ function plot_for_conditions(fignum1, fignum2, color, d, noise_deg, uas_, rgv_, 
     end
     figure(fignum1)
     hold on
-    scatter(rad2deg(mean_noise), mean_error, 4, 'filled', Color=color, DisplayName=sprintf("n=%i", emitter_count), MarkerFaceAlpha = 0.3)
+    scatter(rad2deg(mean_noise), mean_error, 4, color, "filled", DisplayName=sprintf("n=%i", emitter_count), MarkerFaceAlpha = 0.3)
     coeffs = polyfit(rad2deg(mean_noise), mean_error, 1);
     a = coeffs(1);
     b = coeffs(2);
@@ -64,7 +64,7 @@ function plot_for_conditions(fignum1, fignum2, color, d, noise_deg, uas_, rgv_, 
     shg;
     figure(fignum2)
     hold on
-    scatter(rad2deg(mean_noise), center_error, 4, 'filled', Color=color, DisplayName=sprintf("n=%i", emitter_count), MarkerFaceAlpha = 0.3)
+    scatter(rad2deg(mean_noise), center_error, 4, color, "filled", DisplayName=sprintf("n=%i", emitter_count), MarkerFaceAlpha = 0.3)
     coeffs = polyfit(rad2deg(mean_noise), center_error, 1);
     a = coeffs(1);
     b = coeffs(2);
@@ -74,19 +74,16 @@ function plot_for_conditions(fignum1, fignum2, color, d, noise_deg, uas_, rgv_, 
 end
 
 %%
-function make_me_zero = fsolve_me(x, k)
+function make_me_zero = fsolve_me(lambdas_, k)
     arguments
-        x double
+        lambdas_ double
         k knowns
     end
-    emitters_predicted__ = reshape(x(1:k.emitter_count*3), [], 3);
-    lambdas_ = x(k.emitter_count*3+1:end);
     
-    make_me_zero = zeros(1,3*k.emitter_count + nchoosek(k.emitter_count,2));
+    make_me_zero = zeros(1, k.emitter_count*(k.emitter_count+1)/2);
 
-    temp = k.uas_ + lambdas_'.*k.pointing_vectors__-emitters_predicted__;
-    make_me_zero(1:3*k.emitter_count) = temp(:);
-    next_index = 3*k.emitter_count+1;
+    emitters_predicted__ = k.uas_ + lambdas_'.*k.pointing_vectors__;
+    next_index = 1;
     for i = 1:k.emitter_count
         for j = i:k.emitter_count
             make_me_zero(next_index) = norm(emitters_predicted__(i,:) - emitters_predicted__(j,:)) - k.distances__(i,j);
@@ -95,21 +92,19 @@ function make_me_zero = fsolve_me(x, k)
     end
 end
 
-function res = simulate_once(k)
+function emitters_predicted__ = simulate_once(k)
     arguments (Input)
         k (1,1) knowns
     end
     % SOLVE
     options = optimset('Display','off','Algorithm','levenberg-marquardt');
-    res = fsolve(@(x) fsolve_me(x, k), [repmat(k.uas_, 1, k.emitter_count) zeros(1, k.emitter_count)], options);
-    
-    lambda_1 = res(k.emitter_count*3+1);
-    res = reshape(res(1:k.emitter_count*3), [], 3);
+    lambdas_ = fsolve(@(x) fsolve_me(x, k), [ones(1, k.emitter_count)], options);
+    emitters_predicted__ = k.uas_ + lambdas_'.*k.pointing_vectors__;
 
     % CORRECT FOR BACKWARDS-NESS
-    if (lambda_1 < 0)
+    if (lambdas_(1) < 0)
         % It went backwards, flip it
-        res = -res + 2*k.uas_;
+        emitters_predicted__ = -emitters_predicted__ + 2*k.uas_;
     end
 end
 
