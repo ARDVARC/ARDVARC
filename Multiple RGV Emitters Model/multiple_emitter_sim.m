@@ -10,11 +10,6 @@ rgv_ = [2 0 0];
 
 N = 1000;
 
-plot_for_conditions(1, 2, [0 0.4470 0.7410], r, noise_deg, uas_, rgv_, 4, N);
-plot_for_conditions(1, 2, [0.8500 0.3250 0.0980], r, noise_deg, uas_, rgv_, 5, N);
-plot_for_conditions(1, 2, [0.9290 0.6940 0.1250], r, noise_deg, uas_, rgv_, 6, N);
-plot_for_conditions(1, 2, [0.4940 0.1840 0.5560], r, noise_deg, uas_, rgv_, 7, N);
-plot_for_conditions(1, 2, [0.4660 0.6740 0.1880], r, noise_deg, uas_, rgv_, 8, N);
 figure(1)
 grid minor
 legend(Location="best");
@@ -31,6 +26,12 @@ ylabel("Emitter Position Center Error [m]")
 xlim([0 noise_deg])
 ylim([0 inf])
 title("Emitter Center Error vs Angle Error For Different Emitter Counts")
+plot_for_conditions(1, 2, [0 0.4470 0.7410], r, noise_deg, uas_, rgv_, 4, N);
+plot_for_conditions(1, 2, [0.8500 0.3250 0.0980], r, noise_deg, uas_, rgv_, 5, N);
+plot_for_conditions(1, 2, [0.9290 0.6940 0.1250], r, noise_deg, uas_, rgv_, 6, N);
+plot_for_conditions(1, 2, [0.4940 0.1840 0.5560], r, noise_deg, uas_, rgv_, 7, N);
+plot_for_conditions(1, 2, [0.4660 0.6740 0.1880], r, noise_deg, uas_, rgv_, 8, N);
+
 
 function plot_for_conditions(fignum1, fignum2, color, d, noise_deg, uas_, rgv_, emitter_count, N)
     % PREP
@@ -97,15 +98,9 @@ function emitters_predicted__ = simulate_once(k)
         k (1,1) knowns
     end
     % SOLVE
-    options = optimset('Display','off','Algorithm','levenberg-marquardt');
-    lambdas_ = fsolve(@(x) fsolve_me(x, k), [ones(1, k.emitter_count)], options);
+    opt = optimoptions(@lsqnonlin,'Algorithm','trust-region-reflective','Display','off');
+    lambdas_ = lsqnonlin(@(x) fsolve_me(x, k), [ones(1, k.emitter_count)], zeros(1, k.emitter_count), [], [], [], [], [], [], opt);
     emitters_predicted__ = k.uas_ + lambdas_'.*k.pointing_vectors__;
-
-    % CORRECT FOR BACKWARDS-NESS
-    if (lambdas_(1) < 0)
-        % It went backwards, flip it
-        emitters_predicted__ = -emitters_predicted__ + 2*k.uas_;
-    end
 end
 
 % function plot_no_error(fignum, k, emitters__, true_emitters__)
