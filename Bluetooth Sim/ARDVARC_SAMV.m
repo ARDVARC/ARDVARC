@@ -1,11 +1,24 @@
-function [Az, El] = ARDVARC_SAMV(A)
+function [az, el] = ardvarc_music(steering_vector, iq_samples)
+    x = iq_samples;
+    a = steering_vector;
+    
+    N = max(length(x_vec));
+    
+    Rxx = (1/N)*sum(x*x');
+    
+    [V, D] = eig(Rxx);
+    
+    P = 1./(a'*V*V'*a);
+
+function [Az, El] = ARDVARC_SAMV(steering_vector, iq_samples)
 %% Nomenclature
 %         SAMV = Sparse Asymptotic Minimum Variance
 %         ML = Maximum Likelihood
 %% Objective
 %
 %% Inputs
-%         A = Steering matrix (each column is a steering vector : a(theta))
+%         Steering matrix = Each column is a steering vector : a(theta)
+%         iq_samples = Complex numbers of wave form reading
 %% Outputs
 %         Az = Azmith of target
 %         El = Elevatino of target
@@ -13,28 +26,25 @@ function [Az, El] = ARDVARC_SAMV(A)
 %         sigma = Noise estimate
 %         gamma = 
 %         error = 
+%% Initialize V
+    x = iq_samples;
+    a = steering_vector;
 %% Base Equations
+    % Size
+    N = max(length(x_vec));
     % Identity matrix
     I = eye(n);
     % First power value
-    P_0(1) = 1 / (A' * inv(diff(R)) * A); 
-%     P_1(1) = 1 / (A' * inv(diff(R)) * A); 
-%     P_2(1) = 1 / (A' * inv(diff(R)) * A); 
+    P(1) = 1 / (A' * inv(diff(R)) * A); 
     % Iteravtive Adaptive Approach (IAA) covariance matrix
     sym x;
     R = @x A * diag(P(x)) * A' + sigma^2 * I; 
 %% Power Value Iteration
-    while abs(P_0(x+1) - P_0(x)) < err
+    while abs(P(x+1) - P(x)) < err
         % SAMV0
-        P_0(x+1) = (A'*R*inv(P_0(x))*R*R*inv(P_0(x))*A) / (A'*R*inv(P_0(x))*A)^2;
-%         % SAMV1
-%         P_1(x+1) = (A'*R*inv(P_1(x))*R*R*inv(P_1(x))*A) / (A'*R*inv(P_1(x))*A);
-%         % SAMV2
-%         P_2(x+1) = A'*R*inv(P_2(x)) * (R' + gamma*I) * R*inv(P_2(x))*A*p^2; 
+        P(x+1) = (A'*R*inv(P(x))*R*R*inv(P(x))*A) / (A'*R*inv(P(x))*A)^2;
         % Update sigma
-        sigma = sqrt((R*inv(inv(P_0(x)))*R).' / (R*inv(inv(P_0(x)))).');
-%         abs(P_1(x+1) - P_0(x)) < err
-%         abs(P_2(x+1) - P_0(x)) < err
+        sigma = sqrt((R*inv(inv(P(x)))*R).' / (R*inv(inv(P(x)))).');
     end
 %% Find Greatest Power
     P_max = max(P,[],'all');
