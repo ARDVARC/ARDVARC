@@ -1,4 +1,4 @@
-function [Az, El] = ARDVARC_SAMV(steering_vector, iq_samples)
+function [Az, El] = ARDVAR_SAMV(steering_vector, iq_samples)
 %% Nomenclature
 %         SAMV = Sparse Asymptotic Minimum Variance
 %         ML = Maximum Likelihood
