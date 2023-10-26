@@ -1,15 +1,3 @@
-function [az, el] = ardvarc_music(steering_vector, iq_samples)
-    x = iq_samples;
-    a = steering_vector;
-    
-    N = max(length(x_vec));
-    
-    Rxx = (1/N)*sum(x*x');
-    
-    [V, D] = eig(Rxx);
-    
-    P = 1./(a'*V*V'*a);
-
 function [Az, El] = ARDVARC_SAMV(steering_vector, iq_samples)
 %% Nomenclature
 %         SAMV = Sparse Asymptotic Minimum Variance
