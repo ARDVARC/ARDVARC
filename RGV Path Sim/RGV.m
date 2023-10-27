@@ -153,7 +153,7 @@ classdef RGV
                 [newPos, newEuler] = RGV.move(time + deltaTime, time, positions(counter,:), eulers(counter,:), movementTypes(counter));
                 if (Simulation.DistanceToBondary(newPos) < RGV.safeDistanceFromEdge)
                     opts = optimset('Display','off');
-                    deltaTime = fsolve(@(x) Simulation.DistanceToBondary(RGV.move(time + x, time, positions(counter,:), eulers(counter,:), movementTypes(counter))) - RGV.safeDistanceFromEdge, 0, opts);
+                    deltaTime = lsqnonlin(@(x) Simulation.DistanceToBondary(RGV.move(time + x, time, positions(counter,:), eulers(counter,:), movementTypes(counter))) - RGV.safeDistanceFromEdge, deltaTime, 0, [], opts);
                     [newPos, newEuler] = RGV.move(time + deltaTime, time, positions(counter,:), eulers(counter,:), movementTypes(counter));
                     dir = eul2rotm(newEuler)*[1;0;0];
                     if (signedAngle(newPos, dir) > 0)
