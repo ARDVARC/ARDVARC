@@ -11,11 +11,11 @@ classdef RGVMovementType < Simulink.IntEnumType
     methods(Static)
         function this = getRandom()
             randVal = rand(1);
-            if (randVal < 0.2)
+            if (randVal < RGV.waitProbCutoff)
                 this = RGVMovementType.Wait;
-            elseif (randVal < 0.7)
+            elseif (randVal < RGV.straightProbCutoff)
                 this = RGVMovementType.Straight;
-            elseif (randVal < 0.9)
+            elseif (randVal < RGV.arcLeftCutoff)
                 this = RGVMovementType.ArcLeft;
             else
                 this = RGVMovementType.ArcRight;

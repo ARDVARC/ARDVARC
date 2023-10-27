@@ -1,24 +1,36 @@
 classdef RGV
     properties(Constant)
         speed (1,1) double = 0.5;
-        turningRadius (1,1) double = 2;
-        waitTimeMin (1,1) double = 5;
-        waitTimeMax (1,1) double = 10;
-        straightTimeMin (1,1) double = 5;
-        straightTimeMax (1,1) double = 10;
+        turningRadius (1,1) double = 4;
+        uTurnRadius (1,1) double = 2;
+        waitTimeMin (1,1) double = 90;
+        waitTimeMax (1,1) double = 100;
+        straightTimeMin (1,1) double = 1;
+        straightTimeMax (1,1) double = 2;
         arcTimeMin (1,1) double = 2;
-        arcTimeMax (1,1) double = 4;
+        arcTimeMax (1,1) double = 3;
+        waitChanceWeight = 0.1;
+        straightChanceWeight = 5;
+        arcLeftChanceWeight = 1;
+        arcRightChanceWeight = 1;
+        
+        safeDistanceFromEdge = RGV.uTurnRadius*2;
 
-        safeDistanceFromEdge = RGV.turningRadius*2;
-
+        % Precalculate
         turningSpeed (1,1) double =  RGV.speed / RGV.turningRadius;
-        uTurnTurnTime (1,1) double = pi / RGV.turningSpeed;
-        uTurnStraightMinTime (1,1) double = 2 * RGV.turningRadius / RGV.speed;
+        uTurnSpeed (1,1) double =  RGV.speed / RGV.uTurnRadius;
+        uTurnTurnTime (1,1) double = pi / RGV.uTurnSpeed;
+        uTurnStraightMinTime (1,1) double = 2 * RGV.uTurnRadius / RGV.speed;
         uTurnTimeMin (1,1) double = RGV.uTurnTurnTime + RGV.uTurnStraightMinTime;
         uTurnTimeMax (1,1) double = RGV.uTurnTurnTime + RGV.uTurnStraightMinTime + 4;
+
+        weightSum = RGV.waitChanceWeight + RGV.straightChanceWeight + RGV.arcLeftChanceWeight + RGV.arcRightChanceWeight;
+        waitProbCutoff = RGV.waitChanceWeight / RGV.weightSum;
+        straightProbCutoff = (RGV.waitChanceWeight + RGV.straightChanceWeight) / RGV.weightSum;
+        arcLeftCutoff = (RGV.waitChanceWeight + RGV.straightChanceWeight + RGV.arcLeftChanceWeight) / RGV.weightSum;
     end
 
-    properties(Access = private)
+    properties
         times (:,1) double
         positions (:,3) double
         eulers (:,3) double
@@ -60,10 +72,10 @@ classdef RGV
                     pos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
                 case RGVMovementType.UTurnLeft
                     startRotm = eul2rotm(startEul);
-                    radiusVectorIn = (startRotm * [0;RGV.turningRadius;0])';
+                    radiusVectorIn = (startRotm * [0;RGV.uTurnRadius;0])';
                     progressTime = time - startTime;
                     if (progressTime < RGV.uTurnTurnTime)
-                        ang = RGV.turningSpeed * progressTime;
+                        ang = RGV.uTurnSpeed * progressTime;
                         angRotm = axang2rotm([0 0 1 ang]);
                         euler = rotm2eul(angRotm*startRotm);
                         pos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
@@ -79,10 +91,10 @@ classdef RGV
                     end
                 case RGVMovementType.UTurnRight
                     startRotm = eul2rotm(startEul);
-                    radiusVectorIn = (startRotm * [0;-RGV.turningRadius;0])';
+                    radiusVectorIn = (startRotm * [0;-RGV.uTurnRadius;0])';
                     progressTime = time - startTime;
                     if (progressTime < RGV.uTurnTurnTime)
-                        ang = RGV.turningSpeed * progressTime;
+                        ang = RGV.uTurnSpeed * progressTime;
                         angRotm = axang2rotm([0 0 1 -ang]);
                         euler = rotm2eul(angRotm*startRotm);
                         pos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
