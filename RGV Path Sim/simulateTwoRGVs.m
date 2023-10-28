@@ -5,8 +5,8 @@ function [times, rgv1positions, rgv2positions, rgv1movementTypes, rgv2movementTy
     times = 0:(1/plotRate):duration;
     rgv1positions = zeros(length(times),3);
     rgv2positions = zeros(length(times),3);
-    rgv1movementTypes = RGVMovementType.empty(0,1);
-    rgv2movementTypes = RGVMovementType.empty(0,1);
+    rgv1movementTypes = zeros(length(times),1,"int8");
+    rgv2movementTypes = zeros(length(times),1,"int8");
     for i = 1:length(times)
         [rgv1positions(i,:), ~, rgv1movementTypes(i)] = rgv1.getStateAtTime(times(i));
         [rgv2positions(i,:), ~, rgv2movementTypes(i)] = rgv2.getStateAtTime(times(i));

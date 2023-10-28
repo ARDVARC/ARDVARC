@@ -2,14 +2,14 @@ clc
 clear
 close all
 
-runCount = 100;
+runCount = 500;
 idealJointDuration = 20;
 plotRate = 10;
 duration = 30*60;
 
 bests = zeros(runCount,1);
 for i = 1:runCount
-    [times, rgv1positions, rgv2positions] = simulateTwoRGVs(plotRate, duration, randi(10000), randi(10000));
+    [times, rgv1positions, rgv2positions] = simulateTwoRGVs_mex(plotRate, duration, randi(10000), randi(10000));
     distanceBetweenRGVs = vecnorm(rgv1positions - rgv2positions, 2, 2);
     movingMaxForJoint = movmax(distanceBetweenRGVs, idealJointDuration*plotRate);
     bests(i) = min(movingMaxForJoint);

@@ -141,15 +141,38 @@ classdef RGV
 
             rng(seed);
 
+            vecSize = duration;
+
+            times = zeros(vecSize, 1);
+            positions = zeros(vecSize, 3);
+            eulers = zeros(vecSize, 3);
+            movementTypes = zeros(vecSize, 1, "int8");
+
             times(1) = 0;
             positions(1,:) = startPos;
             eulers(1,:) = startEul;
-            movementTypes(1) = RGVMovementType.getRandom();
+            movementTypes(1) = RGV.getRandomMovementType();
 
             counter = 1;
             time = 0;
 
             while (time <= duration)
+                if (counter + 1 > vecSize)
+                    vecSize = vecSize * 2;
+                    timesTemp = zeros(vecSize, 1);
+                    timesTemp(1:counter) = times;
+                    times = timesTemp;
+                    positionsTemp = zeros(vecSize, 3);
+                    positionsTemp(1:counter,:) = positions;
+                    positions = positionsTemp;
+                    eulersTemp = zeros(vecSize, 3);
+                    eulersTemp(1:counter,:) = eulers;
+                    eulers = eulersTemp;
+                    movementTypesTemp = zeros(vecSize, 1, "int8");
+                    movementTypesTemp(1:counter,:) = movementTypes;
+                    movementTypes = movementTypesTemp;
+                end
+
                 switch movementTypes(counter)
                     case RGVMovementType.Wait
                         deltaTime = rand(1)*(RGV.waitTimeMax-RGV.waitTimeMin)+RGV.waitTimeMin;
@@ -164,8 +187,9 @@ classdef RGV
                 end
                 [newPos, newEuler] = RGV.move(time + deltaTime, time, positions(counter,:), eulers(counter,:), movementTypes(counter));
                 if (Simulation.DistanceToBondary(newPos) < RGV.safeDistanceFromEdge)
-                    opts = optimset('Display','off');
-                    deltaTime = lsqnonlin(@(x) Simulation.DistanceToBondary(RGV.move(time + x, time, positions(counter,:), eulers(counter,:), movementTypes(counter))) - RGV.safeDistanceFromEdge, deltaTime, 0, [], opts);
+                    % opts = optimoptions('Display','off');
+                    opts = optimoptions("lsqnonlin","Algorithm","levenberg-marquardt",'Display','off');
+                    deltaTime = lsqnonlin(@(x) Simulation.DistanceToBondary(RGV.move(time + x, time, positions(counter,:), eulers(counter,:), movementTypes(counter))) - RGV.safeDistanceFromEdge, deltaTime, 0, inf, opts);
                     [newPos, newEuler] = RGV.move(time + deltaTime, time, positions(counter,:), eulers(counter,:), movementTypes(counter));
                     dir = eul2rotm(newEuler)*[1;0;0];
                     if (signedAngle(newPos, dir) > 0)
@@ -174,7 +198,7 @@ classdef RGV
                         movementTypes(counter+1,:) = RGVMovementType.UTurnRight;
                     end
                 else
-                    movementTypes(counter+1,:) = RGVMovementType.getRandom();
+                    movementTypes(counter+1,:) = RGV.getRandomMovementType();
                 end
                 counter = counter + 1;
                 time = time + deltaTime;
@@ -183,7 +207,25 @@ classdef RGV
                 eulers(counter,:) = newEuler;
             end
 
+            times = times(1:counter);
+            positions = positions(1:counter,:);
+            eulers = eulers(1:counter,:);
+            movementTypes = movementTypes(1:counter);
+
             this = RGV(times, positions, eulers, movementTypes);
+        end
+        
+        function this = getRandomMovementType()
+            randVal = rand(1);
+            if (randVal < RGV.waitProbCutoff)
+                this = RGVMovementType.Wait;
+            elseif (randVal < RGV.straightProbCutoff)
+                this = RGVMovementType.Straight;
+            elseif (randVal < RGV.arcLeftCutoff)
+                this = RGVMovementType.ArcLeft;
+            else
+                this = RGVMovementType.ArcRight;
+            end
         end
     end
 end

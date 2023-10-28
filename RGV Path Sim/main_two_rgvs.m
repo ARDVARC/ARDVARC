@@ -8,7 +8,7 @@ duration = 30*60;
 seed1 = randi(10000);
 seed2 = randi(10000);
 
-[times, rgv1positions, rgv2positions, rgv1movementTypes, rgv2movementTypes] = simulateTwoRGVs(plotRate, duration, seed1, seed2);
+[times, rgv1positions, rgv2positions, rgv1movementTypes, rgv2movementTypes] = simulateTwoRGVs_mex(plotRate, duration, seed1, seed2);
 
 figure
 hold on
