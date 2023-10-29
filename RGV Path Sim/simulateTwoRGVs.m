@@ -1,4 +1,4 @@
-function [times, rgv1positions, rgv2positions, rgv1movementTypes, rgv2movementTypes] = simulateTwoRGVs(plotRate, duration, seed1, seed2)
+function [times, rgv1positions, rgv2positions, rgv1movementTypes, rgv2movementTypes, rgv1, rgv2] = simulateTwoRGVs(plotRate, duration, seed1, seed2)
     rgv1 = RGV.makeFromSeed(seed1, [-5 5 0], [0 0 0], duration);
     rgv2 = RGV.makeFromSeed(seed2, [5 -5 0], [pi 0 0], duration);
     

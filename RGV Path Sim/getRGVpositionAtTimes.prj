@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.coder" plugin-version="R2023a">
-  <configuration build-checksum="908014747" file="C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\simulateTwoRGVs.prj" location="C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim" name="simulateTwoRGVs" target="target.unifiedcoder" target-name="MATLAB Coder">
+  <configuration build-checksum="1045120708" file="C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\getRGVpositionAtTimes.prj" location="C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim" name="getRGVpositionAtTimes" target="target.unifiedcoder" target-name="MATLAB Coder">
     <profile key="profile.mex">
       <param.BuiltInstrumentedMex>false</param.BuiltInstrumentedMex>
       <param.RanInstrumentedMex>false</param.RanInstrumentedMex>
@@ -596,11 +596,11 @@
     <param.objective>option.objective.c</param.objective>
     <param.WorkflowStep>workflowSummary</param.WorkflowStep>
     <param.TestSnippets>
-      <item>simulateTwoRGVs(10, 10, 1, 2)</item>
+      <item>TEMP</item>
     </param.TestSnippets>
     <param.ExternalFcnMajority>column</param.ExternalFcnMajority>
     <param.UseGlobals>option.UseGlobals.No</param.UseGlobals>
-    <param.outputfile>${PROJECT_ROOT}\simulateTwoRGVs_mex.mexw64</param.outputfile>
+    <param.outputfile>${PROJECT_ROOT}\getRGVpositionAtTimes_mex.mexw64</param.outputfile>
     <param.version>R2012a</param.version>
     <param.HasECoderFeatures>true</param.HasECoderFeatures>
     <param.HasGpuCoder>false</param.HasGpuCoder>
@@ -615,7 +615,7 @@
     <param.AutoInferUnboundedSizeThreshold>2048</param.AutoInferUnboundedSizeThreshold>
     <param.EnableFixedPointStep>false</param.EnableFixedPointStep>
     <param.EnableScreener>true</param.EnableScreener>
-    <param.AnnotationChecksum>1443214822</param.AnnotationChecksum>
+    <param.AnnotationChecksum>1513136119</param.AnnotationChecksum>
     <var.LegacyTarget />
     <var.MirrorOnOpen>false</var.MirrorOnOpen>
     <param.FixedPointEnabled>false</param.FixedPointEnabled>
@@ -623,15 +623,15 @@
     <var.DismissScreener>false</var.DismissScreener>
     <param.unifiedParamStorage />
     <param.hdlParamStorage />
-    <var.gc.lastOutputRoot>codegen\mex\simulateTwoRGVs</var.gc.lastOutputRoot>
+    <var.gc.lastOutputRoot>codegen\mex\getRGVpositionAtTimes</var.gc.lastOutputRoot>
     <var.gc.lastOutputType>MEX_FILE</var.gc.lastOutputType>
-    <var.gc.preBuildChecksum>908014747</var.gc.preBuildChecksum>
-    <var.cfi.lastOutputRoot>codegen\mex\simulateTwoRGVs</var.cfi.lastOutputRoot>
-    <var.cfi.preBuildChecksum>3293567368</var.cfi.preBuildChecksum>
-    <var.lastCfiTestSnippet>simulateTwoRGVs(10, 10, 1, 2)</var.lastCfiTestSnippet>
+    <var.gc.preBuildChecksum>1045120708</var.gc.preBuildChecksum>
+    <var.cfi.lastOutputRoot>codegen\mex\getRGVpositionAtTimes</var.cfi.lastOutputRoot>
+    <var.cfi.preBuildChecksum>4222025253</var.cfi.preBuildChecksum>
+    <var.lastCfiTestSnippet>TEMP</var.lastCfiTestSnippet>
     <var.outdatedOnRestore>false</var.outdatedOnRestore>
-    <var.lastUserSourceChecksum>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;checksum&gt;&lt;includedFiles&gt;&lt;file&gt;C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\RGV.m&lt;/file&gt;&lt;file&gt;C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\signedAngle.m&lt;/file&gt;&lt;file&gt;C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\simulateTwoRGVs.m&lt;/file&gt;&lt;file&gt;C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\Simulation.m&lt;/file&gt;&lt;/includedFiles&gt;&lt;value&gt;2425488931&lt;/value&gt;&lt;/checksum&gt;</var.lastUserSourceChecksum>
-    <var.sourceSetState>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;sourceModel&gt;&lt;primarySourceFiles&gt;&lt;file&gt;C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\RGV.m&lt;/file&gt;&lt;file&gt;C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\signedAngle.m&lt;/file&gt;&lt;file&gt;C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\simulateTwoRGVs.m&lt;/file&gt;&lt;file&gt;C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\Simulation.m&lt;/file&gt;&lt;/primarySourceFiles&gt;&lt;fixedPointSourceFiles/&gt;&lt;fixedPointSourceRegistered&gt;false&lt;/fixedPointSourceRegistered&gt;&lt;fixedPointSourceSelected&gt;false&lt;/fixedPointSourceSelected&gt;&lt;/sourceModel&gt;</var.sourceSetState>
+    <var.lastUserSourceChecksum>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;checksum&gt;&lt;includedFiles&gt;&lt;file&gt;C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\getRGVpositionAtTimes.m&lt;/file&gt;&lt;file&gt;C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\RGV.m&lt;/file&gt;&lt;/includedFiles&gt;&lt;value&gt;676193001&lt;/value&gt;&lt;/checksum&gt;</var.lastUserSourceChecksum>
+    <var.sourceSetState>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;sourceModel&gt;&lt;primarySourceFiles&gt;&lt;file&gt;C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\getRGVpositionAtTimes.m&lt;/file&gt;&lt;file&gt;C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\RGV.m&lt;/file&gt;&lt;/primarySourceFiles&gt;&lt;fixedPointSourceFiles/&gt;&lt;fixedPointSourceRegistered&gt;false&lt;/fixedPointSourceRegistered&gt;&lt;fixedPointSourceSelected&gt;false&lt;/fixedPointSourceSelected&gt;&lt;/sourceModel&gt;</var.sourceSetState>
     <param.forceMexBuild>false</param.forceMexBuild>
     <param.NoDefaultJIT>false</param.NoDefaultJIT>
     <param.configImportActive>false</param.configImportActive>
@@ -645,10 +645,10 @@
     <param.EnableStructExplosion>true</param.EnableStructExplosion>
     <param.ForceANSIC>false</param.ForceANSIC>
     <param.NumCompileJobs>1</param.NumCompileJobs>
-    <param.mex.outputfile>simulateTwoRGVs_mex</param.mex.outputfile>
-    <param.grt.outputfile>simulateTwoRGVs</param.grt.outputfile>
+    <param.mex.outputfile>getRGVpositionAtTimes_mex</param.mex.outputfile>
+    <param.grt.outputfile>getRGVpositionAtTimes</param.grt.outputfile>
     <param.artifact>option.target.artifact.mex</param.artifact>
-    <param.outputfile>${PROJECT_ROOT}\simulateTwoRGVs_mex.mexw64</param.outputfile>
+    <param.outputfile>${PROJECT_ROOT}\getRGVpositionAtTimes_mex.mexw64</param.outputfile>
     <param.CppNamespace />
     <param.CppPackagesToNamespaces>true</param.CppPackagesToNamespaces>
     <param.CppNamespaceForMathworksCode>coder</param.CppNamespaceForMathworksCode>
@@ -884,34 +884,67 @@
       <param.FixedPointUseDesignRanges />
     </unset>
     <fileset.entrypoints>
-      <file custom-data-expanded="false" value="${PROJECT_ROOT}\simulateTwoRGVs.m">
-        <Marker>1698549173107</Marker>
+      <file custom-data-expanded="false" value="${PROJECT_ROOT}\getRGVpositionAtTimes.m">
+        <Marker>1698550163170</Marker>
       </file>
     </fileset.entrypoints>
-    <fileset.testbench />
+    <fileset.testbench>
+      <file>${PROJECT_ROOT}\TEMP.m</file>
+    </fileset.testbench>
     <fileset.inputtypes>
-      <file custom-data-expanded="false" value="${PROJECT_ROOT}\simulateTwoRGVs.m">
-        <Inputs fileName="simulateTwoRGVs.m" functionName="simulateTwoRGVs">
-          <Input Name="plotRate" typeId="0" />
-          <Input Name="duration" typeId="0" />
-          <Input Name="seed1" typeId="0" />
-          <Input Name="seed2" typeId="0" />
+      <file custom-data-expanded="false" value="${PROJECT_ROOT}\getRGVpositionAtTimes.m">
+        <Inputs fileName="getRGVpositionAtTimes.m" functionName="getRGVpositionAtTimes">
+          <Input Name="rgv" typeId="0">
+            <Field Name="times" typeId="1" />
+            <Field Name="positions" typeId="2" />
+            <Field Name="eulers" typeId="2" />
+            <Field Name="movementTypes" typeId="3" />
+          </Input>
+          <Input Name="times" typeId="1" />
           <idpTable>
             <type typeId="0">
-              <Class>double</Class>
+              <Class>RGV</Class>
               <Size>1 x 1</Size>
               <Value />
               <InitialValue />
               <UserDefined>false</UserDefined>
+              <ClassDefinedIn />
+            </type>
+            <type typeId="1">
+              <Class>double</Class>
+              <Size>:inf x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
               <Complex>false</Complex>
               <Sparse>false</Sparse>
+              <ClassDefinedIn />
+            </type>
+            <type typeId="2">
+              <Class>double</Class>
+              <Size>:inf x 3</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+              <Sparse>false</Sparse>
+              <ClassDefinedIn />
+            </type>
+            <type typeId="3">
+              <Class>RGVMovementType</Class>
+              <Size>:inf x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Enum>true</Enum>
+              <ClassDefinedIn />
             </type>
           </idpTable>
         </Inputs>
       </file>
     </fileset.inputtypes>
     <build-deliverables>
-      <file location="${PROJECT_ROOT}" name="simulateTwoRGVs_mex.mexw64" optional="false">C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\simulateTwoRGVs_mex.mexw64</file>
+      <file location="${PROJECT_ROOT}" name="getRGVpositionAtTimes_mex.mexw64" optional="false">C:\Users\aidan\Documents\GitHub\ARDVARC\RGV Path Sim\getRGVpositionAtTimes_mex.mexw64</file>
     </build-deliverables>
     <workflow />
     <matlab>
