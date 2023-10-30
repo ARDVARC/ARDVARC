@@ -147,7 +147,11 @@ classdef RGV
             positions = zeros(vecSize, 3);
             eulers = zeros(vecSize, 3);
             movementTypes = zeros(vecSize, 1, "int8");
-
+            coder.varsize('times');
+            coder.varsize('positions');
+            coder.varsize('eulers');
+            coder.varsize('movementTypes');
+            
             times(1) = 0;
             positions(1,:) = startPos;
             eulers(1,:) = startEul;

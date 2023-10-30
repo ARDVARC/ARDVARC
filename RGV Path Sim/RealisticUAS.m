@@ -23,7 +23,7 @@ classdef RealisticUAS
                 ts (:,1) double
                 positions (:,3) double
             end
-            opts = odeset("AbsTol",1e-1);
+            opts = odeset("AbsTol",1e-6);
             [ts, states] = ode45(@(t,state) this.EOM(t, state, rgv1, rgv2), [0 duration], [startPos(1:2);-startPos(3);zeros(9,1)],opts);
             positions = states(:,1:3);
         end
@@ -81,6 +81,13 @@ classdef RealisticUAS
             dState = [xyzdot;phithetapsidot;uvwdot;pqrdot];
         end
         function [rollError, pitchError, yawError, toNearRGVB] = getUsefulAngles(this, state, RB2E, RGVxyz)
+            arguments(Input)
+                this (1,1) RealisticUAS
+                state (12,1) double
+                RB2E (3,3) double
+                RGVxyz (3,1) double
+            end
+            
             xyz = state(1:3);
             RE2B = RB2E^-1;
             
