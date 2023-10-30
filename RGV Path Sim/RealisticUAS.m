@@ -23,7 +23,8 @@ classdef RealisticUAS
                 ts (:,1) double
                 positions (:,3) double
             end
-            [ts, states] = ode45(@(t,state) this.EOM(t, state, rgv1, rgv2), [0 duration], [startPos(1:2);-startPos(3);zeros(9,1)]);
+            opts = odeset("AbsTol",1e-1);
+            [ts, states] = ode45(@(t,state) this.EOM(t, state, rgv1, rgv2), [0 duration], [startPos(1:2);-startPos(3);zeros(9,1)],opts);
             positions = states(:,1:3);
         end
     end

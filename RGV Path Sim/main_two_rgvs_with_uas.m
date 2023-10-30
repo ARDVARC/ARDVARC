@@ -11,8 +11,9 @@ seed2 = randi(10000);
 [times, rgv1positions, rgv2positions, rgv1movementTypes, rgv2movementTypes, rgv1, rgv2] = simulateTwoRGVs_mex(plotRate, duration, seed1, seed2);
 
 uas = RealisticUAS();
-[uasTimes, uasPositions] = uas.simulate(duration, [0;0;10], rgv1, rgv2);
+[uasTimes, uasPositions] = uas.simulate(duration, [Simulation.missionAreaHalfWidth;Simulation.missionAreaHalfWidth;10], rgv1, rgv2);
 uasPositions(:,3) = -uasPositions(:,3);
+uasPositions = interp1(uasTimes, uasPositions, times);
 
 figure
 hold on
@@ -36,19 +37,17 @@ legend(Location="best")
 figure
 hold on
 grid minor
-rgv1PositionsAtUAStimes = getRGVpositionAtTimes_mex(rgv1, uasTimes);
-rgv2PositionsAtUAStimes = getRGVpositionAtTimes_mex(rgv2, uasTimes);
-UASDistancesToRGV1 = vecnorm(uasPositions - rgv1PositionsAtUAStimes, 2, 2);
-UASDistancesToRGV2 = vecnorm(uasPositions - rgv2PositionsAtUAStimes, 2, 2);
-plot(uasTimes, UASDistancesToRGV1, 'k', DisplayName="Distance to RGV1");
-plot(uasTimes, UASDistancesToRGV2, 'b', DisplayName="Distance to RGV2");
+UASDistancesToRGV1 = vecnorm(uasPositions - rgv1positions, 2, 2);
+UASDistancesToRGV2 = vecnorm(uasPositions - rgv2positions, 2, 2);
+plot(times, UASDistancesToRGV1, 'k', DisplayName="Distance to RGV1");
+plot(times, UASDistancesToRGV2, 'b', DisplayName="Distance to RGV2");
 movingMaxForJoint = movmax(max(UASDistancesToRGV1, UASDistancesToRGV2), idealJointDuration*plotRate, Endpoints=max([UASDistancesToRGV1, UASDistancesToRGV2],[],"all"));
-plot(uasTimes,movingMaxForJoint,'r:', DisplayName="Moving Maximum");
+plot(times,movingMaxForJoint,'r:', DisplayName="Moving Maximum");
 [minMaxForJoint, minMaxForJointIndex] = min(movingMaxForJoint);
 minMaxForJointStartIndex = max(1, minMaxForJointIndex - idealJointDuration*plotRate/2);
-minMaxForJointEndIndex = min(length(uasTimes), minMaxForJointIndex + idealJointDuration*plotRate/2);
+minMaxForJointEndIndex = min(length(times), minMaxForJointIndex + idealJointDuration*plotRate/2);
 fprintf("The UAS's best opportunity for joint localization is at t=%.2fs.\nFor %.1fs the max distance to the furthest of the two RGVs is only %.2fm.\n\n", ...
-    uasTimes(minMaxForJointIndex), ...
+    times(minMaxForJointIndex), ...
     idealJointDuration, ...
     minMaxForJoint);
 title("UAS Distance To RGVs vs. Time")
@@ -64,8 +63,8 @@ axis equal
 plot3(rgv2positions(:,1),rgv2positions(:,2),rgv2positions(:,3), DisplayName="RGV2 Path", Color='b')
 plot3(rgv1positions(minMaxForJointIdealStartIndex:minMaxForJointIdealEndIndex,1),rgv1positions(minMaxForJointIdealStartIndex:minMaxForJointIdealEndIndex,2),rgv1positions(minMaxForJointIdealStartIndex:minMaxForJointIdealEndIndex,3), DisplayName="RGV1 Ideal Joint Path", Color='k', Marker='hexagram')
 plot3(rgv2positions(minMaxForJointIdealStartIndex:minMaxForJointIdealEndIndex,1),rgv2positions(minMaxForJointIdealStartIndex:minMaxForJointIdealEndIndex,2),rgv2positions(minMaxForJointIdealStartIndex:minMaxForJointIdealEndIndex,3), DisplayName="RGV2 Ideal Joint Path", Color='b', Marker='hexagram')
-plot3(rgv1PositionsAtUAStimes(minMaxForJointStartIndex:minMaxForJointEndIndex,1),rgv1PositionsAtUAStimes(minMaxForJointStartIndex:minMaxForJointEndIndex,2),rgv1PositionsAtUAStimes(minMaxForJointStartIndex:minMaxForJointEndIndex,3), DisplayName="RGV1 Joint Path", Color='k', Marker='x')
-plot3(rgv2PositionsAtUAStimes(minMaxForJointStartIndex:minMaxForJointEndIndex,1),rgv2PositionsAtUAStimes(minMaxForJointStartIndex:minMaxForJointEndIndex,2),rgv2PositionsAtUAStimes(minMaxForJointStartIndex:minMaxForJointEndIndex,3), DisplayName="RGV2 Joint Path", Color='b', Marker='x')
+plot3(rgv1positions(minMaxForJointStartIndex:minMaxForJointEndIndex,1),rgv1positions(minMaxForJointStartIndex:minMaxForJointEndIndex,2),rgv1positions(minMaxForJointStartIndex:minMaxForJointEndIndex,3), DisplayName="RGV1 Joint Path", Color='k', Marker='x')
+plot3(rgv2positions(minMaxForJointStartIndex:minMaxForJointEndIndex,1),rgv2positions(minMaxForJointStartIndex:minMaxForJointEndIndex,2),rgv2positions(minMaxForJointStartIndex:minMaxForJointEndIndex,3), DisplayName="RGV2 Joint Path", Color='b', Marker='x')
 plot3(uasPositions(minMaxForJointStartIndex:minMaxForJointEndIndex,1),uasPositions(minMaxForJointStartIndex:minMaxForJointEndIndex,2),uasPositions(minMaxForJointStartIndex:minMaxForJointEndIndex,3), DisplayName="UAS Joint Path", Color='g', Marker='x')
 title("Entire RGV Path")
 plot([Simulation.missionAreaHalfWidth, -Simulation.missionAreaHalfWidth, -Simulation.missionAreaHalfWidth, Simulation.missionAreaHalfWidth, Simulation.missionAreaHalfWidth], ...
