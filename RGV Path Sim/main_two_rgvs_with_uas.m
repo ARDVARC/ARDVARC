@@ -10,8 +10,9 @@ seed2 = randi(10000);
 
 [times, rgv1positions, rgv2positions, rgv1movementTypes, rgv2movementTypes, rgv1, rgv2] = simulateTwoRGVs_mex(plotRate, duration, seed1, seed2);
 
-uas = VerySimpleUAS(1,2,0.001);
-[uasTimes, uasPositions] = uas.simulate(duration, [Simulation.missionAreaHalfWidth;Simulation.missionAreaHalfWidth], 10, rgv1, rgv2);
+uas = RealisticUAS();
+[uasTimes, uasPositions] = uas.simulate(duration, [0;0;10], rgv1, rgv2);
+uasPositions(:,3) = -uasPositions(:,3);
 
 figure
 hold on

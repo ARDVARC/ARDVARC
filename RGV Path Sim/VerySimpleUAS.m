@@ -25,7 +25,7 @@ classdef VerySimpleUAS
             arguments(Input)
                 this (1,1) VerySimpleUAS
                 duration (1,1) double = 30*60
-                startPos2D (2,1) double = [0;0]
+                startPos2D (2,1) double = [Simulation.missionAreaHalfWidth;Simulation.missionAreaHalfWidth]
                 height (1,1) double = 10
                 rgv1 (1,1) RGV = RGV.makeFromSeed(randi(10000), [-5 5 0], [0 0 0], duration)
                 rgv2 (1,1) RGV = RGV.makeFromSeed(randi(10000), [-5 5 0], [0 0 0], duration)
