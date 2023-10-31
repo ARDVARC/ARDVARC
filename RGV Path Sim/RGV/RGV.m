@@ -190,10 +190,10 @@ classdef RGV
                         deltaTime = rand(1)*RGV.waitTimeMin+(RGV.waitTimeMax-RGV.waitTimeMin);
                 end
                 [newPos, newEuler] = RGV.move(time + deltaTime, time, positions(counter,:), eulers(counter,:), movementTypes(counter));
-                if (Simulation.DistanceToBondary(newPos) < RGV.safeDistanceFromEdge)
+                if (Simulation.DistanceToBoundary(newPos) < RGV.safeDistanceFromEdge)
                     % opts = optimoptions('Display','off');
                     opts = optimoptions("lsqnonlin","Algorithm","levenberg-marquardt",'Display','off');
-                    deltaTime = lsqnonlin(@(x) Simulation.DistanceToBondary(RGV.move(time + x, time, positions(counter,:), eulers(counter,:), movementTypes(counter))) - RGV.safeDistanceFromEdge, deltaTime, 0, inf, opts);
+                    deltaTime = lsqnonlin(@(x) Simulation.DistanceToBoundary(RGV.move(time + x, time, positions(counter,:), eulers(counter,:), movementTypes(counter))) - RGV.safeDistanceFromEdge, deltaTime, 0, inf, opts);
                     [newPos, newEuler] = RGV.move(time + deltaTime, time, positions(counter,:), eulers(counter,:), movementTypes(counter));
                     dir = eul2rotm(newEuler)*[1;0;0];
                     if (signedAngle(newPos, dir) > 0)

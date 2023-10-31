@@ -10,22 +10,34 @@ classdef RealisticUAS
         targetRGVgroundDistance = 3;
     end
 
-    methods
-        function [ts, positions] = simulate(this, duration, startPos, rgv1, rgv2)
+    properties
+        uasTimes (1,:) double
+        uasStates (:,12) double
+    end
+
+    methods(Static)
+        function this = makeAndSimulate(duration, startPos, rgv1, rgv2)
             arguments(Input)
-                this (1,1) RealisticUAS
-                duration (1,1) double = 30*60
-                startPos (3,1) double = [Simulation.missionAreaHalfWidth;Simulation.missionAreaHalfWidth;this.targetHeight]
-                rgv1 (1,1) RGV = RGV.makeFromSeed(randi(10000), [-5 5 0], [0 0 0], duration)
-                rgv2 (1,1) RGV = RGV.makeFromSeed(randi(10000), [-5 5 0], [0 0 0], duration)
+                duration (1,1) double
+                startPos (3,1) double
+                rgv1 (1,1) RGV
+                rgv2 (1,1) RGV
             end
             arguments(Output)
-                ts (:,1) double
-                positions (:,3) double
+                this (1,1) RealisticUAS
             end
             opts = odeset("AbsTol",1e-6);
-            [ts, states] = ode45(@(t,state) this.EOM(t, state, rgv1, rgv2), [0 duration], [startPos(1:2);-startPos(3);zeros(9,1)],opts);
-            positions = states(:,1:3);
+            this = RealisticUAS();
+            [this.uasTimes, this.uasStates] = ode45(@(t,state) this.EOM(t, state, rgv1, rgv2), [0 duration], [startPos;zeros(9,1)],opts);
+        end
+
+        function RB2E = getRB2E(state)
+            phi = state(4);
+            theta = state(5);
+            psi = state(6);
+            RB2E = [cos(theta)*cos(psi),sin(phi)*sin(theta)*cos(psi)-cos(phi)*sin(psi),cos(phi)*sin(theta)*cos(psi)+sin(phi)*sin(psi);
+                    cos(theta)*sin(psi),sin(phi)*sin(theta)*sin(psi)+cos(phi)*cos(psi),cos(phi)*sin(theta)*sin(psi)-sin(phi)*cos(psi);
+                    -sin(theta)        ,sin(phi)*cos(theta)                           ,cos(phi)*cos(theta)                           ];
         end
     end
 
@@ -95,15 +107,15 @@ classdef RealisticUAS
             headingE = RB2E*headingB;
         
             toAboveRGVE = RGVxyz - xyz + [0;0;-this.targetHeight];
-            flatToAboveRGVE = normalize(toAboveRGVE(1:2));
+            flatToAboveRGVE = normalize2by1(toAboveRGVE(1:2));
             toNearRGVE = toAboveRGVE - this.targetRGVgroundDistance*[flatToAboveRGVE;0];
         
-            desiredHeadingE = normalize(toNearRGVE);
+            desiredHeadingE = normalize3by1(toNearRGVE);
             toNearRGVB = RE2B*toNearRGVE;
             rightB = [0;1;0];
             rightE = RB2E*rightB;
-            flatHeadingE = normalize(headingE(1:2));
-            flatDesiredHeadingE = normalize(desiredHeadingE(1:2));
+            flatHeadingE = normalize2by1(headingE(1:2));
+            flatDesiredHeadingE = normalize2by1(desiredHeadingE(1:2));
         
             pitchError = asin(headingE(3));
             yawError = signedAngle(flatDesiredHeadingE, flatHeadingE);
@@ -129,17 +141,6 @@ classdef RealisticUAS
             M = clamp(M,-this.LMNmax,this.LMNmax);
             N = clamp(N,-this.LMNmax,this.LMNmax);
             Z = clamp(Z,-this.Zmax,this.Zmax);
-        end
-    end
-
-    methods(Static)
-        function RB2E = getRB2E(state)
-            phi = state(4);
-            theta = state(5);
-            psi = state(6);
-            RB2E = [cos(theta)*cos(psi),sin(phi)*sin(theta)*cos(psi)-cos(phi)*sin(psi),cos(phi)*sin(theta)*cos(psi)+sin(phi)*sin(psi);
-                    cos(theta)*sin(psi),sin(phi)*sin(theta)*sin(psi)+cos(phi)*cos(psi),cos(phi)*sin(theta)*sin(psi)-sin(phi)*cos(psi);
-                    -sin(theta)        ,sin(phi)*cos(theta)                           ,cos(phi)*cos(theta)                           ];
         end
     end
 end
