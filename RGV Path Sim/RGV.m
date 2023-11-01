@@ -194,9 +194,41 @@ classdef RGV
                     dir = eul2rotm(newEuler)*[1;0;0];
                     if (signedAngle(newPos, dir) > 0)
                         movementTypes(counter+1,:) = RGVMovementType.UTurnLeft;
+                        % wallArcLeftChanceWeight = 3;
+                        % wallArcRightChanceWeight = 0;
+                        % wallUTurnLeftChanceWeight = .3;
+                        % wallUTurnRightChanceWeight = 0;
                     else
                         movementTypes(counter+1,:) = RGVMovementType.UTurnRight;
+                        % wallArcLeftChanceWeight = 0;
+                        % wallArcRightChanceWeight = 3;
+                        % wallUTurnLeftChanceWeight = 0;
+                        % wallUTurnRightChanceWeight = .3;
                     end
+                    % wallWaitChanceWeight = 0.1;
+                    % wallStraightChanceWeight = 1;
+                    % wallWeightSum = wallWaitChanceWeight + wallStraightChanceWeight + wallArcLeftChanceWeight + wallArcRightChanceWeight + wallUTurnLeftChanceWeight + wallUTurnRightChanceWeight;
+                    % wallWaitProbCutoff = wallWaitChanceWeight / wallWeightSum;
+                    % wallStraightProbCutoff = (wallWaitChanceWeight + wallStraightChanceWeight) / wallWeightSum;
+                    % wallArcLeftCutoff = (wallWaitChanceWeight + wallStraightChanceWeight + wallArcLeftChanceWeight) / wallWeightSum;
+                    % wallUTurnLeftCutoff = (wallWaitChanceWeight + wallStraightChanceWeight + wallArcLeftChanceWeight + wallUTurnLeftChanceWeight) / wallWeightSum;
+                    % wallArcRightCutoff = (wallWaitChanceWeight + wallStraightChanceWeight + wallArcLeftChanceWeight + wallUTurnLeftChanceWeight + wallArcRightChanceWeight) / wallWeightSum;
+                    % 
+                    % randVal = rand(1);
+                    % if (randVal < wallWaitProbCutoff)
+                    %     movementTypes(counter+1,:) = RGVMovementType.Wait;
+                    % elseif (randVal < wallStraightProbCutoff)
+                    %     movementTypes(counter+1,:) = RGVMovementType.Straight;
+                    % elseif (randVal < wallArcLeftCutoff)
+                    %     movementTypes(counter+1,:) = RGVMovementType.ArcLeft;
+                    % elseif (randVal < wallUTurnLeftCutoff)
+                    %     movementTypes(counter+1,:) = RGVMovementType.UTurnLeft;
+                    % elseif (randVal < wallArcRightCutoff)
+                    %     movementTypes(counter+1,:) = RGVMovementType.ArcRight;
+                    % else
+                    %     movementTypes(counter+1,:) = RGVMovementType.UTurnRight;
+                    % end
+
                 else
                     movementTypes(counter+1,:) = RGV.getRandomMovementType();
                 end
