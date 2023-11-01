@@ -1,11 +1,11 @@
 function rendered_image = corkePinholeCamera(...
-    uas2rgv_pos_exp_uasBodyFrame,...
+    rgv_vec,...
     focal_length,...
     height,...
     width)
 %corkePinholeCamera See Corke Ch.11 for details 
 % TODO(LF) put function stub here
-% TODO(LF) this is all relative to UAS body frame center-account for this later
+% TODO(LF) BE CAREFUL OF FRAMES (what is rgv expressed in?)
 % TODO(LF) Add all equation numbers
 
 H = height;
@@ -32,9 +32,9 @@ xi_C = [pose_rot pose_vec;
 f = focal_length;
 
 % extrace the positions of the uas
-X = uas2rgv_pos_exp_uasBodyFrame(1);
-Y = uas2rgv_pos_exp_uasBodyFrame(2);
-Z = uas2rgv_pos_exp_uasBodyFrame(3);
+X = rgv_vec(1);
+Y = rgv_vec(2);
+Z = rgv_vec(3);
 
 % homogenouse etc.
 P_tilde = [X;Y;Z;1];
