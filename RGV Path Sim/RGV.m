@@ -205,7 +205,7 @@ classdef RGV
                         % wallUTurnLeftChanceWeight = 0;
                         % wallUTurnRightChanceWeight = .3;
                     end
-                    % wallWaitChanceWeight = 0.1;
+                    % wallWaitChanceWeight = 0.01;
                     % wallStraightChanceWeight = 1;
                     % wallWeightSum = wallWaitChanceWeight + wallStraightChanceWeight + wallArcLeftChanceWeight + wallArcRightChanceWeight + wallUTurnLeftChanceWeight + wallUTurnRightChanceWeight;
                     % wallWaitProbCutoff = wallWaitChanceWeight / wallWeightSum;
