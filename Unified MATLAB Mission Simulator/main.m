@@ -1,4 +1,7 @@
 function main(simParamsInput)
+    % The main function for the entire simulation. Use main.prj to compile
+    % this into main_mex which should run a lot faster. Optionally pass in
+    % custom SimParams objects to change common simulation parameters.
     arguments(Input)
         simParamsInput (1,1) SimParams = SimParams();
     end

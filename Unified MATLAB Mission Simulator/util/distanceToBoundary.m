@@ -1,4 +1,6 @@
 function dist = distanceToBoundary(pos)
+    % Returns how far a given initial vector is from the mission area
+    % boundary. Ignores height
     arguments(Input)
         pos (3,1) double
     end

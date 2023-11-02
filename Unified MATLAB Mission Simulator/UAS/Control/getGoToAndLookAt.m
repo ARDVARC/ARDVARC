@@ -1,12 +1,14 @@
 function [goToE, lookAtE] = getGoToAndLookAt(uasState, rgv1Position, rgv2Position)
+    % Determine where the UAS should "go to" and where it should "look at"
+    % at a given time step based on estimates of the UAS and RGV states
     arguments(Input)
         uasState (12,1) double
         rgv1Position (3,1) double
         rgv2Position (3,1) double
     end
     arguments(Output)
-        goToE (3,1) double
-        lookAtE (2,1) double
+        goToE (3,1) double         % The inertial location that the UAS should physically be
+        lookAtE (2,1) double       % The location on the ground that the UAS should be yawed towards
     end
 
     global simParams;
@@ -20,6 +22,6 @@ function [goToE, lookAtE] = getGoToAndLookAt(uasState, rgv1Position, rgv2Positio
         lookAtE = rgv2Position(1:2);
     end
     
-    pointing = normalize2by1(lookAtE - uasPosition(1:2));
-    goToE = [lookAtE - simParams.targetRGVgroundDistance*pointing; -simParams.targetUasHeight];
+    pointingE = normalize2by1(lookAtE - uasPosition(1:2));
+    goToE = [lookAtE - simParams.targetRGVgroundDistance*pointingE; -simParams.targetUasHeight];
 end

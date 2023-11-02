@@ -1,4 +1,6 @@
 classdef RGVMovementType < int8
+    % An enum to describe the type of movement path that an RGV is
+    % currently moving along
     enumeration
         Wait(0)
         Straight(1)

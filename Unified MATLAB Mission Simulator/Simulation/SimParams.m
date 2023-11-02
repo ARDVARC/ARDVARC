@@ -1,4 +1,7 @@
 classdef SimParams
+    % A large collection of simulation parameters that can be changed each
+    % run. This should prevent the need to recompile for small parameter
+    % tweaks
     properties
         % Mission Area Details
         missionAreaHalfWidth = 22.86;

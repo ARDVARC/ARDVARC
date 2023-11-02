@@ -1,4 +1,6 @@
 function RB2E = getRB2E(state)
+    % Calculates a rotation matrix from body frame to inertial frame (based
+    % off of a 12 element UAS state vector)
     arguments(Input)
         state (12,1) double
     end

@@ -1,18 +1,20 @@
 function [idealJointStartIndex, idealJointEndIndex] = plotDistanceBetweenRgvsOverTime(times, rgv1Positions, rgv2Positions)
+    % Plots the distance between the two RGVs over the duration of the
+    % mission
     arguments(Input)
         times (1,:) double
         rgv1Positions (:,3) double
         rgv2Positions (:,3) double
     end
     arguments(Output)
-        idealJointStartIndex (1,1) double
-        idealJointEndIndex (1,1) double
+        idealJointStartIndex (1,1) double  % Index for the time when joint localization would ideally start (based on RGV proximity)
+        idealJointEndIndex (1,1) double    % Index for the time when joint localization would ideally end (based on RGV proximity)
     end
 
     global simParams;
 
-    distanceBetweenRGVs = vecnorm(rgv1Positions - rgv2Positions, 2, 2);
-    movingMaxForJointIdeal = movmax(distanceBetweenRGVs, simParams.idealJointDuration*simParams.sampleRate, Endpoints=max(distanceBetweenRGVs));
+    distanceBetweenRgvs = vecnorm(rgv1Positions - rgv2Positions, 2, 2);
+    movingMaxForJointIdeal = movmax(distanceBetweenRgvs, simParams.idealJointDuration*simParams.sampleRate, Endpoints=max(distanceBetweenRgvs));
     [minMaxForJointIdeal, minMaxForJointIdealIndex] = min(movingMaxForJointIdeal);
     idealJointStartIndex = max(1, minMaxForJointIdealIndex - simParams.idealJointDuration*simParams.sampleRate/2);
     idealJointEndIndex = min(length(times), minMaxForJointIdealIndex + simParams.idealJointDuration*simParams.sampleRate/2);
@@ -25,7 +27,7 @@ function [idealJointStartIndex, idealJointEndIndex] = plotDistanceBetweenRgvsOve
     figure
     hold on
     grid minor
-    plot(times, distanceBetweenRGVs, 'k', DisplayName="Distance");
+    plot(times, distanceBetweenRgvs, 'k', DisplayName="Distance");
     plot(times, movingMaxForJointIdeal,'r:', DisplayName="Moving Maximum");
     title("Distance Between RGVs vs. Time")
     xlabel("Time [s]")

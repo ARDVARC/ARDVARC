@@ -1,14 +1,15 @@
 function plotEntireSimulation3D(rgv1Positions, rgv1movementTypes, rgv2Positions, rgv2movementTypes, uasPositions, idealJointStartIndex, idealJointEndIndex, realJointStartIndex, realJointEndIndex)
+    % Plots the entire mission simulation, including both RGV and UAS paths
     arguments(Input)
         rgv1Positions (:,3) double
         rgv1movementTypes (:,1) RGVMovementType
         rgv2Positions (:,3) double
         rgv2movementTypes (:,1) RGVMovementType
         uasPositions (:,3) double
-        idealJointStartIndex (1,1) double
-        idealJointEndIndex (1,1) double
-        realJointStartIndex (1,1) double
-        realJointEndIndex (1,1) double
+        idealJointStartIndex (1,1) double        % Index for the time when joint localization would ideally start (based on RGV proximity)
+        idealJointEndIndex (1,1) double          % Index for the time when joint localization would ideally end (based on RGV proximity)
+        realJointStartIndex (1,1) double         % Index for the best time when joint localization could actually start (based on UAS proximity)
+        realJointEndIndex (1,1) double           % Index for the best time when joint localization could actually start (based on UAS proximity)
     end
 
     global simParams;

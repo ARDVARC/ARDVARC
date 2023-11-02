@@ -1,4 +1,6 @@
 classdef RGV
+    % A collection of parameters and helper methods for defining and
+    % determing bounded RGV motion throughout a mission
     properties(Constant)
         speed (1,1) double = 0.5;
         turningRadius (1,1) double = 4;
@@ -48,6 +50,17 @@ classdef RGV
 
     methods(Access = private, Static)
         function [pos, euler] = move(time, startTime, startPos, startEul, movementType)
+            arguments(Input)
+                time (1,1) double
+                startTime (1,1) double
+                startPos (1,3) double
+                startEul (1,3) double
+                movementType (1,1) RGVMovementType
+            end
+            arguments(Output)
+                pos (1,3) double
+                euler (1,3) double
+            end
             switch(movementType)
                 case RGVMovementType.Straight
                     progressTime = time - startTime;
@@ -196,7 +209,7 @@ classdef RGV
                     deltaTime = lsqnonlin(@(x) distanceToBoundary(RGV.move(time + x, time, positions(counter,:), eulers(counter,:), movementTypes(counter))) - RGV.safeDistanceFromEdge, deltaTime, 0, inf, opts);
                     [newPos, newEuler] = RGV.move(time + deltaTime, time, positions(counter,:), eulers(counter,:), movementTypes(counter));
                     dir = eul2rotm(newEuler)*[1;0;0];
-                    if (signedAngle(newPos, dir) > 0)
+                    if (signedAngle(newPos(1:2), dir(1:2)) > 0)
                         movementTypes(counter+1,:) = RGVMovementType.UTurnLeft;
                     else
                         movementTypes(counter+1,:) = RGVMovementType.UTurnRight;

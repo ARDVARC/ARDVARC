@@ -1,4 +1,6 @@
 function val = clamp(val, l, u)
+    % Clamps the value 'val' between the lower bound 'l' and the upper
+    % bound 'u'.
     arguments(Input)
         val (1,1) double
         l (1,1) double

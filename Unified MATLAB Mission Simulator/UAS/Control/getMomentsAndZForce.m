@@ -1,7 +1,9 @@
-function [Lc,Mc,Nc,Zc] = getMomentsAndZForce(uasState, RB2E, goToE, lookAtE)
+function [Lc,Mc,Nc,Zc] = getMomentsAndZForce(uasState, goToE, lookAtE)
+    % Determines the various control forces and moments based on where the
+    % UAS thinks it is, where it is trying to go, etc. Uses a PD-like
+    % control scheme with certain limits/clamps
     arguments(Input)
         uasState (12,1) double
-        RB2E (3,3) double
         goToE (3,1) double
         lookAtE (2,1) double
     end
@@ -23,6 +25,7 @@ function [Lc,Mc,Nc,Zc] = getMomentsAndZForce(uasState, RB2E, goToE, lookAtE)
     r = uasState(12);
 
     uasPosE = uasState(1:3);
+    RB2E = getRB2E(uasState);
     RE2B = RB2E^-1;
     
     headingB = [1;0;0];
