@@ -10,3 +10,6 @@ Team ARDVARC's github repository
 5. Make a new PR to pull your working branch into main
 6. Assign someone to review and complete your pr
 7. Bother them until it goes through
+
+Please Put Your Name Below to indicate that you can do this!
+Tim
