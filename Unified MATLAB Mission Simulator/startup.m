@@ -1,0 +1,7 @@
+addpath("util")
+addpath("RGV")
+addpath("UAS/Control")
+addpath("UAS/Sensors")
+addpath("Physics")
+addpath("Plotters")
+disp("Paths added by startup.m")
