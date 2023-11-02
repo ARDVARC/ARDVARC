@@ -197,7 +197,6 @@ classdef RGV
                     else
                         movementTypes(counter+1,:) = RGVMovementType.UTurnRight;
                     end
-
                 else
                     movementTypes(counter+1,:) = RGV.getRandomMovementType();
                 end
