@@ -8,6 +8,9 @@ function [goToE, lookAtE] = getGoToAndLookAt(uasState, rgv1Position, rgv2Positio
         goToE (3,1) double
         lookAtE (2,1) double
     end
+
+    global simParams;
+    
     uasPosition = uasState(1:3);
     distanceToRgv1 = norm(uasPosition-rgv1Position);
     distanceToRgv2 = norm(uasPosition-rgv2Position);
@@ -16,8 +19,6 @@ function [goToE, lookAtE] = getGoToAndLookAt(uasState, rgv1Position, rgv2Positio
     else
         lookAtE = rgv2Position(1:2);
     end
-
-    global simParams;
     
     pointing = normalize2by1(lookAtE - uasPosition(1:2));
     goToE = [lookAtE - simParams.targetRGVgroundDistance*pointing; -simParams.targetUasHeight];
