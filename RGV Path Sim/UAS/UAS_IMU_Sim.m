@@ -1,5 +1,5 @@
 %% Simulate IMU Measurements
-% Preliminary script to mess with matlab imu object
+% New preliminary script to mess with matlab imu object
 % Does not run in a loop
 
 close all; clc;
