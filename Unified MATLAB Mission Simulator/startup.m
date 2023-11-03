@@ -6,6 +6,7 @@ addpath("UAS/Sensors")
 addpath("Physics")
 addpath("Plotters")
 addpath("Simulation")
+addpath("_Runners")
 disp("Paths added by startup.m")
 
 % Add example sim params to workspace

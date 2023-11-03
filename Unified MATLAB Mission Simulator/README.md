@@ -1,6 +1,6 @@
 ## Getting Started
 ### Compiling
-To compile the simulator, double click on `main.prj` and step through the MATLAB Coder app. This should create a `main_mex.mex<os>` file, where `<os>` depends on your operating system.
+To compile the simulator, double click on `_Runners/main.prj` and step through the MATLAB Coder app. This should create a `_Runners/main_mex.mex<os>` file, where `<os>` depends on your operating system.
 ### Running
 To run the simulator, type the following command into the MATLAB command window:
 ```
