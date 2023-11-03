@@ -1,6 +1,10 @@
 # ARDVARC
 Team ARDVARC's github repository
 
+## Team Members (open a pr to put urs below)
+* Tim
+* Lyon
+* Aidan
 
 ## How to make a contribution
 1. Create a new issue
@@ -11,8 +15,42 @@ Team ARDVARC's github repository
 6. Assign someone to review and complete your pr
 7. Bother them until it goes through
 
-Please Put Your Name Below to indicate that you can do this!
-Tim
+## Vector and Frame Naming Convention
+#### Vectors
+* `vec_a2b_in_frame`
+    * `vec` - dentotes it's a vector
+    * `a2b` - denotes the vectors originates at `a` and terminates at `b`
+    * `in_frame` - denotes the frame that the vector is expressed in
+
+Example:
+
+`vec_uas2rgv1_in_enu` - a vector from the UAS to RGV1 expressed in the ENU reference frame
 
 
-Here is test
+
+#### Rotations
+* `object_a2b`
+    * `object` - denotes the type of rotation parameter:
+        * `q` - for unit quaternion
+        * `mrp` - for modified rodrigues parameter
+        * `dcm` - for direction cosine matrix
+    * `a2b` - denotes that the rotation parameter transforms a vector from being expressed in frame `a` to being expressed in frame `b`
+
+Example: 
+
+`quat_enu2uasBody` - an attitude quaternion that takes a vector expressed in the ENU frame to the UAS body frame
+
+`vec_uas2rgv1_in_uasBody = quat_enu2uasBody * vec_uas2rgv1_in_enu * quat_enu2uasBody.conj() `
+
+
+#### Reference Frames
+* `uasBody` - frame fixed at UAS center of mass (TBR) with x-axis out the front (TBR) and y-axis out the (TBD)
+* `inert` - non-rotating inertial coordinate frame used as a reference for angular rotation measurements
+* `bluetooth` - frame fixed (TBD) and aligned with (TBD)
+* `enu` - Earth-fixed frame with origin at Southwest corner of the mission area with x-axis aligned with East, y-axis aligned with North, z-axis pointing straight-down
+
+### TODO
+- [ ] quaternion conventions
+- [ ] convention for rates
+- [ ] define all frames used
+
