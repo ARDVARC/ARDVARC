@@ -4,7 +4,7 @@ Team ARDVARC's github repository
 ## Team Members (open a pr to put urs below)
 * Tim
 * Lyon
-* Aiden
+* Aidan
 
 ## How to make a contribution
 1. Create a new issue
@@ -17,7 +17,7 @@ Team ARDVARC's github repository
 
 ## Vector and Frame Naming Convention
 #### Vectors
-    * `vec_a2b_in_frame`
+* `vec_a2b_in_frame`
     * `vec` - dentotes it's a vector
     * `a2b` - denotes the vectors originates at `a` and terminates at `b`
     * `in_frame` - denotes the frame that the vector is expressed in
@@ -29,7 +29,7 @@ Example:
 
 
 #### Rotations
-    * `object_a2b`
+* `object_a2b`
     * `object` - denotes the type of rotation parameter:
         * `q` - for unit quaternion
         * `mrp` - for modified rodrigues parameter
@@ -44,9 +44,9 @@ Example:
 
 
 #### Reference Frames
-    * `uasBody` - frame fixed at UAS center of mass (TBR) with x-axis out the front (TBR) and y-axis out the (TBD)
-    * `inert` - Non-rotating inertial coordinate frame used as areference for angular rotation measurements
-    * `bluetooth` - frame fixed (TBD) and aligned with (TBD)
+* `uasBody` - frame fixed at UAS center of mass (TBR) with x-axis out the front (TBR) and y-axis out the (TBD)
+* `inert` - Non-rotating inertial coordinate frame used as areference for angular rotation measurements
+* `bluetooth` - frame fixed (TBD) and aligned with (TBD)
 
 ### TODO
 - [ ] quaternion conventions
