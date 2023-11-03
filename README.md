@@ -23,7 +23,7 @@ Team ARDVARC's github repository
 * `in_frame` - denotes the frame that the vector is expressed in
 
 #### Rotations
-* `object_a2b` \ 
+* `object_a2b`
 * `object` - denotes the type of rotation parameter:
     * `q` - for unit quaternion
     * `mrp` - for modified rodrigues parameter
