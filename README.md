@@ -22,6 +22,12 @@ Team ARDVARC's github repository
 * `a2b` - denotes the vectors originates at `a` and terminates at `b`
 * `in_frame` - denotes the frame that the vector is expressed in
 
+Example:
+
+`vec_uas2rgv1_in_enu` - a vector from the UAS to RGV1 expressed in the ENU reference frame
+
+
+
 #### Rotations
 * `object_a2b`
 * `object` - denotes the type of rotation parameter:
@@ -29,6 +35,13 @@ Team ARDVARC's github repository
     * `mrp` - for modified rodrigues parameter
     * `dcm` - for direction cosine matrix
 * `a2b` - denotes that the rotation parameter transforms a vector from being expressed in frame `a` to being expressed in frame `b`
+
+Example: 
+
+`quat_enu2uasBody` - an attitude quaternion that takes a vector expressed in the ENU frame to the UAS body frame
+
+`vec_uas2rgv1_in_uasBody = quat_enu2uasBody * vec_uas2rgv1_in_enu * quat_enu2uasBody.conj() `
+
 
 ### TODO
 - [ ] quaternion conventions
