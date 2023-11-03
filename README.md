@@ -45,8 +45,9 @@ Example:
 
 #### Reference Frames
 * `uasBody` - frame fixed at UAS center of mass (TBR) with x-axis out the front (TBR) and y-axis out the (TBD)
-* `inert` - Non-rotating inertial coordinate frame used as areference for angular rotation measurements
+* `inert` - non-rotating inertial coordinate frame used as a reference for angular rotation measurements
 * `bluetooth` - frame fixed (TBD) and aligned with (TBD)
+* `enu` - Earth-fixed frame with origin at Southwest corner of the mission area with x-axis aligned with East, y-axis aligned with North, z-axis pointing straight-down
 
 ### TODO
 - [ ] quaternion conventions
