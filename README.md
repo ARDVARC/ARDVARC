@@ -1,6 +1,10 @@
 # ARDVARC
 Team ARDVARC's github repository
 
+## Team Members (open a pr to put urs below)
+Tim
+Lyon
+
 
 ## How to make a contribution
 1. Create a new issue
@@ -11,8 +15,22 @@ Team ARDVARC's github repository
 6. Assign someone to review and complete your pr
 7. Bother them until it goes through
 
-Please Put Your Name Below to indicate that you can do this!
-Tim
+## Vector and Frame Naming Convention
+#### Vectors
+`vec_a2b_in_frame`
+`vec` - dentotes it's a vector
+`a2b` - denotes the vectors originates at `a` and terminates at `b`
+`in_frame` - denotes the frame that the vector is expressed in
 
+#### Rotations
+`object_a2b`
+`object` - denotes the type of rotation parameter:
+    `q` - for unit quaternion
+    `mrp` - for modified rodrigues parameter
+    `dcm` - for direction cosine matrix
+`a2b` - denotes that the rotation parameter transforms a vector from being expressed in frame `a` to being expressed in frame `b`
 
-Here is test
+### TODO
+- [ ] quaternion conventions
+- [ ] convention for rates
+
