@@ -1,33 +1,20 @@
-function dTrueState = equationsOfMotion(t, trueUasState, uasStateExtrapolator, rgv1PositionExtrapolater, rgv2PositionExtrapolater)
+function dTrueState = equationsOfMotion(trueUasState, Lc, Mc, Nc, Zc)
     % Calculates the rate of change of a UAS state based on the current UAS
     % state and information that can be used to determine the control
     % forces
     arguments(Input)
-        t (1,1) double
         trueUasState (12,1) double
-        uasStateExtrapolator (1,1) function_handle      % Function to give a predicted UAS state
-        rgv1PositionExtrapolater (1,1) function_handle  % Function to give a predicted position for RGV 1
-        rgv2PositionExtrapolater (1,1) function_handle  % Function to give a predicted position for RGV 2
+        Lc (1,1) double
+        Mc (1,1) double
+        Nc (1,1) double
+        Zc (1,1) double
     end
     arguments(Output)
-        dTrueState (12,1) double                        % Rate of change for UAS state
+        dTrueState (12,1) double    % Rate of change for UAS state
     end
 
     global simParams;
 
-    % Determine where we think we are and where we think the RGVs are
-    extrapolatedUasState = uasStateExtrapolator(t, trueUasState);
-    extrapolatedRgv1Position = rgv1PositionExtrapolater(t, extrapolatedUasState, trueUasState);
-    extrapolatedRgv2Position = rgv2PositionExtrapolater(t, extrapolatedUasState, trueUasState);
-
-    % Determine where we want to go and where we want to be looking
-    [goToE, lookAtE] = getGoToAndLookAt(extrapolatedUasState, extrapolatedRgv1Position, extrapolatedRgv2Position);
-
-    % Use PD control to determine what forces and moments will get us
-    % from where we think we are to where we want to be
-    [Lc,Mc,Nc,Zc] = getMomentsAndZForce(extrapolatedUasState, goToE, lookAtE);
-    
-    % Do the physics stuff know that we know the forces and moments
     phi = trueUasState(4);
     theta = trueUasState(5);
     psi = trueUasState(6);
