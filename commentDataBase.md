@@ -1,10 +1,11 @@
 #ARDVARC
 Comment data base to copy and paste into functions scripts etc
+
 Items surrounded by "quotation marks" should be edited
 
 #### Headers
 
-* `File Header`:
+`File Header`:
 %% "file name"
 % "name"
 % ARDVARC 
@@ -12,7 +13,7 @@ Items surrounded by "quotation marks" should be edited
 % Created: "date"
 % Edited: "date"
 
-* `Function Header`
+`Function Header`:
 % Input: 
 % % % "Input variables" = "Description"
 % Output: 
