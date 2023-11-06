@@ -26,6 +26,7 @@ classdef cam
         function vec_in_uasBody = cam2uasBody(vec)
             %vec - a 3x1 vector in camera frame coordinates
             %vec_in_uasBody - the same 3x1 vector in uasBody coordinates
+            %%TODO incorperate radius value
             vec_in_uasBody = cam.dcm * vec';
         end
     end
