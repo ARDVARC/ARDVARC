@@ -9,7 +9,7 @@ function [realJointStartIndex, realJointEndIndex] = plotUasDistanceToRgvsOverTim
     end
     arguments(Output)
         realJointStartIndex (1,1) double  % Index for the best time when joint localization could actually start (based on UAS proximity)
-        realJointEndIndex (1,1) double    % Index for the best time when joint localization could actually start (based on UAS proximity)
+        realJointEndIndex (1,1) double    % Index for the best time when joint localization could actually end (based on UAS proximity)
     end
 
     global simParams;
