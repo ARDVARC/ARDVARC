@@ -9,7 +9,7 @@ function plotEntireSimulation3D(rgv1Positions, rgv1movementTypes, rgv2Positions,
         idealJointStartIndex (1,1) double        % Index for the time when joint localization would ideally start (based on RGV proximity)
         idealJointEndIndex (1,1) double          % Index for the time when joint localization would ideally end (based on RGV proximity)
         realJointStartIndex (1,1) double         % Index for the best time when joint localization could actually start (based on UAS proximity)
-        realJointEndIndex (1,1) double           % Index for the best time when joint localization could actually start (based on UAS proximity)
+        realJointEndIndex (1,1) double           % Index for the best time when joint localization could actually end (based on UAS proximity)
     end
 
     global simParams;
