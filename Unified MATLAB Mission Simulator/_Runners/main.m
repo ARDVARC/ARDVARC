@@ -11,8 +11,8 @@ function main(simParamsInput)
     global simParams;
     simParams = simParamsInput;
 
-    rgv1 = RGV.makeFromSeed(simParams.rgv1Seed, simParams.rgv1startPos, simParams.rgv1startEul, simParams.duration);
-    rgv2 = RGV.makeFromSeed(simParams.rgv2Seed, simParams.rgv2startPos, simParams.rgv2startEul, simParams.duration);
+    rgv1 = makeRgvFromSeed(simParams.rgv1Seed, simParams.rgv1startPos, simParams.rgv1startEul, simParams.duration, RgvParams());
+    rgv2 = makeRgvFromSeed(simParams.rgv2Seed, simParams.rgv2startPos, simParams.rgv2startEul, simParams.duration, RgvParams());
     [times, trueUasStates, estimatedUasStates, estimatedRgv1Positions, estimatedRgv2Positions] = mainSimulationLoop(rgv1, rgv2, simParams.duration, simParams.uasStartState);
     
     sampleTimes = (0:1/simParams.sampleRate:simParams.duration)';
@@ -31,8 +31,8 @@ function main(simParamsInput)
 
     for i = 1:sampleCount
         time = times(i);
-        [trueRgv1Positions(i,:), ~, rgv1MovementTypes(i)] = rgv1.getStateAtTime(time);
-        [trueRgv2Positions(i,:), ~, rgv2MovementTypes(i)] = rgv2.getStateAtTime(time);
+        [trueRgv1Positions(i,:), ~, rgv1MovementTypes(i)] = getRgvStateAtTime(rgv1, time);
+        [trueRgv2Positions(i,:), ~, rgv2MovementTypes(i)] = getRgvStateAtTime(rgv2, time);
     end
 
     [idealJointStartIndex, idealJointEndIndex] = plotDistanceBetweenRgvsOverTime(times, trueRgv1Positions, trueRgv2Positions);

@@ -7,5 +7,5 @@ function rgvPositionExtrapolater = magicRgvPositionEstimator(rgv)
     arguments(Output)
         rgvPositionExtrapolater (1,1) function_handle  % Function to give a predicted position for an RGV
     end
-    rgvPositionExtrapolater = @(t, extrapolatedUasState, trueUasState) rgv.getStateAtTime(t);
+    rgvPositionExtrapolater = @(t, extrapolatedUasState, trueUasState) getRgvStateAtTime(rgv, t);
 end
