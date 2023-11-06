@@ -19,6 +19,10 @@ Team ARDVARC's github repository
 - When creating a new computational capability (rotation matrix, least squares estimator, filtering, etc.) please make a completely new  
 function properly named to make re-use easier in the future. **If you think someone might use it somewhere else make it a function!**
 - Try to comment, we will be going over each others code frequently and it can be hard to follow otherwise. 
+- Communicate what you are working on to avoid conflicts
+- Don't complete other people's PRs
+- Dont resolve other peoples comments
+- Small, refined, and often changes are better
 
 ## Vector and Frame Naming Convention
 #### Vectors
@@ -32,6 +36,8 @@ Example:
 `vec_uas2rgv1_in_enu` - a vector from the UAS to RGV1 expressed in the ENU reference frame
 
 
+#### Matrices
+* `trix` - Matrix
 
 #### Rotations
 * `object_a2b`
