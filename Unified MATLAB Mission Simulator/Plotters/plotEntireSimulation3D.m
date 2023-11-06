@@ -2,9 +2,9 @@ function plotEntireSimulation3D(rgv1Positions, rgv1movementTypes, rgv2Positions,
     % Plots the entire mission simulation, including both RGV and UAS paths
     arguments(Input)
         rgv1Positions (:,3) double
-        rgv1movementTypes (:,1) RGVMovementType
+        rgv1movementTypes (:,1) RgvMovementType
         rgv2Positions (:,3) double
-        rgv2movementTypes (:,1) RGVMovementType
+        rgv2movementTypes (:,1) RgvMovementType
         uasPositions (:,3) double
         idealJointStartIndex (1,1) double        % Index for the time when joint localization would ideally start (based on RGV proximity)
         idealJointEndIndex (1,1) double          % Index for the time when joint localization would ideally end (based on RGV proximity)
@@ -32,13 +32,13 @@ function plotEntireSimulation3D(rgv1Positions, rgv1movementTypes, rgv2Positions,
          DisplayName="Mission Area", ...
          LineStyle=":", ...
          Color="r")
-    plot([simParams.missionAreaHalfWidth - RGV.uTurnRadius*2, -simParams.missionAreaHalfWidth + RGV.uTurnRadius*2, -simParams.missionAreaHalfWidth + RGV.uTurnRadius*2, simParams.missionAreaHalfWidth - RGV.uTurnRadius*2, simParams.missionAreaHalfWidth - RGV.uTurnRadius*2], ...
-         [simParams.missionAreaHalfWidth - RGV.uTurnRadius*2, simParams.missionAreaHalfWidth - RGV.uTurnRadius*2, -simParams.missionAreaHalfWidth + RGV.uTurnRadius*2, -simParams.missionAreaHalfWidth + RGV.uTurnRadius*2, simParams.missionAreaHalfWidth - RGV.uTurnRadius*2], ...
+    plot([simParams.missionAreaHalfWidth - simParams.rgvParams.uTurnRadius*2, -simParams.missionAreaHalfWidth + simParams.rgvParams.uTurnRadius*2, -simParams.missionAreaHalfWidth + simParams.rgvParams.uTurnRadius*2, simParams.missionAreaHalfWidth - simParams.rgvParams.uTurnRadius*2, simParams.missionAreaHalfWidth - simParams.rgvParams.uTurnRadius*2], ...
+         [simParams.missionAreaHalfWidth - simParams.rgvParams.uTurnRadius*2, simParams.missionAreaHalfWidth - simParams.rgvParams.uTurnRadius*2, -simParams.missionAreaHalfWidth + simParams.rgvParams.uTurnRadius*2, -simParams.missionAreaHalfWidth + simParams.rgvParams.uTurnRadius*2, simParams.missionAreaHalfWidth - simParams.rgvParams.uTurnRadius*2], ...
          DisplayName="RGV Safe Region", ...
          LineStyle=":", ...
          Color="y")
-    stoppedPoints1 = rgv1Positions(rgv1movementTypes==RGVMovementType.Wait,:);
-    stoppedPoints2 = rgv2Positions(rgv2movementTypes==RGVMovementType.Wait,:);
+    stoppedPoints1 = rgv1Positions(rgv1movementTypes==RgvMovementType.Wait,:);
+    stoppedPoints2 = rgv2Positions(rgv2movementTypes==RgvMovementType.Wait,:);
     scatter(stoppedPoints1(:,1),stoppedPoints1(:,2), "k", DisplayName="RGV1 Stop Points")
     scatter(stoppedPoints2(:,1),stoppedPoints2(:,2), "b", DisplayName="RGV2 Stop Points")
     plot3(uasPositions(:,1),uasPositions(:,2),uasPositions(:,3),'g', DisplayName="UAS Path")

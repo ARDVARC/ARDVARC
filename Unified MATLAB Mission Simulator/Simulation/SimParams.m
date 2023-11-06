@@ -31,6 +31,9 @@ classdef SimParams
         rgv1startEul (3,1) double = [pi/2;0;0];
         rgv2startPos (3,1) double;
         rgv2startEul (3,1) double = [-pi/2;0;0];
+
+        % RGV Parameters
+        rgvParams = RgvParams();
     end
 
     methods
@@ -38,8 +41,8 @@ classdef SimParams
             this.rgv1Seed = randi(10000);
             this.rgv2Seed = randi(10000);
             this.uasStartState = [-this.missionAreaHalfWidth;0;-this.targetUasHeight;zeros(9,1)];
-            this.rgv1startPos = [0;-this.missionAreaHalfWidth+RGV.turningRadius;0];
-            this.rgv2startPos = [0;this.missionAreaHalfWidth-RGV.turningRadius;0];
+            this.rgv1startPos = [0;-this.missionAreaHalfWidth+4;0];
+            this.rgv2startPos = [0;this.missionAreaHalfWidth-4;0];
         end
     end
 end

@@ -32,7 +32,7 @@ function [times, trueUasStates, estimatedUasStates, estimatedRgv1Positions, esti
         time = times(i);
         trueUasState = trueUasStates(i);
         estimatedUasStates(i, :) = uasStateExtrapolator(time, trueUasState);
-        estimatedRgv1Positions(i, :) = rgv1.getStateAtTime(time);
-        estimatedRgv2Positions(i, :) = rgv2.getStateAtTime(time);
+        estimatedRgv1Positions(i, :) = getRgvStateAtTime(rgv1, time);
+        estimatedRgv2Positions(i, :) = getRgvStateAtTime(rgv2, time);
     end
 end
