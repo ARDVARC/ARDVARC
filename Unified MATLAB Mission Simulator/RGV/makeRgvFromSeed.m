@@ -14,10 +14,12 @@ function this = makeRgvFromSeed(seed, startPos, startEul, duration)
 
     global simParams;
 
+    % Set the seed of the random number generator so that the RGV
+    % generation is consistent
     rng(seed);
 
+    % Preallocation to make MATLAB Coder happy
     vecSize = duration;
-
     times = zeros(vecSize, 1);
     positions = zeros(vecSize, 3);
     eulers = zeros(vecSize, 3);
@@ -27,6 +29,7 @@ function this = makeRgvFromSeed(seed, startPos, startEul, duration)
     coder.varsize('eulers');
     coder.varsize('movementTypes');
     
+    % Set starting conditions
     times(1) = 0;
     positions(1,:) = startPos;
     eulers(1,:) = startEul;
@@ -36,7 +39,10 @@ function this = makeRgvFromSeed(seed, startPos, startEul, duration)
     time = 0;
 
     while (time <= duration)
+        % If we haven't reached the end time, take another step
         if (counter + 1 > vecSize)
+            % This is weird allocation code to make sure that the various
+            % arrays don't run out of space to store all the RGV states
             vecSize = vecSize * 2;
             timesTemp = zeros(vecSize, 1);
             timesTemp(1:counter) = times;
@@ -52,6 +58,9 @@ function this = makeRgvFromSeed(seed, startPos, startEul, duration)
             movementTypes = movementTypesTemp;
         end
 
+        % Determine how long this step takes based on the known movement
+        % type for the step and the known amounts of time that that type of
+        % movement can take
         switch movementTypes(counter)
             case RgvMovementType.Wait
                 deltaTime = rand(1)*(simParams.rgvParams.waitTimeMax-simParams.rgvParams.waitTimeMin)+simParams.rgvParams.waitTimeMin;
@@ -64,12 +73,18 @@ function this = makeRgvFromSeed(seed, startPos, startEul, duration)
             otherwise
                 deltaTime = rand(1)*simParams.rgvParams.waitTimeMin+(simParams.rgvParams.waitTimeMax-simParams.rgvParams.waitTimeMin);
         end
+
+        % Take a step
         [newPos, newEuler] = moveRgv(time + deltaTime, time, positions(counter,:), eulers(counter,:), movementTypes(counter));
         if (distanceToBoundary(newPos) < simParams.rgvParams.safeDistanceFromEdge)
-            % opts = optimoptions('Display','off');
+            % If the step would take the RGV out of the safe region, don't
+            % let it. Instead, only move until you hit the safe region,
+            % then note that the next step needs to be some kind of u-turn
             opts = optimoptions("lsqnonlin","Algorithm","levenberg-marquardt",'Display','off');
             deltaTime = lsqnonlin(@(x) distanceToBoundary(moveRgv(time + x, time, positions(counter,:), eulers(counter,:), movementTypes(counter))) - simParams.rgvParams.safeDistanceFromEdge, deltaTime, 0, inf, opts);
             [newPos, newEuler] = moveRgv(time + deltaTime, time, positions(counter,:), eulers(counter,:), movementTypes(counter));
+            % Choose the u-turn direction based on whichever way will point
+            % you closer back to the center of the mission area
             dir = eul2rotm(newEuler)*[1;0;0];
             if (signedAngle(newPos(1:2), dir(1:2)) > 0)
                 movementTypes(counter+1,:) = RgvMovementType.UTurnLeft;
@@ -77,8 +92,13 @@ function this = makeRgvFromSeed(seed, startPos, startEul, duration)
                 movementTypes(counter+1,:) = RgvMovementType.UTurnRight;
             end
         else
+            % If the step wouldn't take the RGV out of the safe region,
+            % keep the full step and choose a random movement type for the
+            % next step
             movementTypes(counter+1,:) = getRandomRgvMovementType();
         end
+
+        % Update state arrays
         counter = counter + 1;
         time = time + deltaTime;
         times(counter) = time;
@@ -86,6 +106,7 @@ function this = makeRgvFromSeed(seed, startPos, startEul, duration)
         eulers(counter,:) = newEuler;
     end
 
+    % Remove empty ends of state arrays caused by preallocation
     times = times(1:counter);
     positions = positions(1:counter,:);
     eulers = eulers(1:counter,:);

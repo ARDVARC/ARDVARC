@@ -12,11 +12,15 @@ function [pos, euler, movementType] = getRgvStateAtTime(rgv, time)
         movementType (1,1) RgvMovementType
     end
 
+    % Find the previous known location of the RGV as well as how it will be
+    % moving
     prevStateIndex = find(rgv.times <= time, 1, "last");
     startTime = rgv.times(prevStateIndex);
     startPos = rgv.positions(prevStateIndex, :);
     startEul = rgv.eulers(prevStateIndex, :);
     movementType = rgv.movementTypes(prevStateIndex);
 
+    % Reenact the RGV moving how it did to find out where it would be at
+    % the destired time
     [pos, euler] = moveRgv(time, startTime, startPos, startEul, movementType);
 end

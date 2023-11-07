@@ -39,15 +39,18 @@ function [pos, euler] = moveRgv(time, startTime, startPos, startEul, movementTyp
             euler = rotm2eul(angRotm*startRotm);
             pos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
         case RgvMovementType.UTurnLeft
+            % U-turn movement has two parts
             startRotm = eul2rotm(startEul);
             radiusVectorIn = (startRotm * [0;simParams.rgvParams.uTurnRadius;0])';
             progressTime = time - startTime;
             if (progressTime < simParams.rgvParams.uTurnTurnTime)
+                % The first part is an arc
                 ang = simParams.rgvParams.uTurnSpeed * progressTime;
                 angRotm = axang2rotm([0 0 1 ang]);
                 euler = rotm2eul(angRotm*startRotm);
                 pos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
             else
+                % The second part is straight
                 angRotm = axang2rotm([0 0 1 pi]);
                 startRotm = angRotm*startRotm;
                 startPos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
@@ -58,15 +61,18 @@ function [pos, euler] = moveRgv(time, startTime, startPos, startEul, movementTyp
                 euler = rotm2eul(startRotm);
             end
         case RgvMovementType.UTurnRight
+            % U-turn movement has two parts
             startRotm = eul2rotm(startEul);
             radiusVectorIn = (startRotm * [0;-simParams.rgvParams.uTurnRadius;0])';
             progressTime = time - startTime;
             if (progressTime < simParams.rgvParams.uTurnTurnTime)
+                % The first part is an arc
                 ang = simParams.rgvParams.uTurnSpeed * progressTime;
                 angRotm = axang2rotm([0 0 1 -ang]);
                 euler = rotm2eul(angRotm*startRotm);
                 pos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
             else
+                % The second part is straight
                 angRotm = axang2rotm([0 0 1 -pi]);
                 startRotm = angRotm*startRotm;
                 startPos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
@@ -77,6 +83,8 @@ function [pos, euler] = moveRgv(time, startTime, startPos, startEul, movementTyp
                 euler = rotm2eul(startRotm);
             end
         otherwise
+            % This case is for "Waiting" or if another movement type is
+            % added later but not implemented (it will just stand still)
             pos = startPos;
             euler = startEul;
     end
