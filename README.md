@@ -56,7 +56,7 @@ If a higher dimension object exists to contain many similar lower dimension obje
     * `vec_a2b_frame` - each row is a similar vector from a to b in frame
 * `trix3_trix_info`
     * `trix3` - the variable is a 3D matrix
-    * `trix_info` - each page is a similar 2D matrix info
+    * `trix_info` - each page is a similar 2D matrix of "info"
 
 Examples:
 
