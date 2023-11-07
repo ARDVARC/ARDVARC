@@ -1,35 +1,38 @@
 function rendered_image = corkePinholeCamera(...
     rgv_vec,...
-    focal_length,...
-    height,...
-    width)
+    camera)
 %corkePinholeCamera See Corke Ch.11 for details 
 % TODO(LF) put function stub here
 % TODO(LF) BE CAREFUL OF FRAMES (what is rgv expressed in?)
 % TODO(LF) Add all equation numbers
+% TODO(LF) Model various resolutions
 
-H = height;
-W = width;
+H = camera.Height;
+W = camera.Width;
 
 u_0 = W/2;
 v_0 = H/2;
 
 % TODO(LF) change this later in a way that makes sense
-rho_h = 1;
-rho_w = 1;
+rho_h = camera.rho_h;
+rho_w = camera.rho_w;
 
 % TODO(LF) make this an argument you pass in
 % camera pose
 pose_rot = eye(3);
-pose_vec = [1;1;1];
+pose_vec = [0;0;0];
 
-% TODO(LF) this could be wrong
+% TODO(LF) Pull this from the camera object
 % Extrinsics Matrix
 xi_C = [pose_rot pose_vec;
         0 0 0 1]; 
 
+% xi_C = 1e3 * [1.5 0 .64 0;...
+%               0 1.5 .512 0;...
+%               0 0 .0010 0];
+
 % Going to try to match notation to the book as closely as possible
-f = focal_length;
+f = camera.focalLength;
 
 % extrace the positions of the uas
 X = rgv_vec(1);
@@ -51,8 +54,8 @@ K = [f/rho_w 0 u_0;
 
 p_tilde = K * P_0 * xi_C * P_tilde;
 
-u_tilde = p_tilde(1);
-v_tilde = p_tilde(2);
+u_tilde = p_tilde(1)/W;
+v_tilde = p_tilde(2)/H;
 w_tilde = p_tilde(3);
 
 

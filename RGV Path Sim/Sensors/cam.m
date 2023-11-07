@@ -11,14 +11,19 @@ classdef cam
         dcm = [cos(cam.theta_2_cam2uasBody)*cos(cam.theta_3_cam2uasBody), cos(cam.theta_2_cam2uasBody)*sin(cam.theta_3_cam2uasBody), -sin(cam.theta_2_cam2uasBody); ...
             -cos(cam.theta_1_cam2uasBody)*sin(cam.theta_3_cam2uasBody) + sin(cam.theta_1_cam2uasBody)*sin(cam.theta_2_cam2uasBody)*cos(cam.theta_3_cam2uasBody), cos(cam.theta_1_cam2uasBody)*cos(cam.theta_3_cam2uasBody) + sin(cam.theta_1_cam2uasBody)*sin(cam.theta_2_cam2uasBody)*sin(cam.theta_3_cam2uasBody), sin(cam.theta_1_cam2uasBody)*cos(cam.theta_2_cam2uasBody); ...
             sin(cam.theta_1_cam2uasBody)*sin(cam.theta_3_cam2uasBody) + cos(cam.theta_1_cam2uasBody)*sin(cam.theta_2_cam2uasBody)*cos(cam.theta_3_cam2uasBody), -sin(cam.theta_1_cam2uasBody)*cos(cam.theta_3_cam2uasBody) + cos(cam.theta_1_cam2uasBody)*sin(cam.theta_2_cam2uasBody)*sin(cam.theta_3_cam2uasBody), cos(cam.theta_1_cam2uasBody)*cos(cam.theta_2_cam2uasBody)];
-        
+    end
+    properties(Access=public)
         %% Intrinsics
         scaleFactor (1,1) double = 1; %**Not a True Value**
         focalLength (1,1) double = NaN; %**Not a True Value**
         principalPoint (1,1) double = NaN; %**Not a True Value**
         skew (1,1) double = NaN; %**Not a True Value**
+        Height (1,1) double = NaN; %**Not a True Value**
+        Width (1,1) double = NaN; %**Not a True Value**
+        rho_h (1,1) double = NaN;
+        rho_w (1,1) double = NaN;
         
-
+      
     end
 
     %%Create a method converting a radius to the uasBody frame
