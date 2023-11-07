@@ -54,8 +54,8 @@ K = [f/rho_w 0 u_0;
 
 p_tilde = K * P_0 * xi_C * P_tilde;
 
-u_tilde = p_tilde(1)/W;
-v_tilde = p_tilde(2)/H;
+u_tilde = p_tilde(1);
+v_tilde = p_tilde(2);
 w_tilde = p_tilde(3);
 
 
