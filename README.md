@@ -21,13 +21,13 @@ function properly named to make re-use easier in the future. **If you think some
 - Try to comment, we will be going over each others code frequently and it can be hard to follow otherwise. 
 - Communicate what you are working on to avoid conflicts
 - Don't complete other people's PRs
-- Dont resolve other peoples comments
+- Don't resolve other peoples comments
 - Small, refined, and often changes are better
 
 ## Vector and Frame Naming Convention
 #### Vectors
 * `vec_a2b_in_frame`
-    * `vec` - dentotes it's a vector
+    * `vec` - denotes it's a vector
     * `a2b` - denotes the vectors originates at `a` and terminates at `b`
     * `in_frame` - denotes the frame that the vector is expressed in
 
@@ -45,7 +45,7 @@ Examples:
 
 `trix_cameraImage` - a matrix containing a camera image
 
-`trix3_pressure` - a 3D matrix containing pressure values thourhgout a 3D space
+`trix3_pressure` - a 3D matrix containing pressure values throughout a 3D space
 
 # Nesting
 
@@ -65,7 +65,7 @@ Examples:
 
 Notes:
 
-* In general, each item should vary in the last dimension. For a 3D matrix containing 2D matricies, this means each 2D matrix is in a differnt page. For a 2D matrix containg vectors, this means each vector is in a different row.
+* In general, each item should vary in the last dimension. For a 3D matrix containing 2D matrices, this means each 2D matrix is in a different page. For a 2D matrix containing vectors, this means each vector is in a different row.
 
 #### Rotations
 * `object_a2b`
@@ -74,7 +74,7 @@ Notes:
         * `mrp` - for modified rodrigues parameter
         * `dcm` - for direction cosine matrix
     * `a2b` - denotes that the rotation parameter transforms a vector from being expressed in frame `a` to being expressed in frame `b`
-* `theta_x` - denotes the frame tranfer angle around the `x` axis
+* `theta_x` - denotes the frame transfer angle around the `x` axis
 
 Examples: 
 
@@ -94,8 +94,8 @@ Examples:
 
 
 #### General items
-* `camExtr` - Refering to camera extrinsics
-* `camIntr` - Refering to camera intrinsics
+* `camExtr` - Referring to camera extrinsics
+* `camIntr` - Referring to camera intrinsics
 
 
 ### TODO
