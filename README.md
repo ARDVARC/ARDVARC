@@ -37,7 +37,35 @@ Example:
 
 
 #### Matrices
-* `trix` - Matrix
+* `trix` - Matrix (2D)
+* `trixN` - Matrix (N-dimensional)
+    * `trix3` for 3D matrix, `trix4` for 4D matrix, etc.
+
+Examples:
+
+`trix_cameraImage` - a matrix containing a camera image
+
+`trix3_pressure` - a 3D matrix containing pressure values thourhgout a 3D space
+
+# Nesting
+
+If a higher dimension object exists to contain many similar lower dimension objects, show that in the name
+
+* `trix_vec_a2b_frame`
+    * `trix` - the variable is a 2D matrix
+    * `vec_a2b_frame` - each row is a similar vector from a to b in frame
+* `trix3_trix_info`
+    * `trix3` - the variable is a 3D matrix
+    * `trix_info` - each page is a similar 2D matrix info
+
+Examples:
+
+* `trix_vec_uas2rgv_uasBody` - a 2D matrix where each row is a different vector from the UAS to the RGV in the UAS body frame. Each row may correspond to a different time
+* `trix3_dcm_uasBody2ned` - a 3D matrix where each page is a different direction cosine matrix from the UAS body frame to the NED frame. Each page may correspond to a different time
+
+Notes:
+
+* In general, each item should vary in the last dimension. For a 3D matrix containing 2D matricies, this means each 2D matrix is in a differnt page. For a 2D matrix containg vectors, this means each vector is in a different row.
 
 #### Rotations
 * `object_a2b`
@@ -48,7 +76,8 @@ Example:
     * `a2b` - denotes that the rotation parameter transforms a vector from being expressed in frame `a` to being expressed in frame `b`
 * `theta_x` - denotes the frame tranfer angle around the `x` axis
 
-Example: 
+Examples: 
+
 `theta_1_cam2uasBody` - an angle describing the rotation about the camera primary-axis to rotate it to the uasBody frame
 
 `quat_enu2uasBody` - an attitude quaternion that takes a vector expressed in the ENU frame to the UAS body frame
