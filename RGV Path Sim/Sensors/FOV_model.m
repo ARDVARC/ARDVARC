@@ -15,8 +15,8 @@ vec_focal_length = linspace((0.001),(0.025),25); %Iterative array for height FOV
 
 %Speed based pre-allocations
 trix_fovArea = cell(length(vec_Height),1);
-vec_x_dist = zeros(length(vec_focal_length),1);
-vec_y_dist = zeros(length(vec_focal_length),1);
+vec_v_dist = zeros(length(vec_focal_length),1);
+vec_h_dist = zeros(length(vec_focal_length),1);
 vec_theta_h = zeros(length(vec_focal_length),1);
 vec_theta_v = zeros(length(vec_focal_length),1);
 vec_areas = zeros(length(vec_focal_length),1);
@@ -28,18 +28,18 @@ for i = 1:length(vec_Height)
         vec_theta_h(j) = 2*atan2((cam_rasp.Width * cam_rasp.rho_w),(2*vec_focal_length(j)));
         vec_theta_v(j) = 2*atan2((cam_rasp.Height * cam_rasp.rho_h),(2*vec_focal_length(j)));
         %Loop through focal lengths and calculate area visualized
-        vec_x_dist(j) = vec_Height(i) * (tan(theta_c + vec_theta_h(j)/2) - tan(theta_c - vec_theta_h(j)/2));
-        vec_y_dist(j) = 2*vec_Height(i) * tan(vec_theta_v(j)/2)*tan(theta_c);
+        vec_v_dist(j) = vec_Height(i) * (tan(theta_c + vec_theta_v(j)/2) - tan(theta_c - vec_theta_v(j)/2));
+        vec_h_dist(j) = 2*vec_Height(i) * tan(vec_theta_h(j)/2)*tan(theta_c);
         
     end
 
-    vec_areas = vec_x_dist .* vec_y_dist;
+    vec_areas = vec_v_dist .* vec_h_dist;
     %Store data
     trix_fovArea{i}(:,1) = vec_focal_length(:);
     trix_fovArea{i}(:,2) = vec_theta_h(:) * 180/pi;
     trix_fovArea{i}(:,3) = vec_theta_v(:) * 180/pi;  
-    trix_fovArea{i}(:,4) = vec_x_dist(:);
-    trix_fovArea{i}(:,5) = vec_y_dist(:);  
+    trix_fovArea{i}(:,4) = vec_v_dist(:);
+    trix_fovArea{i}(:,5) = vec_h_dist(:);  
     trix_fovArea{i}(:,6) = vec_areas(:);
     
 end
@@ -63,7 +63,7 @@ for i = 1:length(vec_Height)
     subplot(2,3,3)
         plot(trix_fovArea{i}(:,1),trix_fovArea{i}(:,4)); hold on
         yline(150,'b--')
-        title('Focal Length vs. Horizontal Distance seen')
+        title('Focal Length vs. Vertical Distance seen')
         xlabel('Focal Length (m)')
         ylabel('X_{seen} ft')
         legend('','X limit of the viable boundary')
@@ -71,7 +71,7 @@ for i = 1:length(vec_Height)
     subplot(2,3,4.5)
         plot(trix_fovArea{i}(:,1),trix_fovArea{i}(:,5)); hold on
         yline(150,'b--')
-        title('Focal Length vs. Veritical Distance seen')
+        title('Focal Length vs. Horizontal Distance seen')
         xlabel('Focal Length (m)')
         ylabel('Y_{seen} ft')
         legend('','Y limit of the viable boundary')
