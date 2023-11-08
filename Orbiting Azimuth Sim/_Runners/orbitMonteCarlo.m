@@ -13,34 +13,53 @@ function orbitMonteCarlo(monteParams, params)
     angleStdDegs = monteParams.minAngleStdDeg:monteParams.angleStdGapDeg:monteParams.maxAngleStdDeg;
     orbitDistanceCount = length(orbitDistances);
     angleStdDegsCount = length(angleStdDegs);
-    errors = zeros(angleStdDegsCount,orbitDistanceCount);
+    errors = zeros(angleStdDegsCount,orbitDistanceCount,monteParams.trialsPerCase);
     
     tic
     for i = 1:angleStdDegsCount
         params.angleStdDeg = angleStdDegs(i);
         for j = 1:orbitDistanceCount
-            params.orbitDistance = orbitDistances(j);
-            if (~monteParams.sameSeedForAll)
-                params.seed = randi(10000);
+            for k = 1:monteParams.trialsPerCase
+                params.orbitDistance = orbitDistances(j);
+                if (~monteParams.sameSeedForAll)
+                    params.seed = randi(intmax);
+                end
+                [~, ~, ~, ~, errors(i,j,k)] = getDataForParams(params);
             end
-            [~, ~, ~, ~, errors(i,j)] = getDataForParams(params);
         end
     end
     toc
+
+    errorStds = std(errors, 0, 3);
+    errorMeans = mean(errors, 3);
     
     figure
     hold on
     grid minor
-    axis equal
     for i = 1:angleStdDegsCount
-        scatter(orbitDistances,errors(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+        plot(orbitDistances,errorMeans(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
     end
-    yline(2, 'k:', DisplayName="Coarse Localization Target")
-    yline(1, 'r:', DisplayName="Fine Localization Target")
+    yline(2, 'k', DisplayName="Coarse Localization Target")
+    yline(1, 'r', DisplayName="Fine Localization Target")
     xlabel("Orbit Distance [m]")
     ylabel("Estimate Error [m]")
     title("RGV Position Estimate Error for Different Orbital Ground Distances")
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    ylim([0 max(errors, [], "all")])
+    ylim([0 max(errorMeans, [], "all")])
+    legend(Location="best")
+    
+    figure
+    hold on
+    grid minor
+    for i = 1:angleStdDegsCount
+        plot(orbitDistances,errorStds(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+    end
+    yline(2, 'k', DisplayName="Coarse Localization Target")
+    yline(1, 'r', DisplayName="Fine Localization Target")
+    xlabel("Orbit Distance [m]")
+    ylabel("Estimate Error Standard Deviation [m]")
+    title("RGV Position Estimate Error Standard Deviation for Different Orbital Ground Distances")
+    xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
+    ylim([0 max(errorStds, [], "all")])
     legend(Location="best")
 end

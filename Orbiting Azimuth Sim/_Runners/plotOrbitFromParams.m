@@ -3,7 +3,7 @@ function plotOrbitFromParams(params, zoomOnBottom)
     % full orbit simulation as specified by params
     arguments(Input)
         params (1,1) OrbAzParams = OrbAzParams();
-        zoomOnBottom (1,1) logical = false;
+        zoomOnBottom (1,1) logical = true;
     end
 
     [trix_vec_samplePosition_enu, trix_vec_truePointingVec_enu, trix_vec_sensorPointingVec_enu, bestGuess, ~] = getDataForParams(params);

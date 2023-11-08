@@ -11,6 +11,7 @@ function [bestGuess, error] = getPrediction(trix_vec_sensorPointingVec_enu, trix
         error (1,1) double
     end
 
-    bestGuess = fminsearch(@(x) sqrt(sum(vecnorm(cross(trix_vec_sensorPointingVec_enu,x-trix_vec_samplePosition_enu,2),2,2).^2))/params.sampleCount, [0,0,0]);
+    bestGuess = fminsearch(@(guess) cost2D(guess,trix_vec_sensorPointingVec_enu,trix_vec_samplePosition_enu), [0,0]);
+    bestGuess = [bestGuess, 0];
     error = norm(bestGuess);
 end
