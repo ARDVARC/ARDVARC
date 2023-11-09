@@ -1,7 +1,7 @@
 classdef OrbAzParams
     % Describes the UAS orbit and sensor details
     properties
-        seed (1,1) double = randi(10000);  % Seed for rng
+        seed (1,1) double;                 % Seed for rng, set in constructor
         duration (1,1) double = 30;        % [s] How long the orbit takes
         orbitDistance (1,1) double = 10;   % [m] How far away (ground distance) the UAS orbits the RGV
         height (1,1) double = 10;          % [m] How far up the UAS orbits (AGL)
@@ -19,6 +19,16 @@ classdef OrbAzParams
     end
 
     methods
+        function this = OrbAzParams(seed)
+            arguments(Input)
+                seed (1,1) double = randi(intmax);
+            end
+            arguments(Output)
+                this (1,1) OrbAzParams
+            end
+            this.seed = seed;
+        end
+
         function val = get.orbitSpeed(this)
             val = 2*pi*this.orbitCount*this.orbitDistance/this.duration;
         end
@@ -39,6 +49,9 @@ classdef OrbAzParams
         end
         function val = get.sampleCount(this)
             val = floor(this.duration*this.sampleRate) + 1;
+        end
+        function this = set.sampleCount(this, newVal)
+            this.sampleRate = (newVal-1)/this.duration;
         end
     end
 end

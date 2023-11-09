@@ -30,8 +30,8 @@ function plotOrbitFromData(trix_vec_samplePosition_enu, trix_vec_truePointingVec
     end
 
     plots(4) = plot3DVectorsComingFrom(trix_vec_samplePosition_enu, trix_vec_truePointingVec_enu, 1, 'g', "True Poining Vectors");
-    plots(5) = plot3DVectorsComingFrom(trix_vec_samplePosition_enu, trix_vec_truePointingVec_enu*2*params.height, 1, 'g:', "True Poining Line");
+    plots(5) = plot3DVectorsComingFrom(trix_vec_samplePosition_enu, trix_vec_truePointingVec_enu*2*params.height, 1, 'g--', "True Poining Line");
     plots(6) = plot3DVectorsComingFrom(trix_vec_samplePosition_enu, trix_vec_sensorPointingVec_enu, 1, 'r', "Sensor Poining Vectors");
-    plots(7) = plot3DVectorsComingFrom(trix_vec_samplePosition_enu, trix_vec_sensorPointingVec_enu*2*params.height, 1, 'r:', "Sensor Poining Line");
+    plots(7) = plot3DVectorsComingFrom(trix_vec_samplePosition_enu, trix_vec_sensorPointingVec_enu*2*params.height, 1, 'r--', "Sensor Poining Line");
     legend(plots, Location="best")
 end
