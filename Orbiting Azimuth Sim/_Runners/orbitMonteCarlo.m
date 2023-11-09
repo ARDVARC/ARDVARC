@@ -45,27 +45,28 @@ function orbitMonteCarlo(monteParams, params)
 
     % Calculate standard deviations across the trials for each scenario for 
     % each axis
-    trix_sigma_x = std(trix4_vec_predictedRgvLocation_enu(1,:,:,:),0,4);
-    trix_sigma_y = std(trix4_vec_predictedRgvLocation_enu(2,:,:,:),0,4);
-    trix_sigma_z = std(trix4_vec_predictedRgvLocation_enu(3,:,:,:),0,4);
+    trix_sigma_x = permute(std(trix4_vec_predictedRgvLocation_enu(1,:,:,:),0,4), [2,3,1]);
+    trix_sigma_y = permute(std(trix4_vec_predictedRgvLocation_enu(2,:,:,:),0,4), [2,3,1]);
+    trix_sigma_z = permute(std(trix4_vec_predictedRgvLocation_enu(3,:,:,:),0,4), [2,3,1]);
     % Calculate the average of the magnitudes of the error vectors across
     % the trials for each scenario
-    trix_meanErrorMagnitude = mean(vecnorm(trix4_vec_predictedRgvLocation_enu,2,1),4);
+    trix_meanErrorMagnitude = permute(mean(vecnorm(trix4_vec_predictedRgvLocation_enu,2,1),4), [2,3,1]);
     % Calculate the average error vector across the trials for each
     % scenario (aka the bias vector)
     trix3_vec_bias_enu = mean(trix4_vec_predictedRgvLocation_enu,4);
     % Calculate the magnitude of the bias vector for each scenario 
-    trix_biasMagnitude = vecnorm(trix3_vec_bias_enu,2,1);
+    trix_biasMagnitude = permute(vecnorm(trix3_vec_bias_enu,2,1), [2,3,1]);
     % Calculate the 2DRMS across the trials for each scenario using the
     % equation gove here:
     % https://www.gnss.ca/app_notes/APN-029_GPS_Position_Accuracy_Measures_Application_Note.html
     trix_twoDRMS = 2*sqrt(trix_sigma_x.^2+trix_sigma_y.^2);
     
+    % Plot 2DRMS
     figure
     hold on
     grid minor
     for i = 1:angleStdDegsCount
-        plot(orbitDistances,permute(trix_twoDRMS(1,i,:),[3,2,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+        plot(orbitDistances,trix_twoDRMS(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
     end
     yline(2, 'k', DisplayName="Coarse Localization Target")
     yline(1, 'r', DisplayName="Fine Localization Target")
@@ -77,11 +78,12 @@ function orbitMonteCarlo(monteParams, params)
     legend(Location="best")
     set(gcf,"Color","#f0b1ad")
     
+    % Plot mean error magnitude
     figure
     hold on
     grid minor
     for i = 1:angleStdDegsCount
-        plot(orbitDistances,permute(trix_meanErrorMagnitude(1,i,:),[3,2,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+        plot(orbitDistances,trix_meanErrorMagnitude(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
     end
     xlabel("Orbit Distance [m]")
     ylabel("Mean Estimate Error [m]")
@@ -93,11 +95,12 @@ function orbitMonteCarlo(monteParams, params)
     legend(Location="best")
     set(gcf,"Color","#f0d7ad")
     
+    % Plot bias magnitude
     figure
     hold on
     grid minor
     for i = 1:angleStdDegsCount
-        plot(orbitDistances,permute(trix_biasMagnitude(1,i,:),[3,2,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+        plot(orbitDistances,trix_biasMagnitude(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
     end
     xlabel("Orbit Distance [m]")
     ylabel("Bias Magnitude [m]")
@@ -109,6 +112,7 @@ function orbitMonteCarlo(monteParams, params)
     legend(Location="best")
     set(gcf,"Color","#edf0ad")
     
+    % Plot each sigma
     figure
     hold on
     grid minor
@@ -116,8 +120,9 @@ function orbitMonteCarlo(monteParams, params)
     set(gcf,"Color","#cef0ad")
     subplot(3,1,1)
     hold on
+    grid minor
     for i = 1:angleStdDegsCount
-        plot(orbitDistances,permute(trix_sigma_x(1,i,:),[3,2,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+        plot(orbitDistances,trix_sigma_x(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
     end
     ylabel("sigma_x [m]")
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
@@ -125,22 +130,25 @@ function orbitMonteCarlo(monteParams, params)
     legend(Location="best")
     subplot(3,1,2)
     hold on
+    grid minor
     for i = 1:angleStdDegsCount
-        plot(orbitDistances,permute(trix_sigma_y(1,i,:),[3,2,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+        plot(orbitDistances,trix_sigma_y(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
     end
     ylabel("sigma_y [m]")
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
     ylim([0 max(trix_sigma_y, [], "all")])
     subplot(3,1,3)
     hold on
+    grid minor
     for i = 1:angleStdDegsCount
-        plot(orbitDistances,permute(trix_sigma_z(1,i,:),[3,2,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+        plot(orbitDistances,trix_sigma_z(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
     end
     xlabel("Orbit Distance [m]")
     ylabel("sigma_z [m]")
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
     ylim([0 max(trix_sigma_z, [], "all")])
     
+    % Plot bias by axis
     figure
     hold on
     grid minor
@@ -148,28 +156,31 @@ function orbitMonteCarlo(monteParams, params)
     set(gcf,"Color","#adf0bd")
     subplot(3,1,1)
     hold on
+    grid minor
     for i = 1:angleStdDegsCount
-        plot(orbitDistances,permute(trix3_vec_bias_enu(1,i,:),[3,2,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+        plot(orbitDistances,permute(trix3_vec_bias_enu(1,i,:),[2,3,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
     end
     ylabel("X Bias [m]")
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    ylim([0 max(trix3_vec_bias_enu(1,:,:), [], "all")])
+    ylim([min(trix3_vec_bias_enu(1,:,:), [], "all") max(trix3_vec_bias_enu(1,:,:), [], "all")])
     legend(Location="best")
     subplot(3,1,2)
     hold on
+    grid minor
     for i = 1:angleStdDegsCount
-        plot(orbitDistances,permute(trix3_vec_bias_enu(2,i,:),[3,2,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+        plot(orbitDistances,permute(trix3_vec_bias_enu(2,i,:),[2,3,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
     end
     ylabel("Y Bias [m]")
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    ylim([0 max(trix3_vec_bias_enu(2,:,:), [], "all")])
+    ylim([min(trix3_vec_bias_enu(2,:,:), [], "all") max(trix3_vec_bias_enu(2,:,:), [], "all")])
     subplot(3,1,3)
     hold on
+    grid minor
     for i = 1:angleStdDegsCount
-        plot(orbitDistances,permute(trix3_vec_bias_enu(3,i,:),[3,2,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+        plot(orbitDistances,permute(trix3_vec_bias_enu(3,i,:),[2,3,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
     end
     xlabel("Orbit Distance [m]")
     ylabel("Z Bias [m]")
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    ylim([0 max(trix3_vec_bias_enu(3,:,:), [], "all")])
+    ylim([min(trix3_vec_bias_enu(3,:,:), [], "all") max(trix3_vec_bias_enu(3,:,:), [], "all")])
 end
