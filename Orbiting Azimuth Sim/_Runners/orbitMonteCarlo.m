@@ -146,7 +146,9 @@ function orbitMonteCarlo(monteParams, params)
     xlabel("Orbit Distance [m]")
     ylabel("sigma_z [m]")
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    ylim([0 max(trix_sigma_z, [], "all")])
+    if (trix_sigma_z~=0)
+        ylim([0 max(trix_sigma_z, [], "all")])
+    end
     
     % Plot bias by axis
     figure
@@ -182,5 +184,7 @@ function orbitMonteCarlo(monteParams, params)
     xlabel("Orbit Distance [m]")
     ylabel("Z Bias [m]")
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    ylim([min(trix3_vec_bias_enu(3,:,:), [], "all") max(trix3_vec_bias_enu(3,:,:), [], "all")])
+    if (trix3_vec_bias_enu(3,:,:)~=0)
+        ylim([min(trix3_vec_bias_enu(3,:,:), [], "all") max(trix3_vec_bias_enu(3,:,:), [], "all")])
+    end
 end
