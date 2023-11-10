@@ -16,7 +16,7 @@ function [trix_vec_sensorPointingVec_enu] = getSensorPointingVecs(trix_vec_trueP
     % poining vector. This is stored in a matrix to make the future
     % rotation math easier.
     trix3_vec_specificOrthogonal_enu = zeros(3, 3, params.sampleCount);
-    trix3_vec_specificOrthogonal_enu(:,1,:) = [-trix_vec_truePointingVec_enu(:,2) trix_vec_truePointingVec_enu(:,1) zeros(params.sampleCount,1)]';
+    trix3_vec_specificOrthogonal_enu(:,1,:) = [zeros(params.sampleCount,1) trix_vec_truePointingVec_enu(:,3) -trix_vec_truePointingVec_enu(:,2)]';
     % For each sample, generate a random rotation about the true pointing
     % vector.
     trix3_dcm_specificOrthogonal2randomOrthogonal = axang2rotm([trix_vec_truePointingVec_enu rand(params.sampleCount, 1)*2*pi]);

@@ -9,6 +9,7 @@ classdef OrbAzParams
         angleStdDeg (1,1) double = 3;      % [deg] Standard deviation of sensor pointing angle error
         sampleRate (1,1) double = 1;       % [Hz] How often the sensor measures
         orbitCount (1,1) double = 1;       % How many orbits the UAS should do per duration
+        use2DcostFunction (1,1) logical = true  % Whether to use the 2D cost function to estimate the RGV position. If false, uses 3D cost function
     end
 
     properties(Dependent)
@@ -37,6 +38,9 @@ classdef OrbAzParams
         end
         function val = get.orbitAngularSpeed(this)
             val = this.orbitSpeed / this.orbitDistance;
+            if (isnan(val))
+                val = 1;
+            end
         end
         function this = set.orbitAngularSpeed(this, newVal)
             this.orbitSpeed = newVal * this.orbitDistance;
