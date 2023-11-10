@@ -10,5 +10,10 @@ function vec_predictedRgvLocation_enu = getPrediction(trix_vec_sensorPointingVec
         vec_predictedRgvLocation_enu (1,3) double
     end
 
-    vec_predictedRgvLocation_enu = fminsearch(@(x) sqrt(sum(vecnorm(cross(trix_vec_sensorPointingVec_enu,x-trix_vec_samplePosition_enu,2),2,2).^2))/params.sampleCount, [0,0,0]);
+    if (params.use2DcostFunction)
+        vec_predictedRgvLocation_en = fminsearch(@(vec_predictedRgvLocation_en) cost2D(vec_predictedRgvLocation_en,trix_vec_sensorPointingVec_enu,trix_vec_samplePosition_enu), [0,0]);
+        vec_predictedRgvLocation_enu = [vec_predictedRgvLocation_en, 0];
+    else
+        vec_predictedRgvLocation_enu = fminsearch(@(vec_predictedRgvLocation_enu) cost3D(vec_predictedRgvLocation_enu,trix_vec_sensorPointingVec_enu,trix_vec_samplePosition_enu), [0,0,0]);
+    end
 end

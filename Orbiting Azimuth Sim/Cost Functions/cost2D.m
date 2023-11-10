@@ -1,0 +1,15 @@
+function cost = cost2D(vec_rgvPositionEstimate_en, trix_vec_sensorPointingVec_enu, trix_vec_samplePosition_enu)
+    % Given a ground-constrained RGV position estimate (Easting and
+    % Northing), determines how bad of a guess it is by summing the squares
+    % of the distances from the guess to each 3D line created by each
+    % sensor pointing vector and sample position.
+    arguments(Input)
+        vec_rgvPositionEstimate_en (1,2) double      % A guess of where the RGV is, but only the North and East parts
+        trix_vec_sensorPointingVec_enu (:,3) double  % A matrix where each row is a sensor pointing vector
+        trix_vec_samplePosition_enu (:,3) double     % A matrix where each row is a UAS position
+    end
+    arguments(Output)
+        cost (1,1) double                            % How bad the guess was
+    end
+    cost = sum(vecnorm(cross(trix_vec_sensorPointingVec_enu,[vec_rgvPositionEstimate_en,0]-trix_vec_samplePosition_enu,2),2,2).^2);
+end
