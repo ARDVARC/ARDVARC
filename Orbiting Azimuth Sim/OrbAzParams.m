@@ -48,10 +48,10 @@ classdef OrbAzParams
             this.angleStdDeg = rad2deg(newVal);
         end
         function val = get.sampleCount(this)
-            val = floor(this.duration*this.sampleRate) + 1;
+            val = ceil(this.duration*this.sampleRate);
         end
         function this = set.sampleCount(this, newVal)
-            this.sampleRate = (newVal-1)/this.duration;
+            this.sampleRate = newVal/this.duration;
         end
     end
 end
