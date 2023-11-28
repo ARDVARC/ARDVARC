@@ -11,6 +11,8 @@ function [idealJointStartIndex, idealJointEndIndex] = plotDistanceBetweenRgvsOve
         idealJointEndIndex (1,1) double    % Index for the time when joint localization would ideally end (based on RGV proximity)
     end
 
+    coder.extrinsic("util.plotting.slideify")
+
     global simParams;
 
     distanceBetweenRgvs = vecnorm(rgv1Positions - rgv2Positions, 2, 2);
@@ -27,10 +29,11 @@ function [idealJointStartIndex, idealJointEndIndex] = plotDistanceBetweenRgvsOve
     figure
     hold on
     grid minor
-    plot(times, distanceBetweenRgvs, 'k', DisplayName="Distance");
-    plot(times, movingMaxForJointIdeal,'r:', DisplayName="Moving Maximum");
+    plot(times, distanceBetweenRgvs, Color='white', DisplayName="Distance");
+    plot(times, movingMaxForJointIdeal,'r--', DisplayName="Moving Maximum");
     title("Distance Between RGVs vs. Time")
     xlabel("Time [s]")
     ylabel("Distance [m]")
     legend(Location="best")
+    util.plotting.slideify()
 end

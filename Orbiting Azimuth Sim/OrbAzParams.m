@@ -6,7 +6,7 @@ classdef OrbAzParams
         orbitDistance (1,1) double = 10;   % [m] How far away (ground distance) the UAS orbits the RGV
         height (1,1) double = 10;          % [m] How far up the UAS orbits (AGL)
         heightStd (1,1) double = 0;        % [m] Standard deviation of orbit height
-        angleStdDeg (1,1) double = 3;      % [deg] Standard deviation of sensor pointing angle error
+        angleStdDeg (1,1) double = 25;      % [deg] Standard deviation of sensor pointing angle error
         sampleRate (1,1) double = 1;       % [Hz] How often the sensor measures
         orbitCount (1,1) double = 1;       % How many orbits the UAS should do per duration
         use2DcostFunction (1,1) logical = true  % Whether to use the 2D cost function to estimate the RGV position. If false, uses 3D cost function

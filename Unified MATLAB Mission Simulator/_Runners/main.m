@@ -6,6 +6,10 @@ function main(simParamsInput)
         simParamsInput (1,1) SimParams = SimParams();
     end
 
+    coder.extrinsic("plotDistanceBetweenRgvsOverTime")
+    coder.extrinsic("plotUasDistanceToRgvsOverTime")
+    coder.extrinsic("plotEntireSimulation3D")
+
     close all;
 
     global simParams;

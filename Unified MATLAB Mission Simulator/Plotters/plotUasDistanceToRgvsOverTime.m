@@ -12,6 +12,8 @@ function [realJointStartIndex, realJointEndIndex] = plotUasDistanceToRgvsOverTim
         realJointEndIndex (1,1) double    % Index for the best time when joint localization could actually end (based on UAS proximity)
     end
 
+    coder.extrinsic("util.plotting.slideify")
+
     global simParams;
 
     uasDistancesToRgv1 = vecnorm(uasPositions - rgv1Positions, 2, 2);
@@ -29,11 +31,12 @@ function [realJointStartIndex, realJointEndIndex] = plotUasDistanceToRgvsOverTim
     figure
     hold on
     grid minor
-    plot(times, uasDistancesToRgv1, 'k', DisplayName="Distance to RGV1");
-    plot(times, uasDistancesToRgv2, 'b', DisplayName="Distance to RGV2");
-    plot(times,movingMaxForJoint,'r:', DisplayName="Moving Maximum");
+    plot(times, uasDistancesToRgv1, Color='#ffbb00', DisplayName="Distance to RGV1");
+    plot(times, uasDistancesToRgv2, Color='#0077ff', DisplayName="Distance to RGV2");
+    plot(times,movingMaxForJoint,'r--', DisplayName="Moving Maximum");
     title("UAS Distance To RGVs vs. Time")
     xlabel("Time [s]")
     ylabel("Distance [m]")
     legend(Location="best")
+    util.plotting.slideify()
 end

@@ -68,8 +68,8 @@ function orbitMonteCarlo(monteParams, params)
     for i = 1:angleStdDegsCount
         plot(orbitDistances,trix_twoDRMS(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
     end
-    yline(2, 'k', DisplayName="Coarse Localization Target")
-    yline(1, 'r', DisplayName="Fine Localization Target")
+    yline(2, 'k--', DisplayName="Coarse Localization Target")
+    yline(1, 'r--', DisplayName="Fine Localization Target")
     xlabel("Orbit Distance [m]")
     ylabel("Estimate 2DRMS [m]")
     title("RGV Position Estimate Error 2DRMS")
@@ -107,7 +107,7 @@ function orbitMonteCarlo(monteParams, params)
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
     ylimupper = max(trix_biasMagnitude, [], "all");
     ylim([0 ylimupper])
-    legend(Location="best")
+    legend(Location="eastoutside")
     set(gcf,"Color","#edf0ad")
     
     % Plot each sigma
@@ -125,7 +125,6 @@ function orbitMonteCarlo(monteParams, params)
     ylabel("sigma_x [m]")
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
     ylim([0 max(trix_sigma_x, [], "all")])
-    legend(Location="best")
     subplot(3,1,2)
     hold on
     grid minor
@@ -147,6 +146,7 @@ function orbitMonteCarlo(monteParams, params)
     if (trix_sigma_z ~= 0)
         ylim([0 max(trix_sigma_z, [], "all")])
     end
+    legend(Location="best")
     
     % Plot bias by axis
     figure
@@ -163,7 +163,6 @@ function orbitMonteCarlo(monteParams, params)
     ylabel("X Bias [m]")
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
     ylim([min(trix3_vec_bias_enu(1,:,:), [], "all") max(trix3_vec_bias_enu(1,:,:), [], "all")])
-    legend(Location="best")
     subplot(3,1,2)
     hold on
     grid minor
@@ -185,4 +184,5 @@ function orbitMonteCarlo(monteParams, params)
     if (trix3_vec_bias_enu(3,:,:) ~= 0)
         ylim([min(trix3_vec_bias_enu(3,:,:), [], "all") max(trix3_vec_bias_enu(3,:,:), [], "all")])
     end
+    legend(Location="best")
 end
