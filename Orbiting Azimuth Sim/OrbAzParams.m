@@ -1,7 +1,7 @@
 classdef OrbAzParams
     % Describes the UAS orbit and sensor details
     properties
-        seed (1,1) double = randi(10000);  % Seed for rng
+        seed (1,1) double;                 % Seed for rng, set in constructor
         duration (1,1) double = 30;        % [s] How long the orbit takes
         orbitDistance (1,1) double = 10;   % [m] How far away (ground distance) the UAS orbits the RGV
         height (1,1) double = 10;          % [m] How far up the UAS orbits (AGL)
@@ -9,6 +9,7 @@ classdef OrbAzParams
         angleStdDeg (1,1) double = 3;      % [deg] Standard deviation of sensor pointing angle error
         sampleRate (1,1) double = 1;       % [Hz] How often the sensor measures
         orbitCount (1,1) double = 1;       % How many orbits the UAS should do per duration
+        use2DcostFunction (1,1) logical = true  % Whether to use the 2D cost function to estimate the RGV position. If false, uses 3D cost function
     end
 
     properties(Dependent)
@@ -19,6 +20,16 @@ classdef OrbAzParams
     end
 
     methods
+        function this = OrbAzParams(seed)
+            arguments(Input)
+                seed (1,1) double = randi(intmax);
+            end
+            arguments(Output)
+                this (1,1) OrbAzParams
+            end
+            this.seed = seed;
+        end
+
         function val = get.orbitSpeed(this)
             val = 2*pi*this.orbitCount*this.orbitDistance/this.duration;
         end
@@ -27,6 +38,9 @@ classdef OrbAzParams
         end
         function val = get.orbitAngularSpeed(this)
             val = this.orbitSpeed / this.orbitDistance;
+            if (isnan(val))
+                val = 1;
+            end
         end
         function this = set.orbitAngularSpeed(this, newVal)
             this.orbitSpeed = newVal * this.orbitDistance;
@@ -38,7 +52,10 @@ classdef OrbAzParams
             this.angleStdDeg = rad2deg(newVal);
         end
         function val = get.sampleCount(this)
-            val = floor(this.duration*this.sampleRate) + 1;
+            val = ceil(this.duration*this.sampleRate);
+        end
+        function this = set.sampleCount(this, newVal)
+            this.sampleRate = newVal/this.duration;
         end
     end
 end
