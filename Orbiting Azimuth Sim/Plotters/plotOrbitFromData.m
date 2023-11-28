@@ -7,8 +7,6 @@ function plotOrbitFromData(trix_vec_samplePosition_enu, trix_vec_truePointingVec
         params (1,1) OrbAzParams
         zoomOnBottom (1,1) logical = false;
     end
-    
-    close all
 
     figure(1)
     plots(1) = scatter3(trix_vec_samplePosition_enu(:,1),trix_vec_samplePosition_enu(:,2),trix_vec_samplePosition_enu(:,3),DisplayName="True UAS Locations");

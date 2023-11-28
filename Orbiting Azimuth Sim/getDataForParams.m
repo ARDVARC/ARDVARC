@@ -13,6 +13,10 @@ function [trix_vec_samplePosition_enu, trix_vec_truePointingVec_enu, trix_vec_se
     end
     
     [trix_vec_samplePosition_enu, trix_vec_truePointingVec_enu] = getTrueOrbitValues(params);
-    [trix_vec_sensorPointingVec_enu] = getSensorPointingVecs(trix_vec_truePointingVec_enu, params);
+
+    % [trix_vec_sensorPointingVec_enu] = getSensorPointingVecs(trix_vec_truePointingVec_enu, params);
+    trix_vec_uas2rgv_enu = -trix_vec_samplePosition_enu;
+    trix_vec_sensorPointingVec_enu = getPinholePointingVecs(trix_vec_uas2rgv_enu, params);
+
     vec_predictedRgvLocation_enu = getPrediction(trix_vec_sensorPointingVec_enu, trix_vec_samplePosition_enu, params);
 end
