@@ -22,6 +22,12 @@ function slideify(fignum, bgColor, textColor)
             g.ZColor = textColor;
             g.Color = bgColor;
             g.Title.Color = textColor;
+            for j = 1:length(g.Children)
+                gg = g.Children(j);
+                if (isa(gg, "matlab.graphics.primitive.Text"))
+                    gg.Color = textColor;
+                end
+            end
         elseif(isa(g, "matlab.graphics.illustration.Legend"))
             % Make legend child match slide color theme 
             g.Color = bgColor;

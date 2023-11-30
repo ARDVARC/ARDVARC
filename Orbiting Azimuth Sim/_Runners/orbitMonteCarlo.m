@@ -66,123 +66,127 @@ function orbitMonteCarlo(monteParams, params)
     hold on
     grid minor
     for i = 1:angleStdDegsCount
-        plot(orbitDistances,trix_twoDRMS(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+        fig1plots(i) = plot(orbitDistances,trix_twoDRMS(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)));
     end
-    yline(2, 'k--', DisplayName="Coarse Localization Target")
-    yline(1, 'r--', DisplayName="Fine Localization Target")
+    yline(1, "w")
+    text(monteParams.maxOrbitDistance * 1.01, 1, ["Coarse","Target"])
+    yline(2, "w")
+    text(monteParams.maxOrbitDistance * 1.01, 2, ["Fine","Target"])
     xlabel("Orbit Distance [m]")
     ylabel("Estimate 2DRMS [m]")
     title("RGV Position Estimate Error 2DRMS")
     xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
     ylim([0 max(trix_twoDRMS, [], "all")])
-    legend(Location="best")
-    set(gcf,"Color","#f0b1ad")
+    legend(fig1plots, Location="southoutside")
+    p = get(gca,'Position');
+    set(gca,'Position',[p(1) p(2) p(3)*0.95 p(4)]);
+    util.plotting.slideify()
     
-    % Plot mean error magnitude
-    figure
-    hold on
-    grid minor
-    for i = 1:angleStdDegsCount
-        plot(orbitDistances,trix_meanErrorMagnitude(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
-    end
-    xlabel("Orbit Distance [m]")
-    ylabel("Mean Estimate Error [m]")
-    title("RGV Position Estimate Mean Error")
-    xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    ylimupper = max(trix_meanErrorMagnitude, [], "all");
-    ylim([0 ylimupper])
-    legend(Location="best")
-    set(gcf,"Color","#f0d7ad")
-    
-    % Plot bias magnitude
-    figure
-    hold on
-    grid minor
-    for i = 1:angleStdDegsCount
-        plot(orbitDistances,trix_biasMagnitude(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
-    end
-    xlabel("Orbit Distance [m]")
-    ylabel("Bias Magnitude [m]")
-    title("RGV Position Estimate Bias Magnitude")
-    xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    ylimupper = max(trix_biasMagnitude, [], "all");
-    ylim([0 ylimupper])
-    legend(Location="eastoutside")
-    set(gcf,"Color","#edf0ad")
-    
-    % Plot each sigma
-    figure
-    hold on
-    grid minor
-    sgtitle("RGV Position Estimate Error Standard Deviations by Axis")
-    set(gcf,"Color","#cef0ad")
-    subplot(3,1,1)
-    hold on
-    grid minor
-    for i = 1:angleStdDegsCount
-        plot(orbitDistances,trix_sigma_x(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
-    end
-    ylabel("sigma_x [m]")
-    xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    ylim([0 max(trix_sigma_x, [], "all")])
-    subplot(3,1,2)
-    hold on
-    grid minor
-    for i = 1:angleStdDegsCount
-        plot(orbitDistances,trix_sigma_y(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
-    end
-    ylabel("sigma_y [m]")
-    xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    ylim([0 max(trix_sigma_y, [], "all")])
-    subplot(3,1,3)
-    hold on
-    grid minor
-    for i = 1:angleStdDegsCount
-        plot(orbitDistances,trix_sigma_z(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
-    end
-    xlabel("Orbit Distance [m]")
-    ylabel("sigma_z [m]")
-    xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    if (trix_sigma_z ~= 0)
-        ylim([0 max(trix_sigma_z, [], "all")])
-    end
-    legend(Location="best")
-    
-    % Plot bias by axis
-    figure
-    hold on
-    grid minor
-    sgtitle("RGV Position Estimate Bias by Axis")
-    set(gcf,"Color","#adf0bd")
-    subplot(3,1,1)
-    hold on
-    grid minor
-    for i = 1:angleStdDegsCount
-        plot(orbitDistances,permute(trix3_vec_bias_enu(1,i,:),[2,3,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
-    end
-    ylabel("X Bias [m]")
-    xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    ylim([min(trix3_vec_bias_enu(1,:,:), [], "all") max(trix3_vec_bias_enu(1,:,:), [], "all")])
-    subplot(3,1,2)
-    hold on
-    grid minor
-    for i = 1:angleStdDegsCount
-        plot(orbitDistances,permute(trix3_vec_bias_enu(2,i,:),[2,3,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
-    end
-    ylabel("Y Bias [m]")
-    xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    ylim([min(trix3_vec_bias_enu(2,:,:), [], "all") max(trix3_vec_bias_enu(2,:,:), [], "all")])
-    subplot(3,1,3)
-    hold on
-    grid minor
-    for i = 1:angleStdDegsCount
-        plot(orbitDistances,permute(trix3_vec_bias_enu(3,i,:),[2,3,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
-    end
-    xlabel("Orbit Distance [m]")
-    ylabel("Z Bias [m]")
-    xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
-    if (trix3_vec_bias_enu(3,:,:) ~= 0)
-        ylim([min(trix3_vec_bias_enu(3,:,:), [], "all") max(trix3_vec_bias_enu(3,:,:), [], "all")])
-    end
-    legend(Location="best")
+    % % Plot mean error magnitude
+    % figure
+    % hold on
+    % grid minor
+    % for i = 1:angleStdDegsCount
+    %     plot(orbitDistances,trix_meanErrorMagnitude(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+    % end
+    % xlabel("Orbit Distance [m]")
+    % ylabel("Mean Estimate Error [m]")
+    % title("RGV Position Estimate Mean Error")
+    % xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
+    % ylimupper = max(trix_meanErrorMagnitude, [], "all");
+    % ylim([0 ylimupper])
+    % legend(Location="best")
+    % util.plotting.slideify()
+    % 
+    % % Plot bias magnitude
+    % figure
+    % hold on
+    % grid minor
+    % for i = 1:angleStdDegsCount
+    %     plot(orbitDistances,trix_biasMagnitude(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+    % end
+    % xlabel("Orbit Distance [m]")
+    % ylabel("Bias Magnitude [m]")
+    % title("RGV Position Estimate Bias Magnitude")
+    % xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
+    % ylimupper = max(trix_biasMagnitude, [], "all");
+    % ylim([0 ylimupper])
+    % legend(Location="eastoutside")
+    % util.plotting.slideify()
+    % 
+    % % Plot each sigma
+    % figure
+    % hold on
+    % grid minor
+    % sgtitle("RGV Position Estimate Error Standard Deviations by Axis")
+    % subplot(3,1,1)
+    % hold on
+    % grid minor
+    % for i = 1:angleStdDegsCount
+    %     plot(orbitDistances,trix_sigma_x(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+    % end
+    % ylabel("sigma_x [m]")
+    % xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
+    % ylim([0 max(trix_sigma_x, [], "all")])
+    % subplot(3,1,2)
+    % hold on
+    % grid minor
+    % for i = 1:angleStdDegsCount
+    %     plot(orbitDistances,trix_sigma_y(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+    % end
+    % ylabel("sigma_y [m]")
+    % xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
+    % ylim([0 max(trix_sigma_y, [], "all")])
+    % subplot(3,1,3)
+    % hold on
+    % grid minor
+    % for i = 1:angleStdDegsCount
+    %     plot(orbitDistances,trix_sigma_z(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+    % end
+    % xlabel("Orbit Distance [m]")
+    % ylabel("sigma_z [m]")
+    % xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
+    % if (trix_sigma_z ~= 0)
+    %     ylim([0 max(trix_sigma_z, [], "all")])
+    % end
+    % legend(Location="best")
+    % util.plotting.slideify()
+    % 
+    % % Plot bias by axis
+    % figure
+    % hold on
+    % grid minor
+    % sgtitle("RGV Position Estimate Bias by Axis")
+    % subplot(3,1,1)
+    % hold on
+    % grid minor
+    % for i = 1:angleStdDegsCount
+    %     plot(orbitDistances,permute(trix3_vec_bias_enu(1,i,:),[2,3,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+    % end
+    % ylabel("X Bias [m]")
+    % xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
+    % ylim([min(trix3_vec_bias_enu(1,:,:), [], "all") max(trix3_vec_bias_enu(1,:,:), [], "all")])
+    % subplot(3,1,2)
+    % hold on
+    % grid minor
+    % for i = 1:angleStdDegsCount
+    %     plot(orbitDistances,permute(trix3_vec_bias_enu(2,i,:),[2,3,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+    % end
+    % ylabel("Y Bias [m]")
+    % xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
+    % ylim([min(trix3_vec_bias_enu(2,:,:), [], "all") max(trix3_vec_bias_enu(2,:,:), [], "all")])
+    % subplot(3,1,3)
+    % hold on
+    % grid minor
+    % for i = 1:angleStdDegsCount
+    %     plot(orbitDistances,permute(trix3_vec_bias_enu(3,i,:),[2,3,1]),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)))
+    % end
+    % xlabel("Orbit Distance [m]")
+    % ylabel("Z Bias [m]")
+    % xlim([monteParams.minOrbitDistance monteParams.maxOrbitDistance])
+    % if (trix3_vec_bias_enu(3,:,:) ~= 0)
+    %     ylim([min(trix3_vec_bias_enu(3,:,:), [], "all") max(trix3_vec_bias_enu(3,:,:), [], "all")])
+    % end
+    % legend(Location="best")
+    % util.plotting.slideify()
 end
