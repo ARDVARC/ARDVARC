@@ -1,91 +1,80 @@
-function [pos, euler] = moveRgv(time, startTime, startPos, startEul, movementType)
+function [vec_newPos_en, newYawAngle] = moveRgv(rgvParams, time, startTime, vec_startPos_en, startYawAngle, movementType)
     % Moves an RGV from some specified starting state for some specified
     % amount of time following a specfied movement type. Returns the final
     % state of the moved RGV.
     arguments(Input)
+        rgvParams (1,1) RgvParams
         time (1,1) double
         startTime (1,1) double
-        startPos (1,3) double
-        startEul (1,3) double
+        vec_startPos_en (2,1) double
+        startYawAngle (1,1) double
         movementType (1,1) RgvMovementType
     end
     arguments(Output)
-        pos (1,3) double
-        euler (1,3) double
+        vec_newPos_en (2,1) double
+        newYawAngle (1,1) double
     end
-
-    global simParams;
 
     switch(movementType)
         case RgvMovementType.Straight
             progressTime = time - startTime;
-            dir = (eul2rotm(startEul) * [1;0;0])';
-            pos = startPos + simParams.rgvParams.speed * progressTime * dir;
-            euler = startEul;
+            vec_dir_en = [cos(startYawAngle);sin(startYawAngle)];
+            vec_newPos_en = vec_startPos_en + rgvParams.speed * progressTime * vec_dir_en;
+            newYawAngle = startYawAngle;
         case RgvMovementType.ArcLeft
-            startRotm = eul2rotm(startEul);
-            radiusVectorIn = (startRotm * [0;simParams.rgvParams.turningRadius;0])';
+            vec_radiusVectorIn_en = rgvParams.turningRadius * [-sin(startYawAngle);cos(startYawAngle)];
             progressTime = time - startTime;
-            ang = simParams.rgvParams.turningSpeed * progressTime;
-            angRotm = axang2rotm([0 0 1 ang]);
-            euler = rotm2eul(angRotm*startRotm);
-            pos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
+            addedYawAngle = rgvParams.turningSpeed * progressTime;
+            newYawAngle = startYawAngle + addedYawAngle;
+            vec_radiusVectorOut_en = rgvParams.turningRadius * [sin(newYawAngle);-cos(newYawAngle)];
+            vec_newPos_en = vec_startPos_en + vec_radiusVectorIn_en + vec_radiusVectorOut_en;
         case RgvMovementType.ArcRight
-            startRotm = eul2rotm(startEul);
-            radiusVectorIn = (startRotm * [0;-simParams.rgvParams.turningRadius;0])';
+            vec_radiusVectorIn_en = rgvParams.turningRadius * [sin(startYawAngle);-cos(startYawAngle)];
             progressTime = time - startTime;
-            ang = simParams.rgvParams.turningSpeed * progressTime;
-            angRotm = axang2rotm([0 0 1 -ang]);
-            euler = rotm2eul(angRotm*startRotm);
-            pos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
+            addedYawAngle = -rgvParams.turningSpeed * progressTime;
+            newYawAngle = startYawAngle + addedYawAngle;
+            vec_radiusVectorOut_en = rgvParams.turningRadius * [-sin(newYawAngle);cos(newYawAngle)];
+            vec_newPos_en = vec_startPos_en + vec_radiusVectorIn_en + vec_radiusVectorOut_en;
         case RgvMovementType.UTurnLeft
             % U-turn movement has two parts
-            startRotm = eul2rotm(startEul);
-            radiusVectorIn = (startRotm * [0;simParams.rgvParams.uTurnRadius;0])';
+            vec_radiusVectorIn_en = rgvParams.uTurnRadius * [-sin(startYawAngle);cos(startYawAngle)];
             progressTime = time - startTime;
-            if (progressTime < simParams.rgvParams.uTurnTurnTime)
+            if (progressTime < rgvParams.uTurnTurnTime)
                 % The first part is an arc
-                ang = simParams.rgvParams.uTurnSpeed * progressTime;
-                angRotm = axang2rotm([0 0 1 ang]);
-                euler = rotm2eul(angRotm*startRotm);
-                pos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
+                addedYawAngle = rgvParams.uTurnSpeed  * progressTime;
+                newYawAngle = startYawAngle + addedYawAngle;
+                vec_radiusVectorOut_en = rgvParams.uTurnRadius * [sin(newYawAngle);-cos(newYawAngle)];
+                vec_newPos_en = vec_startPos_en + vec_radiusVectorIn_en + vec_radiusVectorOut_en;
             else
                 % The second part is straight
-                angRotm = axang2rotm([0 0 1 pi]);
-                startRotm = angRotm*startRotm;
-                startPos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
-    
-                progressTime = progressTime - simParams.rgvParams.uTurnTurnTime;
-                dir = (startRotm * [1;0;0])';
-                pos = startPos + simParams.rgvParams.speed * progressTime * dir;
-                euler = rotm2eul(startRotm);
+                vec_startPos_en = vec_startPos_en + 2*vec_radiusVectorIn_en;
+                newYawAngle = startYawAngle + pi;
+                progressTime = progressTime - rgvParams.uTurnTurnTime;
+                vec_dir_en = [cos(newYawAngle);sin(newYawAngle)];
+                vec_newPos_en = vec_startPos_en + rgvParams.speed * progressTime * vec_dir_en;
             end
         case RgvMovementType.UTurnRight
             % U-turn movement has two parts
-            startRotm = eul2rotm(startEul);
-            radiusVectorIn = (startRotm * [0;-simParams.rgvParams.uTurnRadius;0])';
+            vec_radiusVectorIn_en = rgvParams.uTurnRadius * [sin(startYawAngle);-cos(startYawAngle)];
             progressTime = time - startTime;
-            if (progressTime < simParams.rgvParams.uTurnTurnTime)
+            if (progressTime < rgvParams.uTurnTurnTime)
                 % The first part is an arc
-                ang = simParams.rgvParams.uTurnSpeed * progressTime;
-                angRotm = axang2rotm([0 0 1 -ang]);
-                euler = rotm2eul(angRotm*startRotm);
-                pos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
+                addedYawAngle = rgvParams.uTurnSpeed * progressTime;
+                newYawAngle = startYawAngle - addedYawAngle;
+                vec_radiusVectorOut_en = rgvParams.uTurnRadius * [-sin(newYawAngle);cos(newYawAngle)];
+                vec_newPos_en = vec_startPos_en + vec_radiusVectorIn_en + vec_radiusVectorOut_en;
             else
                 % The second part is straight
-                angRotm = axang2rotm([0 0 1 -pi]);
-                startRotm = angRotm*startRotm;
-                startPos = startPos + radiusVectorIn + (angRotm*-radiusVectorIn')';
-    
-                progressTime = progressTime - simParams.rgvParams.uTurnTurnTime;
-                dir = (startRotm * [1;0;0])';
-                pos = startPos + simParams.rgvParams.speed * progressTime * dir;
-                euler = rotm2eul(startRotm);
+                vec_startPos_en = vec_startPos_en + 2*vec_radiusVectorIn_en;
+                newYawAngle = startYawAngle + pi;
+                progressTime = progressTime - rgvParams.uTurnTurnTime;
+                vec_dir_en = [cos(newYawAngle);sin(newYawAngle)];
+                vec_newPos_en = vec_startPos_en + rgvParams.speed * progressTime * vec_dir_en;
             end
         otherwise
             % This case is for "Waiting" or if another movement type is
             % added later but not implemented (it will just stand still)
-            pos = startPos;
-            euler = startEul;
+            vec_newPos_en = vec_startPos_en;
+            newYawAngle = startYawAngle;
     end
 end

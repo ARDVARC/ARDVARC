@@ -1,18 +1,18 @@
-function this = makeRgvFromSeed(seed, startPos, startEul, duration)
+function this = makeRgvFromSeed(rgvParams, seed, vec_startPos_en, startYawAngle, duration, missionAreaHalfWidth)
     % Creates a new RGV with the specified starting conditions by moving it
     % in large steps according to seeded random movement types. Generates
     % movements until the specified duration is reached.
     arguments(Input)
+        rgvParams (1,1) RgvParams
         seed (1,1) double
-        startPos (1,3) double
-        startEul (1,3) double
+        vec_startPos_en (2,1) double
+        startYawAngle (1,1) double
         duration (1,1) double
+        missionAreaHalfWidth (1,1) double
     end
     arguments(Output)
         this (1,1) RGV
     end
-
-    global simParams;
 
     % Set the seed of the random number generator so that the RGV
     % generation is consistent
@@ -20,20 +20,20 @@ function this = makeRgvFromSeed(seed, startPos, startEul, duration)
 
     % Preallocation to make MATLAB Coder happy
     vecSize = duration;
-    times = zeros(vecSize, 1);
-    positions = zeros(vecSize, 3);
-    eulers = zeros(vecSize, 3);
-    movementTypes = zeros(vecSize, 1, "int8");
+    vec_time = zeros(1, vecSize);
+    trix_vec_position_en = zeros(2, vecSize);
+    vec_yawAngle = zeros(1, vecSize);
+    vec_movementType = zeros(1, vecSize, "int8");
     coder.varsize('times');
     coder.varsize('positions');
     coder.varsize('eulers');
     coder.varsize('movementTypes');
     
     % Set starting conditions
-    times(1) = 0;
-    positions(1,:) = startPos;
-    eulers(1,:) = startEul;
-    movementTypes(1) = getRandomRgvMovementType();
+    vec_time(1) = 0;
+    trix_vec_position_en(:,1) = vec_startPos_en;
+    vec_yawAngle(1) = startYawAngle;
+    vec_movementType(1) = getRandomRgvMovementType(rgvParams);
 
     counter = 1;
     time = 0;
@@ -44,73 +44,73 @@ function this = makeRgvFromSeed(seed, startPos, startEul, duration)
             % This is weird allocation code to make sure that the various
             % arrays don't run out of space to store all the RGV states
             vecSize = vecSize * 2;
-            timesTemp = zeros(vecSize, 1);
-            timesTemp(1:counter) = times;
-            times = timesTemp;
-            positionsTemp = zeros(vecSize, 3);
-            positionsTemp(1:counter,:) = positions;
-            positions = positionsTemp;
-            eulersTemp = zeros(vecSize, 3);
-            eulersTemp(1:counter,:) = eulers;
-            eulers = eulersTemp;
-            movementTypesTemp = zeros(vecSize, 1, "int8");
-            movementTypesTemp(1:counter,:) = movementTypes;
-            movementTypes = movementTypesTemp;
+            vec_timeTemp = zeros(1, vecSize);
+            vec_timeTemp(1:counter) = vec_time;
+            vec_time = vec_timeTemp;
+            trix_vec_position_enTemp = zeros(2, vecSize);
+            trix_vec_position_enTemp(:,1:counter) = trix_vec_position_en;
+            trix_vec_position_en = trix_vec_position_enTemp;
+            vec_yawAngleTemp = zeros(1, vecSize);
+            vec_yawAngleTemp(1:counter) = vec_yawAngle;
+            vec_yawAngle = vec_yawAngleTemp;
+            vec_movementTypeTemp = zeros(1, vecSize, "int8");
+            vec_movementTypeTemp(1:counter) = vec_movementType;
+            vec_movementType = vec_movementTypeTemp;
         end
 
         % Determine how long this step takes based on the known movement
         % type for the step and the known amounts of time that that type of
         % movement can take
-        switch movementTypes(counter)
+        switch vec_movementType(counter)
             case RgvMovementType.Wait
-                deltaTime = rand(1)*(simParams.rgvParams.waitTimeMax-simParams.rgvParams.waitTimeMin)+simParams.rgvParams.waitTimeMin;
+                deltaTime = rand(1)*(rgvParams.waitTimeMax-rgvParams.waitTimeMin)+rgvParams.waitTimeMin;
             case RgvMovementType.Straight
-                deltaTime = rand(1)*(simParams.rgvParams.straightTimeMax-simParams.rgvParams.straightTimeMin)+simParams.rgvParams.straightTimeMin;
+                deltaTime = rand(1)*(rgvParams.straightTimeMax-rgvParams.straightTimeMin)+rgvParams.straightTimeMin;
             case { RgvMovementType.ArcLeft, RgvMovementType.ArcRight }
-                deltaTime = rand(1)*(simParams.rgvParams.arcTimeMax-simParams.rgvParams.arcTimeMin)+simParams.rgvParams.arcTimeMin;
+                deltaTime = rand(1)*(rgvParams.arcTimeMax-rgvParams.arcTimeMin)+rgvParams.arcTimeMin;
             case { RgvMovementType.UTurnLeft, RgvMovementType.UTurnRight }
-                deltaTime = rand(1)*(simParams.rgvParams.uTurnTimeMax-simParams.rgvParams.uTurnTimeMin)+simParams.rgvParams.uTurnTimeMin;
+                deltaTime = rand(1)*(rgvParams.uTurnTimeMax-rgvParams.uTurnTimeMin)+rgvParams.uTurnTimeMin;
             otherwise
-                deltaTime = rand(1)*simParams.rgvParams.waitTimeMin+(simParams.rgvParams.waitTimeMax-simParams.rgvParams.waitTimeMin);
+                deltaTime = rand(1)*rgvParams.waitTimeMin+(rgvParams.waitTimeMax-rgvParams.waitTimeMin);
         end
 
         % Take a step
-        [newPos, newEuler] = moveRgv(time + deltaTime, time, positions(counter,:), eulers(counter,:), movementTypes(counter));
-        if (distanceToBoundary(newPos) < simParams.rgvParams.safeDistanceFromEdge)
+        [vec_newPos_en, newYawAngle] = moveRgv(rgvParams, time + deltaTime, time, trix_vec_position_en(:,counter), vec_yawAngle(counter), vec_movementType(counter));
+        if (distanceToBoundary(missionAreaHalfWidth, vec_newPos_en) < rgvParams.safeDistanceFromEdge)
             % If the step would take the RGV out of the safe region, don't
             % let it. Instead, only move until you hit the safe region,
             % then note that the next step needs to be some kind of u-turn
             opts = optimoptions("lsqnonlin","Algorithm","levenberg-marquardt",'Display','off');
-            deltaTime = lsqnonlin(@(x) distanceToBoundary(moveRgv(time + x, time, positions(counter,:), eulers(counter,:), movementTypes(counter))) - simParams.rgvParams.safeDistanceFromEdge, deltaTime, 0, inf, opts);
-            [newPos, newEuler] = moveRgv(time + deltaTime, time, positions(counter,:), eulers(counter,:), movementTypes(counter));
+            deltaTime = lsqnonlin(@(x) distanceToBoundary(missionAreaHalfWidth, moveRgv(rgvParams, time + x, time, trix_vec_position_en(:,counter), vec_yawAngle(counter), vec_movementType(counter))) - rgvParams.safeDistanceFromEdge, deltaTime, 0, inf, opts);
+            [vec_newPos_en, newYawAngle] = moveRgv(rgvParams, time + deltaTime, time, trix_vec_position_en(:,counter), vec_yawAngle(counter), vec_movementType(counter));
             % Choose the u-turn direction based on whichever way will point
             % you closer back to the center of the mission area
-            dir = eul2rotm(newEuler)*[1;0;0];
-            if (signedAngle(newPos(1:2), dir(1:2)) > 0)
-                movementTypes(counter+1,:) = RgvMovementType.UTurnLeft;
+            vec_dir_en = [cos(newYawAngle);sin(newYawAngle)];
+            if (signedAngle(vec_newPos_en, vec_dir_en) > 0)
+                vec_movementType(counter+1) = RgvMovementType.UTurnLeft;
             else
-                movementTypes(counter+1,:) = RgvMovementType.UTurnRight;
+                vec_movementType(counter+1) = RgvMovementType.UTurnRight;
             end
         else
             % If the step wouldn't take the RGV out of the safe region,
             % keep the full step and choose a random movement type for the
             % next step
-            movementTypes(counter+1,:) = getRandomRgvMovementType();
+            vec_movementType(counter+1) = getRandomRgvMovementType(rgvParams);
         end
 
         % Update state arrays
         counter = counter + 1;
         time = time + deltaTime;
-        times(counter) = time;
-        positions(counter,:) = newPos;
-        eulers(counter,:) = newEuler;
+        vec_time(counter) = time;
+        trix_vec_position_en(:,counter) = vec_newPos_en;
+        vec_yawAngle(counter) = newYawAngle;
     end
 
     % Remove empty ends of state arrays caused by preallocation
-    times = times(1:counter);
-    positions = positions(1:counter,:);
-    eulers = eulers(1:counter,:);
-    movementTypes = movementTypes(1:counter);
+    vec_time = vec_time(1:counter);
+    trix_vec_position_en = trix_vec_position_en(:,1:counter);
+    vec_yawAngle = vec_yawAngle(1:counter);
+    vec_movementType = vec_movementType(1:counter);
 
-    this = RGV(times, positions, eulers, movementTypes);
+    this = RGV(vec_time, trix_vec_position_en, vec_yawAngle, vec_movementType);
 end

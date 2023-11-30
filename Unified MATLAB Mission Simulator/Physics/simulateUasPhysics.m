@@ -1,31 +1,25 @@
-function [times, trueUasStates] = simulateUasPhysics(uasStateExtrapolator, rgv1PositionExtrapolater, rgv2PositionExtrapolater, startTime, endTime, trueUasStartState)
+function [vec_time, trix_vec_trueUasState] = simulateUasPhysics(simParams, vec_goToCenter_enu, vec_lookAt_enu, orbitRadius, startTime, endTime, vec_trueUasStartState)
     % Uses ode45 to simulate the physics of the UAS over a specified time
     % period and under specified initial conditions
     arguments(Input)
-        uasStateExtrapolator (1,1) function_handle      % Function to give a predicted UAS state
-        rgv1PositionExtrapolater (1,1) function_handle  % Function to give a predicted position for RGV 1
-        rgv2PositionExtrapolater (1,1) function_handle  % Function to give a predicted position for RGV 2
+        simParams (1,1) SimParams
+        vec_goToCenter_enu (3,1) double
+        vec_lookAt_enu (2,1) double
+        orbitRadius (1,1) double
         startTime (1,1) double
         endTime (1,1) double
-        trueUasStartState (12,1) double
+        vec_trueUasStartState (12,1) double
     end
     opts = odeset("AbsTol",1e-6);
-    [times, trueUasStates] = ode45(@(t,trueUasState) ode45Inner(t, trueUasState, uasStateExtrapolator, rgv1PositionExtrapolater, rgv2PositionExtrapolater), [startTime endTime], trueUasStartState, opts);
+    [vec_time, trix_vec_trueUasState] = ode45(@(t,vec_trueUasState) ode45Inner(t, vec_trueUasState, simParams, vec_goToCenter_enu, vec_lookAt_enu, orbitRadius), [startTime endTime], vec_trueUasStartState, opts);
 
-    function dTrueState = ode45Inner(t, trueUasState, uasStateExtrapolator, rgv1PositionExtrapolater, rgv2PositionExtrapolater)
-        % Determine where we think we are and where we think the RGVs are
-        extrapolatedUasState = uasStateExtrapolator(t, trueUasState);
-        extrapolatedRgv1Position = rgv1PositionExtrapolater(t, extrapolatedUasState, trueUasState);
-        extrapolatedRgv2Position = rgv2PositionExtrapolater(t, extrapolatedUasState, trueUasState);
-    
-        % Determine where we want to go and where we want to be looking
-        [goToE, lookAtE] = getGoToAndLookAt(extrapolatedUasState, extrapolatedRgv1Position, extrapolatedRgv2Position);
-    
+    function vec_dTrueUasState = ode45Inner(t, vec_trueUasState, simParams, vec_goToCenter_enu, vec_lookAt_enu, orbitRadius)
         % Use PD control to determine what forces and moments will get us
         % from where we think we are to where we want to be
-        [Lc,Mc,Nc,Zc] = getMomentsAndZForce(extrapolatedUasState, goToE, lookAtE);
+        vec_goToReal_enu = vec_goToCenter_enu + orbitRadius*[-cos(2*pi*t/simParams.orbitDuration);sin(2*pi*t/simParams.orbitDuration);0];
+        [Lc,Mc,Nc,Zc] = getMomentsAndZForce(simParams, vec_trueUasState, vec_goToReal_enu, vec_lookAt_enu);
 
         % Do actual physics
-        dTrueState = equationsOfMotion(trueUasState, Lc, Mc, Nc, Zc);
+        vec_dTrueUasState = equationsOfMotion(simParams, vec_trueUasState, Lc, Mc, Nc, Zc);
     end
 end

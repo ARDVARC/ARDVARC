@@ -1,8 +1,9 @@
-function [Lc,Mc,Nc,Zc] = getMomentsAndZForce(uasState, goToE, lookAtE)
+function [Lc,Mc,Nc,Zc] = getMomentsAndZForce(simParams, uasState, goToE, lookAtE)
     % Determines the various control forces and moments based on where the
     % UAS thinks it is, where it is trying to go, etc. Uses a PD-like
     % control scheme with certain limits/clamps
     arguments(Input)
+        simParams (1,1) SimParams
         uasState (12,1) double
         goToE (3,1) double
         lookAtE (2,1) double
@@ -13,8 +14,6 @@ function [Lc,Mc,Nc,Zc] = getMomentsAndZForce(uasState, goToE, lookAtE)
         Nc (1,1) double
         Zc (1,1) double
     end
-
-    global simParams;
     
     z = uasState(3);
     u = uasState(7);
@@ -25,8 +24,8 @@ function [Lc,Mc,Nc,Zc] = getMomentsAndZForce(uasState, goToE, lookAtE)
     r = uasState(12);
 
     uasPosE = uasState(1:3);
-    RB2E = getRB2E(uasState);
-    RE2B = RB2E^-1;
+    RB2E = getDcmUas2Enu(uasState);
+    RE2B = RB2E';
     
     headingB = [1;0;0];
     headingE = RB2E*headingB;
@@ -45,10 +44,10 @@ function [Lc,Mc,Nc,Zc] = getMomentsAndZForce(uasState, goToE, lookAtE)
     fromUasToGoToE = goToE - uasPosE;
     fromUasToGoToB = RE2B*fromUasToGoToE;
 
-    Lc = 2000*rollError-80*v-200*p+140*clamp(fromUasToGoToB(2),-5,5);
-    Mc = 2000*pitchError+80*u-200*q-140*clamp(fromUasToGoToB(1),-5,5);
-    Nc = -1200*yawError-200*r;
-    Zc = -9.81/cos(pitchError)/cos(rollError)+2*-clamp(z+simParams.targetUasHeight,-5,5)-4*clamp(w,-1,1);
+    Lc = 2000*rollError-200*v-500*p+140*clamp(fromUasToGoToB(2),-5,5);
+    Mc = 2000*pitchError+200*u-500*q-140*clamp(fromUasToGoToB(1),-5,5);
+    Nc = -1200*yawError-400*r;
+    Zc = -9.81/cos(pitchError)/cos(rollError)+2*-5*clamp(z-goToE(3),-0.5,0.5)-4*clamp(w,-1,1);
 
     Lc = clamp(Lc,-simParams.LMNmax,simParams.LMNmax);
     Mc = clamp(Mc,-simParams.LMNmax,simParams.LMNmax);

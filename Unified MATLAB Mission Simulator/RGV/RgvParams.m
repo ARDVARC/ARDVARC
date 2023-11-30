@@ -3,7 +3,7 @@ classdef RgvParams
     % each run to alter how the RGV(s) move. This should prevent the need
     % to recompile for small parameter tweaks
     properties
-        speed (1,1) double = 0.5;               % [m/s] The speed of the RGV whenever it is moving
+        speed (1,1) double = 1;                 % [m/s] The speed of the RGV whenever it is moving
         turningRadius (1,1) double = 4;         % [m] The radius of the circle that the arcing RGV follows 
         uTurnRadius (1,1) double = 2;           % [m] The radius of the circle that the u-turning RGV follows 
         waitTimeMin (1,1) double = 90;          % [s] The minimum amount of time that a single wait step should last

@@ -1,43 +1,42 @@
-function dTrueState = equationsOfMotion(trueUasState, Lc, Mc, Nc, Zc)
+function vec_dTrueState = equationsOfMotion(simParams, vec_trueUasState, Lc, Mc, Nc, Zc)
     % Calculates the rate of change of a UAS state based on the current UAS
     % state and information that can be used to determine the control
     % forces
     arguments(Input)
-        trueUasState (12,1) double
+        simParams (1,1) SimParams
+        vec_trueUasState (12,1) double
         Lc (1,1) double
         Mc (1,1) double
         Nc (1,1) double
         Zc (1,1) double
     end
     arguments(Output)
-        dTrueState (12,1) double    % Rate of change for UAS state
+        vec_dTrueState (12,1) double    % Rate of change for UAS state
     end
 
-    global simParams;
+    phi = vec_trueUasState(4);
+    theta = vec_trueUasState(5);
+    psi = vec_trueUasState(6);
+    vec_uvw_uas = vec_trueUasState(7:9);
+    p = vec_trueUasState(10);
+    q = vec_trueUasState(11);
+    r = vec_trueUasState(12);
+    vec_pqr_uas = vec_trueUasState(10:12);
 
-    phi = trueUasState(4);
-    theta = trueUasState(5);
-    psi = trueUasState(6);
-    uvw = trueUasState(7:9);
-    p = trueUasState(10);
-    q = trueUasState(11);
-    r = trueUasState(12);
-    pqr = trueUasState(10:12);
+    dcm_uas2enu = getDcmUas2Enu(vec_trueUasState);
+    trix_rotDyn = [1,sin(phi)*tan(theta),cos(phi)*tan(theta);
+                   0,cos(phi)           ,-sin(phi)          ;
+                   0,sin(phi)*sec(theta),cos(phi)*sec(theta)];
+    vec_xyzdot_enu = dcm_uas2enu*vec_uvw_uas;
 
-    RB2E = getRB2E(trueUasState);
-    rotDynMat = [1,sin(phi)*tan(theta),cos(phi)*tan(theta);
-                 0,cos(phi)           ,-sin(phi)          ;
-                 0,sin(phi)*sec(theta),cos(phi)*sec(theta)];
-    xyzdot = RB2E*uvw;
+    vec_phithetapsidot_enu = trix_rotDyn*vec_pqr_uas;
 
-    phithetapsidot = rotDynMat*pqr;
-
-    gravDir = [-sin(theta);cos(theta)*sin(phi);cos(theta)*cos(phi)];
+    vec_gravDir_uas = [-sin(theta);cos(theta)*sin(phi);cos(theta)*cos(phi)];
     % TODO - Aerodynamic forces
-    uvwdot = cross(uvw,pqr) + 9.81*gravDir + [0;0;Zc]/simParams.m;
+    vec_uvwdot_uas = cross(vec_uvw_uas,vec_pqr_uas) + 9.81*vec_gravDir_uas + [0;0;Zc]/simParams.m;
     
     % TODO - Aerodynamic moments
-    pqrdot = [(simParams.Iy-simParams.Iz)/simParams.Ix*q*r;(simParams.Iz-simParams.Ix)/simParams.Iy*p*r;(simParams.Ix-simParams.Iy)/simParams.Iz*p*q] + [Lc/simParams.Ix;Mc/simParams.Iy;Nc/simParams.Iz];
+    vec_pqrdot_uas = [(simParams.Iy-simParams.Iz)/simParams.Ix*q*r;(simParams.Iz-simParams.Ix)/simParams.Iy*p*r;(simParams.Ix-simParams.Iy)/simParams.Iz*p*q] + [Lc/simParams.Ix;Mc/simParams.Iy;Nc/simParams.Iz];
 
-    dTrueState = [xyzdot;phithetapsidot;uvwdot;pqrdot];
+    vec_dTrueState = [vec_xyzdot_enu;vec_phithetapsidot_enu;vec_uvwdot_uas;vec_pqrdot_uas];
 end
