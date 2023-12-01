@@ -69,9 +69,9 @@ function orbitMonteCarlo(monteParams, params)
         fig1plots(i) = plot(orbitDistances,trix_twoDRMS(i,:),Marker=".",DisplayName=sprintf("%.2f Degree STD", angleStdDegs(i)));
     end
     yline(1, "w")
-    text(monteParams.maxOrbitDistance * 1.01, 1, ["Coarse","Target"])
+    text(monteParams.maxOrbitDistance * 1.01, 1, ["Fine","Target"])
     yline(2, "w")
-    text(monteParams.maxOrbitDistance * 1.01, 2, ["Fine","Target"])
+    text(monteParams.maxOrbitDistance * 1.01, 2, ["Coarse","Target"])
     xlabel("Orbit Distance [m]")
     ylabel("Estimate 2DRMS [m]")
     title("RGV Position Estimate Error 2DRMS")

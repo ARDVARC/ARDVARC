@@ -8,7 +8,7 @@ classdef OrbAzMonteParams
         maxAngleStdDeg (1,1) double = 25;       % [deg] The maximum pointing angle error (std) to test
         angleStdGapDeg (1,1) double = 5;       % [deg] The size of the gap between each tested pointing angle error (std)
         sameSeedForAll (1,1) logical = false;  % Whether or not to use the same random seed for each trial
-        trialsPerCase (1,1) double = 1000;
+        trialsPerCase (1,1) double = 5000;
     end
 end
 
