@@ -1,22 +1,35 @@
 classdef OrbAzParams
     % Describes the UAS orbit and sensor details
     properties
-        seed (1,1) double;                 % Seed for rng, set in constructor
-        duration (1,1) double = 30;        % [s] How long the orbit takes
-        orbitDistance (1,1) double = 10;   % [m] How far away (ground distance) the UAS orbits the RGV
-        height (1,1) double = 10;          % [m] How far up the UAS orbits (AGL)
-        heightStd (1,1) double = 0;        % [m] Standard deviation of orbit height
-        angleStdDeg (1,1) double = 3;      % [deg] Standard deviation of sensor pointing angle error
-        sampleRate (1,1) double = 1;       % [Hz] How often the sensor measures
-        orbitCount (1,1) double = 1;       % How many orbits the UAS should do per duration
-        use2DcostFunction (1,1) logical = true  % Whether to use the 2D cost function to estimate the RGV position. If false, uses 3D cost function
+        % Seed for rng, set in constructor
+        seed (1,1) double;
+        % [s] How long the orbit takes
+        duration (1,1) double = 60;
+        % [m] How far away (ground distance) the UAS orbits the RGV
+        orbitDistance (1,1) double = 10;
+        % [m] How far up the UAS orbits (AGL)
+        height (1,1) double = 10;
+        % [m] Standard deviation of orbit height
+        heightStd (1,1) double = 0;
+        % [deg] Standard deviation of sensor pointing angle error
+        angleStdDeg (1,1) double = 2;
+        % [Hz] How often the sensor measures
+        sampleRate (1,1) double = 5;
+        % How many orbits the UAS should do per duration
+        orbitCount (1,1) double = 1;
+        % Which cost funciton to use
+        costFunction (1,1) CostFunctionEnum = CostFunctionEnum.TwoDMoving
     end
 
     properties(Dependent)
-        orbitSpeed (1,1) double            % [m/s] How fast the UAS should be going
-        orbitAngularSpeed (1,1) double     % [m/s] How fast the UAS should be going (but angular)
-        angleStdRad (1,1) double           % [rad] Standard deviation of sensor pointing angle error (but radians)
-        sampleCount (1,1) double           % How many samples will be taken over the entire duration
+        % [m/s] How fast the UAS should be going
+        orbitSpeed (1,1) double
+        % [m/s] How fast the UAS should be going (but angular)
+        orbitAngularSpeed (1,1) double
+        % [rad] Standard deviation of sensor pointing angle error (but radians)
+        angleStdRad (1,1) double
+        % How many samples will be taken over the entire duration
+        sampleCount (1,1) double
     end
 
     methods

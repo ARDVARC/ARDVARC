@@ -8,6 +8,8 @@ function orbitMonteCarlo(monteParams, params)
     end
 
     close all
+
+    assert(params.costFunction ~= CostFunctionEnum.TwoDMoving)
     
     % Determine the range and number of orbital distances and angle errors
     % to test
@@ -31,7 +33,7 @@ function orbitMonteCarlo(monteParams, params)
         for j = 1:orbitDistanceCount
             for k = 1:monteParams.trialsPerCase
                 params.orbitDistance = orbitDistances(j);
-                [~, ~, ~, trix4_vec_predictedRgvLocation_enu(:,i,j,k)] = getDataForParams(params);
+                [~, ~, ~, ~, ~, ~, trix4_vec_predictedRgvLocation_enu(:,i,j,k)] = getDataForParams(params);
                 if (~monteParams.sameSeedForAll)
                     params.seed = randi(intmax);
                 end
