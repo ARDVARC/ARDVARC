@@ -1,24 +1,4 @@
-function sliderCallback(ax, time, vec_sampleTimes, trix_vec_rgvPosition_enu, trix_vec_samplePosition_enu, trix_vec_truePointingVec_enu, trix_vec_sensorPointingVec_enu, vec_predictionTimes, trix_vec_predictedRgvLocationAtPredictionTime_enu, params)
-    persistent timeOfLastCall
-
-    if (isempty(timeOfLastCall))
-        timeOfLastCall = datetime("now");
-    end
-
-    if ((datetime("now") - timeOfLastCall) < duration(0,0,0,500))
-        return
-    else
-        timeOfLastCall = datetime("now");
-    end
-
-
-    cla(ax)
-    trix_vec_allPoints_enu = [trix_vec_rgvPosition_enu;trix_vec_samplePosition_enu;trix_vec_predictedRgvLocationAtPredictionTime_enu];
-    axis(ax,"equal")
-    xlim(ax,[min(trix_vec_allPoints_enu(:,1)), max(trix_vec_allPoints_enu(:,1))])
-    ylim(ax,[min(trix_vec_allPoints_enu(:,2)), max(trix_vec_allPoints_enu(:,2))])
-    zlim(ax,[min(trix_vec_allPoints_enu(:,3)), max(trix_vec_allPoints_enu(:,3))])
-
+function sliderCallback(ax, time, vec_sampleTimes, trix_vec_rgvPosition_enu, trix_vec_samplePosition_enu, vec_predictionTimes, trix_vec_predictedRgvLocationAtPredictionTime_enu, uasPlot, rgvTruePlot, rgvSplinePlot, timeVaryingPlots, params)
     indexOfSampleTimeBefore = find(vec_sampleTimes<=time-2,1,"last");
     if (isempty(indexOfSampleTimeBefore))
         indexOfSampleTimeBefore = 1;
@@ -38,8 +18,22 @@ function sliderCallback(ax, time, vec_sampleTimes, trix_vec_rgvPosition_enu, tri
 
     trix_vec_rgvPosition_enu = trix_vec_rgvPosition_enu(indexOfSampleTimeBefore:indexOfSampleTimeAfter,:);
     trix_vec_samplePosition_enu = trix_vec_samplePosition_enu(indexOfSampleTimeBefore:indexOfSampleTimeAfter,:);
-    trix_vec_truePointingVec_enu = trix_vec_truePointingVec_enu(indexOfSampleTimeBefore:indexOfSampleTimeAfter,:);
-    trix_vec_sensorPointingVec_enu = trix_vec_sensorPointingVec_enu(indexOfSampleTimeBefore:indexOfSampleTimeAfter,:);
     trix_vec_predictedRgvLocationAtPredictionTime_enu = trix_vec_predictedRgvLocationAtPredictionTime_enu(indexOfPredictionTimeBefore:indexOfPredictionTimeAfter,:);
-    plotOrbitFromData(ax, trix_vec_rgvPosition_enu, trix_vec_samplePosition_enu, trix_vec_truePointingVec_enu, trix_vec_sensorPointingVec_enu, trix_vec_predictedRgvLocationAtPredictionTime_enu, params)
+
+    set(uasPlot, "XData", trix_vec_samplePosition_enu(:,1), "YData", trix_vec_samplePosition_enu(:,2), "ZData", trix_vec_samplePosition_enu(:,3))
+    set(rgvTruePlot, "XData", trix_vec_rgvPosition_enu(:,1), "YData", trix_vec_rgvPosition_enu(:,2), "ZData", trix_vec_rgvPosition_enu(:,3))
+    set(rgvSplinePlot, "XData", trix_vec_predictedRgvLocationAtPredictionTime_enu(:,1), "YData", trix_vec_predictedRgvLocationAtPredictionTime_enu(:,2), "ZData", trix_vec_predictedRgvLocationAtPredictionTime_enu(:,3))
+    
+    for i = 1:params.sampleCount
+        if (indexOfSampleTimeBefore <= i && indexOfSampleTimeAfter >= i)
+            visibility = "on";
+        else
+            visibility = "off";
+        end
+        timeVaryingPlots(i,1).Visible = visibility;
+        timeVaryingPlots(i,2).Visible = visibility;
+        timeVaryingPlots(i,3).Visible = visibility;
+        timeVaryingPlots(i,4).Visible = visibility;
+    end
+    drawnow
 end
