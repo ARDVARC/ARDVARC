@@ -6,6 +6,6 @@ function plotOrbitFromParams(params, zoomOnBottom)
         zoomOnBottom (1,1) logical = false;
     end
 
-    [trix_vec_samplePosition_enu, trix_vec_truePointingVec_enu, trix_vec_sensorPointingVec_enu, bestGuess, ~] = getDataForParams(params);
-    plotOrbitFromData(trix_vec_samplePosition_enu, trix_vec_truePointingVec_enu, trix_vec_sensorPointingVec_enu, bestGuess, params, zoomOnBottom)
+    [trix_vec_samplePosition_enu, trix_vec_truePointingVec_enu, trix_vec_sensorPointingVec_enu, vec_predictedRgvLocation_enu] = getDataForParams(params);
+    plotOrbitFromData(trix_vec_samplePosition_enu, trix_vec_truePointingVec_enu, trix_vec_sensorPointingVec_enu, vec_predictedRgvLocation_enu, params, zoomOnBottom)
 end
