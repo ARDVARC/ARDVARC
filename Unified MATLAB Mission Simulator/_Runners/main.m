@@ -7,6 +7,7 @@ function main(simParams)
     end
 
     close all;
+    fprintf("Simulating... [RGV 1 Seed: %i, RGV 2 Seed: %i]\n", simParams.rgv1Seed, simParams.rgv2Seed)
 
     rgv1 = makeRgvFromSeed(simParams.rgvParams, simParams.rgv1Seed, simParams.vec_rgv1startPos_en, simParams.rgv1startYawAngle, simParams.duration, simParams.missionAreaHalfWidth);
     rgv2 = makeRgvFromSeed(simParams.rgvParams, simParams.rgv2Seed, simParams.vec_rgv2startPos_en, simParams.rgv2startYawAngle, simParams.duration, simParams.missionAreaHalfWidth);
@@ -17,12 +18,10 @@ function main(simParams)
 
     truthData.trix_vec_uasStates = interp1(rawTruthData.vec_times,rawTruthData.trix_vec_uasStates,vec_sampleTimes);
     truthData.vec_times = vec_sampleTimes;
-
     truthData.trix_vec_rgv1Positions_enu = zeros(3,sampleCount);
     truthData.trix_vec_rgv2Positions_enu = zeros(3,sampleCount);
     truthData.vec_rgv1MovementTypes = zeros(1,sampleCount,"int8");
     truthData.vec_rgv2MovementTypes = zeros(1,sampleCount,"int8");
-
     for i = 1:sampleCount
         time = truthData.vec_times(i);
         [truthData.trix_vec_rgv1Positions_enu(1:2,i), ~, truthData.vec_rgv1MovementTypes(i)] = getRgvStateAtTime(simParams.rgvParams, rgv1, time);

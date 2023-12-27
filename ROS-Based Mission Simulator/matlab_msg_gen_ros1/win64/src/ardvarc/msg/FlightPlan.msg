@@ -1,0 +1,3 @@
+Point go_to_center
+float64 orbit_radius
+Point look_at

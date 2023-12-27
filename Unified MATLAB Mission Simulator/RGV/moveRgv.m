@@ -2,18 +2,18 @@ function [vec_newPos_en, newYawAngle] = moveRgv(rgvParams, time, startTime, vec_
     % Moves an RGV from some specified starting state for some specified
     % amount of time following a specfied movement type. Returns the final
     % state of the moved RGV.
-    arguments(Input)
-        rgvParams (1,1) RgvParams
-        time (1,1) double
-        startTime (1,1) double
-        vec_startPos_en (2,1) double
-        startYawAngle (1,1) double
-        movementType (1,1) RgvMovementType
-    end
-    arguments(Output)
-        vec_newPos_en (2,1) double
-        newYawAngle (1,1) double
-    end
+    % arguments(Input)
+    %     rgvParams (1,1) RgvParams
+    %     time (1,1) double
+    %     startTime (1,1) double
+    %     vec_startPos_en (2,1) double
+    %     startYawAngle (1,1) double
+    %     movementType (1,1) RgvMovementType
+    % end
+    % arguments(Output)
+    %     vec_newPos_en (2,1) double
+    %     newYawAngle (1,1) double
+    % end
 
     switch(movementType)
         case RgvMovementType.Straight

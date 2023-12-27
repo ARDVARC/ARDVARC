@@ -7,32 +7,37 @@ classdef SimParams
         missionAreaHalfWidth = 22.86;
 
         % UAS Physical Properties
-        m = 1;
-        Ix = 1;
-        Iy = 1;
-        Iz = 0.5;
-        LMNmax = 10;
-        Zmax = 50;
+        m = 5.3063;
+        Ix = 5.3063 * 0.3475^2 / 4;
+        Iy = 5.3063 * 0.3475^2 / 4;
+        Iz = 5.3063 * 0.3475^2 / 2;
+        LMNmax = 22.63 * 0.3475;
+        Zmax = 73.54;
         
         % UAS Control Parameters
         targetUasHeight = 10;
         targetRgvTrailDistance = 1;
         flightPlanRate = 1;
         orbitDuration = 30;
-        orbitRadius = 2;
+        orbitRadius = 3;
+        jointFocusTime = 30;
+        localizeTargetDuration = 90;
+        localizeMinDuration = 60;
+
+        % RGV Location Prediction
+        splineCount = 3;
+        nodeGap = 8;
+        stillSpeedTolerance = 0.3;
 
         % UAS Sensor Parameters
         bluetoothRate = 5;
         bluetoothAngleStdRad = deg2rad(5);
-
-        % Mission Parameters
-        idealJointDuration = 20;
         dcm_bluetooth2uas = eul2rotm([pi, 0.2, 0.2]);
-
+        
         % Simulation Parameters
         rgv1Seed (1,1) double 
         rgv2Seed (1,1) double
-        duration (1,1) double = 10*60;
+        duration (1,1) double = 15*60;
         sampleRate = 10;
         vec_uasStartState (12,1) double;
         vec_rgv1startPos_en (2,1) double;

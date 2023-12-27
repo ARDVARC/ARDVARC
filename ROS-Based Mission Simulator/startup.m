@@ -1,0 +1,2 @@
+addpath("Nodes\")
+addpath('C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\install\m')

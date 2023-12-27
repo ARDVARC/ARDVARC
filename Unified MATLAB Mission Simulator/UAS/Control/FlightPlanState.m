@@ -1,9 +1,11 @@
 classdef FlightPlanState < int8
     enumeration
-        TrailRGV1(0)
-        OrbitRGV1(1)
-        TrailRGV2(2)
+        GoHome(1)
+        OrbitRGV1(2)
         OrbitRGV2(3)
-        Joint(4)
+        TrailRGV1(4)
+        TrailRGV2(5)
+        JointFocusRGV1(6)
+        JointFocusRGV2(7)
     end
 end

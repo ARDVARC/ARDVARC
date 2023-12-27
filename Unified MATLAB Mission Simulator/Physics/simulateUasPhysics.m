@@ -1,15 +1,15 @@
 function [vec_time, trix_vec_trueUasState] = simulateUasPhysics(simParams, vec_goToCenter_enu, vec_lookAt_enu, orbitRadius, startTime, endTime, vec_trueUasStartState)
     % Uses ode45 to simulate the physics of the UAS over a specified time
     % period and under specified initial conditions
-    arguments(Input)
-        simParams (1,1) SimParams
-        vec_goToCenter_enu (3,1) double
-        vec_lookAt_enu (2,1) double
-        orbitRadius (1,1) double
-        startTime (1,1) double
-        endTime (1,1) double
-        vec_trueUasStartState (12,1) double
-    end
+    % arguments(Input)
+    %     simParams (1,1) SimParams
+    %     vec_goToCenter_enu (3,1) double
+    %     vec_lookAt_enu (2,1) double
+    %     orbitRadius (1,1) double
+    %     startTime (1,1) double
+    %     endTime (1,1) double
+    %     vec_trueUasStartState (12,1) double
+    % end
     opts = odeset("AbsTol",1e-6);
     [vec_time, trix_vec_trueUasState] = ode45(@(t,vec_trueUasState) ode45Inner(t, vec_trueUasState, simParams, vec_goToCenter_enu, vec_lookAt_enu, orbitRadius), [startTime endTime], vec_trueUasStartState, opts);
 

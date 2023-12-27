@@ -11,11 +11,9 @@ addpath("_Runners")
 disp("Paths added by startup.m")
 
 % Add example sim params to workspace
-global simParams;
 sp_1_2 = SimParams();
 sp_1_2.rgv1Seed = 1;
 sp_1_2.rgv2Seed = 2;
-simParams = sp_1_2;
 sp_quick = SimParams();
 sp_quick.rgv1Seed = 2;
 sp_quick.rgv2Seed = 3;

@@ -1,6 +1,4 @@
-function animateSimulation2D()
-    close all force;
-    
+function animateSimulation2D()    
     frameRate = 5;
     playbackRate = 5;
     mainPixelRadius = 2;
@@ -11,10 +9,11 @@ function animateSimulation2D()
     if inputFile == 0
         return
     end
-    load([inputPath,inputFile]);
+    load([inputPath,inputFile],"truthData","sensorData","predictorData","simParams");
     
     truthDataIndex = 1;
     sensorIndex = 1;
+    predictorIndex = 1;
 
     vec_frameTimes = 0:(1/frameRate):simParams.duration;
     frameCount = length(vec_frameTimes);
@@ -30,10 +29,20 @@ function animateSimulation2D()
     trix_vec_uasPositionsScaled_en = (truthData.trix_vec_uasStates(:,1:2)'/simParams.missionAreaHalfWidth+1)/2;
     trix_vec_uasPositionsScaled_en(1,:) = round(trix_vec_uasPositionsScaled_en(1,:)*(res(1)-1))+1;
     trix_vec_uasPositionsScaled_en(2,:) = round(trix_vec_uasPositionsScaled_en(2,:)*(res(2)-1))+1;
-    trix3_vec_rgvPositionEstimatesScaled_en = (sensorData.trix3_vec_rgvPositionEstimate_enu(1:2,:,:)/simParams.missionAreaHalfWidth+1)/2;
-    trix3_vec_rgvPositionEstimatesScaled_en(1,:,:) = max(min(round(trix3_vec_rgvPositionEstimatesScaled_en(1,:,:)*(res(1)-1))+1,res(1)),1);
-    trix3_vec_rgvPositionEstimatesScaled_en(2,:,:) = max(min(round(trix3_vec_rgvPositionEstimatesScaled_en(2,:,:)*(res(2)-1))+1,res(2)),1);
-
+    trix3_vec_rgvMeasurementsScaled_en = (sensorData.trix3_vec_rgvPositionMeasurement_enu(1:2,:,:)/simParams.missionAreaHalfWidth+1)/2;
+    trix3_vec_rgvMeasurementsScaled_en(1,:,:) = max(min(round(trix3_vec_rgvMeasurementsScaled_en(1,:,:)*(res(1)-1))+1,res(1)),1);
+    trix3_vec_rgvMeasurementsScaled_en(2,:,:) = max(min(round(trix3_vec_rgvMeasurementsScaled_en(2,:,:)*(res(2)-1))+1,res(2)),1);
+    trix4_vec_rgvPredictionsScaled_en = (predictorData.trix4_splineVars(:,:,:,:)/simParams.missionAreaHalfWidth+1)/2;
+    trix4_vec_rgvPredictionsScaled_en(:,1,:,:) = max(min(round(trix4_vec_rgvPredictionsScaled_en(:,1,:,:)*(res(1)-1))+1,res(1)),1);
+    trix4_vec_rgvPredictionsScaled_en(:,2,:,:) = max(min(round(trix4_vec_rgvPredictionsScaled_en(:,2,:,:)*(res(2)-1))+1,res(2)),1);
+    trix_vec_goTo_en = predictorData.trix_vec_goToCenter_enu(1:2,:) + predictorData.vec_orbitRadius.*[-cos(2*pi*predictorData.vec_times/simParams.orbitDuration);sin(2*pi*predictorData.vec_times/simParams.orbitDuration)];
+    trix_vec_goTo_en = (trix_vec_goTo_en/simParams.missionAreaHalfWidth+1)/2;
+    trix_vec_goTo_en(1,:) = max(min(round(trix_vec_goTo_en(1,:)*(res(1)-1))+1,res(1)),1);
+    trix_vec_goTo_en(2,:) = max(min(round(trix_vec_goTo_en(2,:)*(res(2)-1))+1,res(2)),1);
+    trix_vec_lookAt_en = (predictorData.trix_vec_lookAt_en/simParams.missionAreaHalfWidth+1)/2;
+    trix_vec_lookAt_en(1,:) = max(min(round(trix_vec_lookAt_en(1,:)*(res(1)-1))+1,res(1)),1);
+    trix_vec_lookAt_en(2,:) = max(min(round(trix_vec_lookAt_en(2,:)*(res(2)-1))+1,res(2)),1);
+    
     defaultOutputFile = strrep(strrep(inputFile,"SimData","SimVid"),".mat",".mj2");
     [outputFile,outputPath] = uiputfile(".mj2","Save Simulation Video", defaultOutputFile);
     if outputFile == 0
@@ -70,20 +79,23 @@ function animateSimulation2D()
     for i = 1:frameCount
         time = vec_frameTimes(i);
 
-        while truthDataIndex < length(truthData.vec_times) && truthData.vec_times(truthDataIndex) <= time
+        while truthDataIndex < length(truthData.vec_times) && truthData.vec_times(truthDataIndex+1) <= time
             truthDataIndex = truthDataIndex + 1;
         end
-        while sensorIndex < length(sensorData.vec_times) && sensorData.vec_times(sensorIndex) <= time
+        while sensorIndex < length(sensorData.vec_times) && sensorData.vec_times(sensorIndex+1) <= time
             sensorIndex = sensorIndex + 1;
+        end
+        while predictorIndex < length(predictorData.vec_times) && predictorData.vec_times(predictorIndex+1) <= time
+            predictorIndex = predictorIndex + 1;
         end
 
         frame = zeros([res,3],"uint8");
 
-        for j = max(1, sensorIndex-simParams.bluetoothRate*2):sensorIndex
-            frame = paintFrame(frame,trix3_vec_rgvPositionEstimatesScaled_en(:,1,j),sensorPixelRadius,1,127);
-            frame = paintFrame(frame,trix3_vec_rgvPositionEstimatesScaled_en(:,2,j),sensorPixelRadius,3,127);
+        for j = max(1, sensorIndex-1-simParams.splineCount*simParams.nodeGap*simParams.bluetoothRate):sensorIndex
+            frame = paintFrame(frame,trix3_vec_rgvMeasurementsScaled_en(:,1,j),sensorPixelRadius,1,127);
+            frame = paintFrame(frame,trix3_vec_rgvMeasurementsScaled_en(:,2,j),sensorPixelRadius,3,127);
         end
-        for j = max(1, truthDataIndex-simParams.sampleRate):max(1, truthDataIndex-1)
+        for j = max(1, truthDataIndex-1-simParams.splineCount*simParams.nodeGap*simParams.sampleRate):max(1, truthDataIndex-1)
             frame = paintFrame(frame,trix_vec_rgv1PositionsScaled_en(:,j),trailPixelRadius,1,255);
             frame = paintFrame(frame,trix_vec_uasPositionsScaled_en(:,j),trailPixelRadius,2,255);
             frame = paintFrame(frame,trix_vec_rgv2PositionsScaled_en(:,j),trailPixelRadius,3,255);
@@ -94,7 +106,12 @@ function animateSimulation2D()
             frame = paintFrame(frame,trix_vec_rgv2PositionsScaled_en(:,j),mainPixelRadius,3,255);
         end
 
-        dcm_uas2enu = getDcmUas2Enu(truthData.trix_vec_uasStates(truthDataIndex,:));
+        phi = truthData.trix_vec_uasStates(truthDataIndex,4);
+        theta = truthData.trix_vec_uasStates(truthDataIndex,5);
+        psi = truthData.trix_vec_uasStates(truthDataIndex,6);
+        dcm_uas2enu = [cos(theta)*cos(psi),sin(phi)*sin(theta)*cos(psi)-cos(phi)*sin(psi),cos(phi)*sin(theta)*cos(psi)+sin(phi)*sin(psi);
+                       cos(theta)*sin(psi),sin(phi)*sin(theta)*sin(psi)+cos(phi)*cos(psi),cos(phi)*sin(theta)*sin(psi)-sin(phi)*cos(psi);
+                       -sin(theta)        ,sin(phi)*cos(theta)                           ,cos(phi)*cos(theta)                           ];
         trix_vec_cameraBitsPointing_enu = dcm_uas2enu * trix_vec_cameraBitsPointing_uas;
 
         vec_coeff = -truthData.trix_vec_uasStates(truthDataIndex,3)./trix_vec_cameraBitsPointing_enu(3,:);
@@ -107,6 +124,18 @@ function animateSimulation2D()
             frame = paintFrame(frame,trix_vec_cameraGroundPointScaled_en(:,j),sensorPixelRadius,1:3,127);
         end
 
+        if predictorIndex ~= 1
+            for j = 1:simParams.splineCount
+                frame = paintFrame(frame,trix4_vec_rgvPredictionsScaled_en(j,:,1,predictorIndex),sensorPixelRadius,[1,3],191);
+                frame = paintFrame(frame,trix4_vec_rgvPredictionsScaled_en(j,:,2,predictorIndex),sensorPixelRadius,[1,3],191);
+            end
+            frame = paintFrame(frame,trix4_vec_rgvPredictionsScaled_en(simParams.splineCount+1,:,1,predictorIndex),mainPixelRadius,[1,3],191);
+            frame = paintFrame(frame,trix4_vec_rgvPredictionsScaled_en(simParams.splineCount+1,:,2,predictorIndex),mainPixelRadius,[1,3],191);
+        end
+
+        frame = paintFrame(frame,trix_vec_goTo_en(:,predictorIndex),sensorPixelRadius,1:2,127);
+        frame = paintFrame(frame,trix_vec_lookAt_en(:,predictorIndex),sensorPixelRadius,2:3,127);
+        
         writeVideo(v,frame);
         waitbar(i/frameCount,wb);
     end

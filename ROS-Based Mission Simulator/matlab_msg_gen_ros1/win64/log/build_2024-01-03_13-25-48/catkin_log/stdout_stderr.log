@@ -1,0 +1,145 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.8.2
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x86_x64'
+-- The C compiler identification is MSVC 19.38.33130.0
+-- The CXX compiler identification is MSVC 19.38.33130.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.38.33130/bin/Hostx86/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.38.33130/bin/Hostx86/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Using CATKIN_DEVEL_PREFIX: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/devel
+-- Using CMAKE_PREFIX_PATH: C:\Program Files\MATLAB\R2023b\sys\ros1\win64\ros1;C:/Program Files/MATLAB/R2023b/toolbox/ros/mlroscpp/custom_messages
+-- This workspace overlays: C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1;C:/Program Files/MATLAB/R2023b/toolbox/ros/mlroscpp/custom_messages
+-- Found PythonInterp: C:/Users/aidan/AppData/Local/Microsoft/WindowsApps/python3.exe (found suitable version "3.10.11", minimum required is "3") 
+-- Using PYTHON_EXECUTABLE: C:/Users/aidan/AppData/Local/Microsoft/WindowsApps/python3.exe
+-- Using default Python package layout
+-- Found PY_em: C:\Users\aidan\AppData\Roaming\MATHWO~1\MATLAB\R2023b\ros1\win64\venv\lib\site-packages\em.py  
+-- Using empy: C:/Users/aidan/AppData/Roaming/MATHWO~1/MATLAB/R2023b/ros1/win64/venv/lib/site-packages/em.py
+-- Using CATKIN_ENABLE_TESTING: off
+-- catkin 0.8.10
+-- BUILD_SHARED_LIBS is on
+The system cannot find the batch label specified - GenerateTempFilename
+-- BUILD_SHARED_LIBS is on
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- ~~  traversing 1 packages in topological order:
+-- ~~  - ardvarc
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- +++ processing catkin package: 'ardvarc'
+-- ==> add_subdirectory(ardvarc)
+CMake Warning at C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/genmsg/cmake/genmsg-extras.cmake:49 (message):
+  Unknown message generator specified in ROS_LANG_DISABLE: geneus
+Call Stack (most recent call first):
+  C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/genmsg/cmake/genmsgConfig.cmake:222 (include)
+  C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/gencpp/cmake/gencppConfig.cmake:197 (find_package)
+  C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/message_generation/cmake/message_generationConfig.cmake:197 (find_package)
+  C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/catkin/cmake/catkinConfig.cmake:76 (find_package)
+  ardvarc/CMakeLists.txt:24 (find_package)
+
+
+CMake Warning at C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/genmsg/cmake/genmsg-extras.cmake:49 (message):
+  Unknown message generator specified in ROS_LANG_DISABLE: genlisp
+Call Stack (most recent call first):
+  C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/genmsg/cmake/genmsgConfig.cmake:222 (include)
+  C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/gencpp/cmake/gencppConfig.cmake:197 (find_package)
+  C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/message_generation/cmake/message_generationConfig.cmake:197 (find_package)
+  C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/catkin/cmake/catkinConfig.cmake:76 (find_package)
+  ardvarc/CMakeLists.txt:24 (find_package)
+
+
+CMake Warning at C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/genmsg/cmake/genmsg-extras.cmake:49 (message):
+  Unknown message generator specified in ROS_LANG_DISABLE: gennodejs
+Call Stack (most recent call first):
+  C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/genmsg/cmake/genmsgConfig.cmake:222 (include)
+  C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/gencpp/cmake/gencppConfig.cmake:197 (find_package)
+  C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/message_generation/cmake/message_generationConfig.cmake:197 (find_package)
+  C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/catkin/cmake/catkinConfig.cmake:76 (find_package)
+  ardvarc/CMakeLists.txt:24 (find_package)
+
+
+-- Using these message generators: gencpp;genpy
+-- ardvarc: 1 messages, 0 services
+-- Configuring done
+-- Generating done
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    Boost_NAMESPACE
+
+
+-- Build files have been written to: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/build
+[1/9] cmd.exe /C "cd /D "C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\build\ardvarc" && "C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\build\catkin_generated\env_cached.bat" C:/Users/aidan/AppData/Local/Microsoft/WindowsApps/python3.exe "C:/Program Files/MATLAB/R2023b/sys/ros1/win64/ros1/share/genmsg/cmake/../../../lib/genmsg/genmsg_check_deps.py" ardvarc "C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/src/ardvarc/msg/FlightPlan.msg" geometry_msgs/Point"
+[2/9] Generating Python from MSG ardvarc/FlightPlan
+[3/9] Generating C++ code from ardvarc/FlightPlan.msg
+[4/9] Generating Python msg __init__.py for ardvarc
+[5/9] Building CXX object CMakeFiles\Project__setup_util.py_exec_install_python.dir\f81e684fb9e4ff71439b2914814ce514\_setup_util.cpp.obj
+[6/9] Linking CXX executable catkin_generated\windows_wrappers\Project__setup_util.py_exec_install_python\_setup_util.exe
+[7/9] Building CXX object ardvarc\CMakeFiles\ardvarc_matlab.dir\src\ardvarc_FlightPlan_message.cpp.obj
+C:\Program Files\MATLAB\R2023b\sys\ros1\win64\ros1\boost\include\boost-1_78\boost/bind.hpp(77): note: The practice of declaring the Bind placeholders (_1, _2, ...) in the global namespace is deprecated. Please use <boost/bind/bind.hpp> + using namespace mwboost::placeholders, or define BOOST_BIND_GLOBAL_PLACEHOLDERS to retain the current behavior.
+[8/9] Linking CXX shared library "C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\devel\bin\ardvarc_matlab.dll"
+[8/9] Install the project...
+-- Install configuration: "Release"
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/_setup_util.py
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/_setup_util.exe
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/env.bat
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/setup.bat
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/local_setup.bat
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/.rosinstall
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/share/ardvarc/msg/FlightPlan.msg
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/share/ardvarc/cmake/ardvarc-msg-paths.cmake
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/include/ardvarc
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/include/ardvarc/FlightPlan.h
+Listing 'C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/devel/lib/site-packages/ardvarc'...
+Compiling 'C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/devel/lib/site-packages/ardvarc\\__init__.py'...
+Listing 'C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/devel/lib/site-packages/ardvarc\\msg'...
+Compiling 'C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/devel/lib/site-packages/ardvarc\\msg\\_FlightPlan.py'...
+Compiling 'C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/devel/lib/site-packages/ardvarc\\msg\\__init__.py'...
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/lib/site-packages/ardvarc
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/lib/site-packages/ardvarc/msg
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/lib/site-packages/ardvarc/msg/_FlightPlan.py
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/lib/site-packages/ardvarc/msg/__init__.py
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/lib/site-packages/ardvarc/msg/__pycache__
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/lib/site-packages/ardvarc/msg/__pycache__/_FlightPlan.cpython-310.pyc
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/lib/site-packages/ardvarc/msg/__pycache__/__init__.cpython-310.pyc
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/lib/site-packages/ardvarc/__init__.py
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/lib/site-packages/ardvarc/__pycache__
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/lib/site-packages/ardvarc/__pycache__/__init__.cpython-310.pyc
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/lib/pkgconfig/ardvarc.pc
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/share/ardvarc/cmake/ardvarc-msg-extras.cmake
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/share/ardvarc/cmake/ardvarcConfig.cmake
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/share/ardvarc/cmake/ardvarcConfig-version.cmake
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/share/ardvarc/package.xml
+-- Up-to-date: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/include
+-- Up-to-date: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/include/ardvarc
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/include/ardvarc/visibility_control.h
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/lib/ardvarc_matlab.lib
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/bin/ardvarc_matlab.dll
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/m/
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/m//+ros
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/m//+ros/+internal
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/m//+ros/+internal/+ros
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/m//+ros/+internal/+ros/+custommessages
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/m//+ros/+internal/+ros/+custommessages/+ardvarc
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/m//+ros/+internal/+ros/+custommessages/+ardvarc/flightPlan.m
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/m//+ros/+msggen
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/m//+ros/+msggen/+ardvarc
+-- Installing: C:/Users/aidan/Documents/GitHub/ARDVARC/ROS-Based Mission Simulator/matlab_msg_gen_ros1/win64/install/m//+ros/+msggen/+ardvarc/FlightPlan.m
+Base path: C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64
+Source space: C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\src
+Build space: C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\build
+Devel space: C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\devel
+Install space: C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\install
+Copying file from "C:\PROGRA~1\MATLAB\R2023b\sys\ros1\win64\ros1\share\catkin\cmake\toplevel.cmake" to "C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\src\CMakeLists.txt"
+####
+#### Running command: "cmake C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\src -DALIAS_ROS1_CLASS_LOADER=1 -DBoost_NAMESPACE=mwboost -DCATKIN_ENABLE_TESTING=off -DCMAKE_PREFIX_PATH=C:\Program Files\MATLAB\R2023b\sys\ros1\win64\ros1;C:/Program Files/MATLAB/R2023b/toolbox/ros/mlroscpp/custom_messages -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=/MD /Od /Ob2 /DNDEBUG -DCATKIN_DEVEL_PREFIX=C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\devel -DCMAKE_INSTALL_PREFIX=C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\install -G Ninja" in "C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\build"
+####
+####
+#### Running command: "ninja install install -j16 -l16" in "C:\Users\aidan\Documents\GitHub\ARDVARC\ROS-Based Mission Simulator\matlab_msg_gen_ros1\win64\build"
+####

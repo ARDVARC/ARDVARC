@@ -2,17 +2,17 @@ function this = makeRgvFromSeed(rgvParams, seed, vec_startPos_en, startYawAngle,
     % Creates a new RGV with the specified starting conditions by moving it
     % in large steps according to seeded random movement types. Generates
     % movements until the specified duration is reached.
-    arguments(Input)
-        rgvParams (1,1) RgvParams
-        seed (1,1) double
-        vec_startPos_en (2,1) double
-        startYawAngle (1,1) double
-        duration (1,1) double
-        missionAreaHalfWidth (1,1) double
-    end
-    arguments(Output)
-        this (1,1) RGV
-    end
+    % arguments(Input)
+    %     rgvParams (1,1) RgvParams
+    %     seed (1,1) double
+    %     vec_startPos_en (2,1) double
+    %     startYawAngle (1,1) double
+    %     duration (1,1) double
+    %     missionAreaHalfWidth (1,1) double
+    % end
+    % arguments(Output)
+    %     this (1,1) RGV
+    % end
 
     % Set the seed of the random number generator so that the RGV
     % generation is consistent
@@ -86,7 +86,8 @@ function this = makeRgvFromSeed(rgvParams, seed, vec_startPos_en, startYawAngle,
             % Choose the u-turn direction based on whichever way will point
             % you closer back to the center of the mission area
             vec_dir_en = [cos(newYawAngle);sin(newYawAngle)];
-            if (signedAngle(vec_newPos_en, vec_dir_en) > 0)
+            signedAngle = atan2(vec_dir_en(2)*vec_newPos_en(1)-vec_dir_en(1)*vec_newPos_en(2),vec_dir_en(1)*vec_newPos_en(1)+vec_dir_en(2)*vec_newPos_en(2));
+            if (signedAngle > 0)
                 vec_movementType(counter+1) = RgvMovementType.UTurnLeft;
             else
                 vec_movementType(counter+1) = RgvMovementType.UTurnRight;
