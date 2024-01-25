@@ -17,8 +17,8 @@ async def main():
     # s.recv(1) # ACK
     
     N = 50
-    trix_vec_uasPositions_local = np.empty((3,N))
-    trix_vec_rgv1Predictions_local = np.empty((3,N))
+    trix_vec_uasPositions_local_ned = np.empty((3,N))
+    trix_vec_rgv1Predictions_local_ned = np.empty((3,N))
     for i in range(1,N+1):
         # Move to next time
         writer.write(bytearray([simulator.SimulatorMessageKind.simulateUntil]))
@@ -45,25 +45,25 @@ async def main():
         costheta = np.cos(theta)
         sinpsi = np.sin(psi)
         cospsi = np.cos(psi)
-        dcm_uas2local = np.array([
+        dcm_uas2local_ned = np.array([
             [costheta*cospsi,sinphi*sintheta*cospsi-cosphi*sinpsi,cosphi*sintheta*cospsi+sinphi*sinpsi],
             [costheta*sinpsi,sinphi*sintheta*sinpsi+cosphi*cospsi,cosphi*sintheta*sinpsi-sinphi*cospsi],
             [-sintheta      ,sinphi*costheta                     ,cosphi*costheta                     ]
         ])
-        vec_pointingVec_enu = dcm_uas2local@vec_pointing_uas
-        coeff = z/vec_pointingVec_enu[2]
-        vec_rgv1Prediction_local = vec_uasState[0:3] - vec_pointingVec_enu * coeff
+        vec_pointingVec_local_ned = dcm_uas2local_ned@vec_pointing_uas
+        coeff = z/vec_pointingVec_local_ned[2]
+        vec_rgv1Prediction_local_ned = vec_uasState[0:3] - vec_pointingVec_local_ned * coeff
         
         # Set waypoint to above RGV measurement
         writer.write(bytearray([simulator.SimulatorMessageKind.setComplexWaypoint]))
-        writer.write(struct.pack("!dddddd", vec_rgv1Prediction_local[0], vec_rgv1Prediction_local[1], 10, vec_rgv1Prediction_local[0], vec_rgv1Prediction_local[1], vec_rgv1Prediction_local[2]))
+        writer.write(struct.pack("!dddddd", vec_rgv1Prediction_local_ned[0], vec_rgv1Prediction_local_ned[1], -10, vec_rgv1Prediction_local_ned[0], vec_rgv1Prediction_local_ned[1], vec_rgv1Prediction_local_ned[2]))
         await reader.read(1) # ACK
         
         # Store info to plot later
-        trix_vec_rgv1Predictions_local[:,i-1] = vec_rgv1Prediction_local
-        trix_vec_uasPositions_local[:,i-1] = vec_uasState[0:3]
-    plt.scatter(trix_vec_rgv1Predictions_local[0,:],trix_vec_rgv1Predictions_local[1,:], s=1, c="red")
-    plt.scatter(trix_vec_uasPositions_local[0,:],trix_vec_uasPositions_local[1,:], s=1, c="green")
+        trix_vec_rgv1Predictions_local_ned[:,i-1] = vec_rgv1Prediction_local_ned
+        trix_vec_uasPositions_local_ned[:,i-1] = vec_uasState[0:3]
+    plt.scatter(trix_vec_rgv1Predictions_local_ned[0,:],trix_vec_rgv1Predictions_local_ned[1,:], s=1, c="red")
+    plt.scatter(trix_vec_uasPositions_local_ned[0,:],trix_vec_uasPositions_local_ned[1,:], s=1, c="green")
     plt.axis('equal')
     plt.grid(which='both')
     plt.show()

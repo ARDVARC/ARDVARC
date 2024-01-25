@@ -28,7 +28,7 @@ async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
     rgv1 = RGV.RGV(1, np.array([5,5]), np.pi/2, 900)
     rgv2 = RGV.RGV(2, np.array([-5,-5]), -np.pi/2, 900)
     tPrev = 0
-    vec_uasStatePrev = np.array([-30,0,10,0,0,0,0,0,0,0,0,0])
+    vec_uasStatePrev = np.array([-30,0,-10,0,0,0,0,0,0,0,0,0])
     complexWaypoint = uasPhysics.ComplexWaypoint(np.array([0,0,10]),np.array([0,0,0]))
     
     while True:
@@ -58,12 +58,12 @@ async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
                 writer.write(bytearray([6]))
             case SimulatorMessageKind.reset:
                 tPrev = 0
-                vec_uasStatePrev = np.array([-30,0,10,0,0,0,0,0,0,0,0,0])
+                vec_uasStatePrev = np.array([-30,0,-10,0,0,0,0,0,0,0,0,0])
                 complexWaypoint = uasPhysics.ComplexWaypoint(np.array([0,0,10]),np.array([0,0,0]))
                 writer.write(bytearray([6]))
 
 def measureRgv(rgv: RGV.RGV, tPrev: float, vec_uasState: np.ndarray) -> np.ndarray:
-    vec_uasPos_local = vec_uasState[0:3]
+    vec_uasPos_local_ned = vec_uasState[0:3]
     phi = vec_uasState[3]
     theta = vec_uasState[4]
     psi = vec_uasState[5]
@@ -75,11 +75,11 @@ def measureRgv(rgv: RGV.RGV, tPrev: float, vec_uasState: np.ndarray) -> np.ndarr
     sinpsi = np.sin(psi)
     cospsi = np.cos(psi)
     
-    _, vec_rgvPosition_localGround = RGV.getRgvStateAtTime(rgv, tPrev)
-    vec_pointingVecToRgv_local = np.array([vec_rgvPosition_localGround[0],vec_rgvPosition_localGround[1],0]) - vec_uasPos_local
-    vec_pointingVecToRgv_local /= np.linalg.norm(vec_pointingVecToRgv_local)
+    _, vec_rgvPosition_local_ne = RGV.getRgvStateAtTime(rgv, tPrev)
+    vec_pointingVecToRgv_local_ned = np.array([vec_rgvPosition_local_ne[0],vec_rgvPosition_local_ne[1],0]) - vec_uasPos_local_ned
+    vec_pointingVecToRgv_local_ned /= np.linalg.norm(vec_pointingVecToRgv_local_ned)
     
-    dcm_local2uas = np.array([
+    dcm_local_ned2uas = np.array([
         [costheta*cospsi                     ,costheta*sinpsi                     ,-sintheta      ],
         [sinphi*sintheta*cospsi-cosphi*sinpsi,sinphi*sintheta*sinpsi+cosphi*cospsi,sinphi*costheta],
         [cosphi*sintheta*cospsi+sinphi*sinpsi,cosphi*sintheta*sinpsi-sinphi*cospsi,cosphi*costheta]
@@ -87,26 +87,26 @@ def measureRgv(rgv: RGV.RGV, tPrev: float, vec_uasState: np.ndarray) -> np.ndarr
     
     # Get a specific vector that is orthogonal to the true
     # poining vector.
-    vec_specificOrthogonal_local = np.array([-vec_pointingVecToRgv_local[1],vec_pointingVecToRgv_local[0],0])
-    vec_specificOrthogonal_local /= np.linalg.norm(vec_specificOrthogonal_local)
+    vec_specificOrthogonal_local_ned = np.array([-vec_pointingVecToRgv_local_ned[1],vec_pointingVecToRgv_local_ned[0],0])
+    vec_specificOrthogonal_local_ned /= np.linalg.norm(vec_specificOrthogonal_local_ned)
     # Generate a random rotation about the true pointing
     # vector.
-    dcm_specificOrthogonal2randomOrthogonal = R.from_rotvec(vec_pointingVecToRgv_local * (random.random()+1)*2*np.pi).as_matrix()
+    dcm_specificOrthogonal2randomOrthogonal = R.from_rotvec(vec_pointingVecToRgv_local_ned * (random.random()+1)*2*np.pi).as_matrix()
     # Rotate the specific orthogonal vector by the random
     # rotation to get a random orthogonal vector. This is easy because the
     # specific orthogonal vector is already stored in a matrix.
-    vec_randomOrthogonal_local = dcm_specificOrthogonal2randomOrthogonal@vec_specificOrthogonal_local
+    vec_randomOrthogonal_local_ned = dcm_specificOrthogonal2randomOrthogonal@vec_specificOrthogonal_local_ned
     # Specify the axis and angle of rotation for the
     # estimated pointing vector. The axis is the random orthogonal vector
     # and the angle is random based on the pointing angle standard
     # deviation parameter. Then generate the rotation matrix corresponding
     # to the specified axis and angle.
-    dcm_truePointingVec2sensorPointingVec = R.from_rotvec(vec_randomOrthogonal_local * (random.normalvariate(0,np.deg2rad(20))+2*np.pi)).as_matrix()
+    dcm_truePointingVec2sensorPointingVec = R.from_rotvec(vec_randomOrthogonal_local_ned * (random.normalvariate(0,np.deg2rad(5))+2*np.pi)).as_matrix()
     # Rotate the true pointing vector by the pointing
     # error rotation to get the sensor pointing vector.
-    vec_sensorPointingVec_local = dcm_truePointingVec2sensorPointingVec@vec_pointingVecToRgv_local
+    vec_sensorPointingVec_local_ned = dcm_truePointingVec2sensorPointingVec@vec_pointingVecToRgv_local_ned
     # Finally convert to the UAS frame
-    vec_sensorPointingVec_uas = dcm_local2uas@vec_sensorPointingVec_local
+    vec_sensorPointingVec_uas = dcm_local_ned2uas@vec_sensorPointingVec_local_ned
     return vec_sensorPointingVec_uas
 
 if __name__ == "__main__":
