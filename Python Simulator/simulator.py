@@ -93,8 +93,7 @@ def measureRgv(rgv: RGV.RGV, tPrev: float, vec_uasState: np.ndarray) -> np.ndarr
     # vector.
     dcm_specificOrthogonal2randomOrthogonal = R.from_rotvec(vec_pointingVecToRgv_local_ned * (random.random()+1)*2*np.pi).as_matrix()
     # Rotate the specific orthogonal vector by the random
-    # rotation to get a random orthogonal vector. This is easy because the
-    # specific orthogonal vector is already stored in a matrix.
+    # rotation to get a random orthogonal vector.
     vec_randomOrthogonal_local_ned = dcm_specificOrthogonal2randomOrthogonal@vec_specificOrthogonal_local_ned
     # Specify the axis and angle of rotation for the
     # estimated pointing vector. The axis is the random orthogonal vector
