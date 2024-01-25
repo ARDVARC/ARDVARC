@@ -4,6 +4,7 @@ import socket
 import struct
 import numpy as np
 from scipy.spatial.transform import Rotation as R 
+import asyncio
 
 import rgv as RGV
 import uasPhysics
@@ -16,7 +17,13 @@ class SimulatorMessageKind(IntEnum):
     setComplexWaypoint = 4
     reset = 5
 
-def main():
+async def main():
+    # Run simulation as commanded
+    server = await asyncio.start_server(handle_client, "localhost", 1234)
+    async with server:
+        await server.serve_forever()
+
+async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
     # Initialize simulation
     rgv1 = RGV.RGV(1, np.array([5,5]), np.pi/2, 900)
     rgv2 = RGV.RGV(2, np.array([-5,-5]), -np.pi/2, 900)
@@ -24,40 +31,36 @@ def main():
     vec_uasStatePrev = np.array([-30,0,10,0,0,0,0,0,0,0,0,0])
     complexWaypoint = uasPhysics.ComplexWaypoint(np.array([0,0,10]),np.array([0,0,0]))
     
-    # Run simulation as commanded
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-        s.bind(("localhost", 1234))
-        with s:
-            while True:
-                data, address = s.recvfrom(1)
-                messageKind = SimulatorMessageKind(data[0])
-                # print(messageKind)
-                match messageKind:
-                    case SimulatorMessageKind.simulateUntil:
-                        t: float = struct.unpack("!d", s.recv(8))[0]
-                        if t <= tPrev:
-                            raise Exception(f"Asked to simulate until invalid time {t} (tPrev: {tPrev}).")
-                        sol = uasPhysics.simulateUasPhysics((tPrev, t), vec_uasStatePrev, complexWaypoint)
-                        vec_uasStatePrev = sol.y[:,-1]
-                        tPrev = t
-                        s.sendto(bytearray([6]), address)
-                    case SimulatorMessageKind.measureRgv1:
-                        vec_sensorPointingVec_uas = measureRgv(rgv1, tPrev, vec_uasStatePrev)
-                        s.sendto(struct.pack("!ddd", vec_sensorPointingVec_uas[0], vec_sensorPointingVec_uas[1], vec_sensorPointingVec_uas[2]), address)
-                    case SimulatorMessageKind.measureRgv2:
-                        vec_sensorPointingVec_uas = measureRgv(rgv2, tPrev, vec_uasStatePrev)
-                        s.sendto(struct.pack("!ddd", vec_sensorPointingVec_uas[0], vec_sensorPointingVec_uas[1], vec_sensorPointingVec_uas[2]), address)
-                    case SimulatorMessageKind.measureUas:
-                        s.sendto(struct.pack("!dddddddddddd", vec_uasStatePrev[0], vec_uasStatePrev[1], vec_uasStatePrev[2], vec_uasStatePrev[3], vec_uasStatePrev[4], vec_uasStatePrev[5], vec_uasStatePrev[6], vec_uasStatePrev[7], vec_uasStatePrev[8], vec_uasStatePrev[9], vec_uasStatePrev[10], vec_uasStatePrev[11]), address)
-                    case SimulatorMessageKind.setComplexWaypoint:
-                        vals = struct.unpack("!dddddd", s.recv(48))
-                        complexWaypoint = uasPhysics.ComplexWaypoint(np.array([vals[0],vals[1],vals[2]]), np.array([vals[3],vals[4],vals[5]]))
-                        s.sendto(bytearray([6]), address)
-                    case SimulatorMessageKind.reset:
-                        tPrev = 0
-                        vec_uasStatePrev = np.array([-30,0,10,0,0,0,0,0,0,0,0,0])
-                        complexWaypoint = uasPhysics.ComplexWaypoint(np.array([0,0,10]),np.array([0,0,0]))
-                        s.sendto(bytearray([6]), address)
+    while True:
+        data = await reader.read(1)
+        messageKind = SimulatorMessageKind(data[0])
+        # print(messageKind)
+        match messageKind:
+            case SimulatorMessageKind.simulateUntil:
+                t: float = struct.unpack("!d", await reader.read(8))[0]
+                if t <= tPrev:
+                    raise Exception(f"Asked to simulate until invalid time {t} (tPrev: {tPrev}).")
+                sol = uasPhysics.simulateUasPhysics((tPrev, t), vec_uasStatePrev, complexWaypoint)
+                vec_uasStatePrev = sol.y[:,-1]
+                tPrev = t
+                writer.write(bytearray([6]))
+            case SimulatorMessageKind.measureRgv1:
+                vec_sensorPointingVec_uas = measureRgv(rgv1, tPrev, vec_uasStatePrev)
+                writer.write(struct.pack("!ddd", vec_sensorPointingVec_uas[0], vec_sensorPointingVec_uas[1], vec_sensorPointingVec_uas[2]))
+            case SimulatorMessageKind.measureRgv2:
+                vec_sensorPointingVec_uas = measureRgv(rgv2, tPrev, vec_uasStatePrev)
+                writer.write(struct.pack("!ddd", vec_sensorPointingVec_uas[0], vec_sensorPointingVec_uas[1], vec_sensorPointingVec_uas[2]))
+            case SimulatorMessageKind.measureUas:
+                writer.write(struct.pack("!dddddddddddd", vec_uasStatePrev[0], vec_uasStatePrev[1], vec_uasStatePrev[2], vec_uasStatePrev[3], vec_uasStatePrev[4], vec_uasStatePrev[5], vec_uasStatePrev[6], vec_uasStatePrev[7], vec_uasStatePrev[8], vec_uasStatePrev[9], vec_uasStatePrev[10], vec_uasStatePrev[11]))
+            case SimulatorMessageKind.setComplexWaypoint:
+                vals = struct.unpack("!dddddd", await reader.read(48))
+                complexWaypoint = uasPhysics.ComplexWaypoint(np.array([vals[0],vals[1],vals[2]]), np.array([vals[3],vals[4],vals[5]]))
+                writer.write(bytearray([6]))
+            case SimulatorMessageKind.reset:
+                tPrev = 0
+                vec_uasStatePrev = np.array([-30,0,10,0,0,0,0,0,0,0,0,0])
+                complexWaypoint = uasPhysics.ComplexWaypoint(np.array([0,0,10]),np.array([0,0,0]))
+                writer.write(bytearray([6]))
 
 def measureRgv(rgv: RGV.RGV, tPrev: float, vec_uasState: np.ndarray) -> np.ndarray:
     vec_uasPos_local = vec_uasState[0:3]
@@ -107,4 +110,4 @@ def measureRgv(rgv: RGV.RGV, tPrev: float, vec_uasState: np.ndarray) -> np.ndarr
     return vec_sensorPointingVec_uas
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
