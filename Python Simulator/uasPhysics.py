@@ -1,6 +1,7 @@
 from abc import abstractmethod
 import numpy as np
 from scipy.integrate import solve_ivp, _ivp
+from scipy.spatial.transform import Rotation as R 
 
 class ComplexWaypoint:
     def __init__(self, vec_waypoint_local_ned: np.ndarray, vec_roi_local_ned: np.ndarray):
@@ -12,11 +13,9 @@ def simulateUasPhysics(tSpan: tuple[float,float], vec_uasStartState: np.ndarray,
     return solve_ivp(lambda t, vec_uasState: simulateUasPhysicsInner(t, vec_uasState, complexWaypoint), tSpan, vec_uasStartState)
 
 def simulateUasPhysicsInner(t, vec_uasState, complexWaypoint: ComplexWaypoint) -> np.ndarray:
-    z = vec_uasState[0]
     vec_uasPos_local_ned = vec_uasState[0:3]
     phi = vec_uasState[3]
     theta = vec_uasState[4]
-    psi = vec_uasState[5]
     vec_uvw_uas = vec_uasState[6:9]
     u = vec_uasState[6]
     v = vec_uasState[7]
@@ -25,24 +24,14 @@ def simulateUasPhysicsInner(t, vec_uasState, complexWaypoint: ComplexWaypoint) -
     p = vec_uasState[9]
     q = vec_uasState[10]
     r = vec_uasState[11]
-    phi = vec_uasState[3]
-    theta = vec_uasState[4]
-    psi = vec_uasState[5]
     
     sinphi = np.sin(phi)
     cosphi = np.cos(phi)
     sintheta = np.sin(theta)
     costheta = np.cos(theta)
-    sinpsi = np.sin(psi)
-    cospsi = np.cos(psi)
-    
-    dcm_uas2local_ned = np.array([
-        [costheta*cospsi,sinphi*sintheta*cospsi-cosphi*sinpsi,cosphi*sintheta*cospsi+sinphi*sinpsi],
-        [costheta*sinpsi,sinphi*sintheta*sinpsi+cosphi*cospsi,cosphi*sintheta*sinpsi-sinphi*cospsi],
-        [-sintheta      ,sinphi*costheta                     ,cosphi*costheta                     ]
-    ])
     
     # Determine control forces and moments
+    dcm_uas2local_ned = R.from_euler("xyz", vec_uasState[3:6]).as_matrix()
     dcm_local_ned2uas = np.transpose(dcm_uas2local_ned)
     
     vec_heading_uas = np.array([1,0,0])

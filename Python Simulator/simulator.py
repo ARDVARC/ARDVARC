@@ -5,6 +5,7 @@ import struct
 import numpy as np
 from scipy.spatial.transform import Rotation as R 
 import asyncio
+import mavgen_common as mg
 
 import rgv as RGV
 import uasPhysics
@@ -29,6 +30,7 @@ async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
     rgv2 = RGV.RGV(2, np.array([-5,-5]), -np.pi/2, 900)
     tPrev = 0
     vec_uasStatePrev = np.array([-30,0,-10,0,0,0,0,0,0,0,0,0])
+    dcm_local_ned2uas = np.zeros((3,3))
     complexWaypoint = uasPhysics.ComplexWaypoint(np.array([0,0,10]),np.array([0,0,0]))
     
     while True:
@@ -41,16 +43,19 @@ async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
                 if t <= tPrev:
                     raise Exception(f"Asked to simulate until invalid time {t} (tPrev: {tPrev}).")
                 sol = uasPhysics.simulateUasPhysics((tPrev, t), vec_uasStatePrev, complexWaypoint)
-                vec_uasStatePrev = sol.y[:,-1]
                 tPrev = t
+                vec_uasStatePrev = sol.y[:,-1]
+                dcm_local_ned2uas = R.from_euler("xyz", vec_uasStatePrev[3:6]).as_matrix().transpose()
+                
                 writer.write(bytearray([6]))
             case SimulatorMessageKind.measureRgv1:
-                vec_sensorPointingVec_uas = measureRgv(rgv1, tPrev, vec_uasStatePrev)
+                vec_sensorPointingVec_uas = measureRgv(rgv1, tPrev, vec_uasStatePrev, dcm_local_ned2uas)
                 writer.write(struct.pack("!ddd", vec_sensorPointingVec_uas[0], vec_sensorPointingVec_uas[1], vec_sensorPointingVec_uas[2]))
             case SimulatorMessageKind.measureRgv2:
-                vec_sensorPointingVec_uas = measureRgv(rgv2, tPrev, vec_uasStatePrev)
+                vec_sensorPointingVec_uas = measureRgv(rgv2, tPrev, vec_uasStatePrev, dcm_local_ned2uas)
                 writer.write(struct.pack("!ddd", vec_sensorPointingVec_uas[0], vec_sensorPointingVec_uas[1], vec_sensorPointingVec_uas[2]))
             case SimulatorMessageKind.measureUas:
+                # mg.MAVLink.local_position_ned_encode(self, tPrev, )
                 writer.write(struct.pack("!dddddddddddd", vec_uasStatePrev[0], vec_uasStatePrev[1], vec_uasStatePrev[2], vec_uasStatePrev[3], vec_uasStatePrev[4], vec_uasStatePrev[5], vec_uasStatePrev[6], vec_uasStatePrev[7], vec_uasStatePrev[8], vec_uasStatePrev[9], vec_uasStatePrev[10], vec_uasStatePrev[11]))
             case SimulatorMessageKind.setComplexWaypoint:
                 vals = struct.unpack("!dddddd", await reader.read(48))
@@ -62,28 +67,10 @@ async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
                 complexWaypoint = uasPhysics.ComplexWaypoint(np.array([0,0,10]),np.array([0,0,0]))
                 writer.write(bytearray([6]))
 
-def measureRgv(rgv: RGV.RGV, tPrev: float, vec_uasState: np.ndarray) -> np.ndarray:
-    vec_uasPos_local_ned = vec_uasState[0:3]
-    phi = vec_uasState[3]
-    theta = vec_uasState[4]
-    psi = vec_uasState[5]
-    
-    sinphi = np.sin(phi)
-    cosphi = np.cos(phi)
-    sintheta = np.sin(theta)
-    costheta = np.cos(theta)
-    sinpsi = np.sin(psi)
-    cospsi = np.cos(psi)
-    
+def measureRgv(rgv: RGV.RGV, tPrev: float, vec_uasState: np.ndarray, dcm_local_ned2uas: np.ndarray) -> np.ndarray:
     _, vec_rgvPosition_local_ne = RGV.getRgvStateAtTime(rgv, tPrev)
-    vec_pointingVecToRgv_local_ned = np.array([vec_rgvPosition_local_ne[0],vec_rgvPosition_local_ne[1],0]) - vec_uasPos_local_ned
+    vec_pointingVecToRgv_local_ned = np.array([vec_rgvPosition_local_ne[0],vec_rgvPosition_local_ne[1],0]) - vec_uasState[0:3]
     vec_pointingVecToRgv_local_ned /= np.linalg.norm(vec_pointingVecToRgv_local_ned)
-    
-    dcm_local_ned2uas = np.array([
-        [costheta*cospsi                     ,costheta*sinpsi                     ,-sintheta      ],
-        [sinphi*sintheta*cospsi-cosphi*sinpsi,sinphi*sintheta*sinpsi+cosphi*cospsi,sinphi*costheta],
-        [cosphi*sintheta*cospsi+sinphi*sinpsi,cosphi*sintheta*sinpsi-sinphi*cospsi,cosphi*costheta]
-    ])
     
     # Get a specific vector that is orthogonal to the true
     # poining vector.
@@ -100,7 +87,7 @@ def measureRgv(rgv: RGV.RGV, tPrev: float, vec_uasState: np.ndarray) -> np.ndarr
     # and the angle is random based on the pointing angle standard
     # deviation parameter. Then generate the rotation matrix corresponding
     # to the specified axis and angle.
-    dcm_truePointingVec2sensorPointingVec = R.from_rotvec(vec_randomOrthogonal_local_ned * (random.normalvariate(0,np.deg2rad(5))+2*np.pi)).as_matrix()
+    dcm_truePointingVec2sensorPointingVec = R.from_rotvec(vec_randomOrthogonal_local_ned * (random.normalvariate(0,np.deg2rad(0))+2*np.pi)).as_matrix()
     # Rotate the true pointing vector by the pointing
     # error rotation to get the sensor pointing vector.
     vec_sensorPointingVec_local_ned = dcm_truePointingVec2sensorPointingVec@vec_pointingVecToRgv_local_ned

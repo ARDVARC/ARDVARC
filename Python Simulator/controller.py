@@ -3,6 +3,7 @@ import socket
 import struct
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.spatial.transform import Rotation as R 
 
 import simulator
 
@@ -16,7 +17,7 @@ async def main():
     # s.sendall(struct.pack("!d", 5))
     # s.recv(1) # ACK
     
-    N = 50
+    N = 500
     trix_vec_uasPositions_local_ned = np.empty((3,N))
     trix_vec_rgv1Predictions_local_ned = np.empty((3,N))
     for i in range(1,N+1):
@@ -35,23 +36,13 @@ async def main():
         writer.write(bytearray([simulator.SimulatorMessageKind.measureUas]))
         uasStateBytes = await reader.read(96)
         uasStateVals = struct.unpack("!dddddddddddd", uasStateBytes)
-        _, _, z, phi, theta, psi, _, _, _, _, _, _ = uasStateVals
         vec_uasState = np.array(uasStateVals)
+        print(vec_uasState[0:3])
         
         # Project to ground to get RGV prediction
-        sinphi = np.sin(phi)
-        cosphi = np.cos(phi)
-        sintheta = np.sin(theta)
-        costheta = np.cos(theta)
-        sinpsi = np.sin(psi)
-        cospsi = np.cos(psi)
-        dcm_uas2local_ned = np.array([
-            [costheta*cospsi,sinphi*sintheta*cospsi-cosphi*sinpsi,cosphi*sintheta*cospsi+sinphi*sinpsi],
-            [costheta*sinpsi,sinphi*sintheta*sinpsi+cosphi*cospsi,cosphi*sintheta*sinpsi-sinphi*cospsi],
-            [-sintheta      ,sinphi*costheta                     ,cosphi*costheta                     ]
-        ])
+        dcm_uas2local_ned = R.from_euler("xyz", vec_uasState[3:6]).as_matrix()
         vec_pointingVec_local_ned = dcm_uas2local_ned@vec_pointing_uas
-        coeff = z/vec_pointingVec_local_ned[2]
+        coeff = uasStateVals[2]/vec_pointingVec_local_ned[2]
         vec_rgv1Prediction_local_ned = vec_uasState[0:3] - vec_pointingVec_local_ned * coeff
         
         # Set waypoint to above RGV measurement
@@ -62,8 +53,8 @@ async def main():
         # Store info to plot later
         trix_vec_rgv1Predictions_local_ned[:,i-1] = vec_rgv1Prediction_local_ned
         trix_vec_uasPositions_local_ned[:,i-1] = vec_uasState[0:3]
-    plt.scatter(trix_vec_rgv1Predictions_local_ned[0,:],trix_vec_rgv1Predictions_local_ned[1,:], s=1, c="red")
-    plt.scatter(trix_vec_uasPositions_local_ned[0,:],trix_vec_uasPositions_local_ned[1,:], s=1, c="green")
+    plt.scatter(trix_vec_rgv1Predictions_local_ned[1,:],trix_vec_rgv1Predictions_local_ned[0,:], s=1, c="red")
+    plt.scatter(trix_vec_uasPositions_local_ned[1,:],trix_vec_uasPositions_local_ned[0,:], s=1, c="green")
     plt.axis('equal')
     plt.grid(which='both')
     plt.show()
