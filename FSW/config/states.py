@@ -10,9 +10,10 @@ Description:
 Notes:
     - Delete state that are unused by state machines.
 """
+# ! moved to config/structures.py
+# ! TODO(LF) REMOVE BECAUSE DEPRECATED
+# from enum import Enum
 
-from enum import Enum
-
-class STATES(Enum):
-    TAKEOFF = 1
-    TRACK = 2
+# class STATES(Enum):
+#     TAKEOFF = 1
+#     TRACK = 2
