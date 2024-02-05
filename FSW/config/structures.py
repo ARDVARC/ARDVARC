@@ -43,7 +43,7 @@ class UAS_t:
     JOINT_localized: bool = False
 
     # Always default to PIC on initialization
-    STATE: STATES = STATES.PIC
+    STATE: STATES = STATES.FIND_1
     
 
 if __name__ == "__main__":

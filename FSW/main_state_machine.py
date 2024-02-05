@@ -31,6 +31,7 @@ most_recent_message = None
 def print_callback(message):
     print("bruh moment!")
     print(message)
+    global most_recent_message
     most_recent_message = message
 
 
@@ -40,8 +41,11 @@ main_state = STATES.FIND_1
 """Assignment of mission start time"""
 mission_start_time = time.time()
 
+
+print("creating ROS node and subscribing")
 rospy.init_node("fsm_node")
 sub = rospy.Subscriber("AnnotatedCameraFrame_topic", AnnotatedCameraFrame, print_callback)
+print("subscribed to cv topic")
 
 while(True):
 
@@ -49,7 +53,7 @@ while(True):
     # ! Notional state machine example, not for flight use
 
     # Stuff that always happens
-    pass
+    # pass
 
     if main_state == STATES.FIND_1:
         print("sleeping for 5 seconds")
@@ -60,6 +64,11 @@ while(True):
     if main_state == STATES.TRACK_1:
         print("here's the most recent message: ")
         print(most_recent_message)
+
+    # rn, only way to exit fsm is by killing ros
+    if rospy.is_shutdown():
+        print("ros is dead, exiting fsm")
+        break
 
     # update rate of fsm
     time.sleep(1)
