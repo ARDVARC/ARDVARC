@@ -27,6 +27,7 @@ sensor_height = 2.4 # mm
 image_width = 640 # pixels
 image_height = 480 # pixels
 video_FPS = 30 # frames per second
+"""Extrinsics"""
 
 class Camera:
     """Class for camera vison object recognition software"""
@@ -42,7 +43,7 @@ class Camera:
 
     def frame_to_rgv_inert(frame):
     
-    pass
+        pass
 
 
 
