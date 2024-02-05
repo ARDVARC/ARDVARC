@@ -27,7 +27,7 @@ from rosardvarc.msg import AnnotatedCameraFrame
 import time
 
 # TODO(LF): move whatever this ends up being to util
-most_recent_message
+most_recent_message = None
 def print_callback(message):
     print("bruh moment!")
     print(message)
@@ -60,4 +60,6 @@ while(True):
     if main_state == STATES.TRACK_1:
         print("here's the most recent message: ")
         print(most_recent_message)
+
+    # update rate of fsm
     time.sleep(1)
