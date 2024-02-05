@@ -21,12 +21,8 @@ import sys
 
 # All possible states of Ardvarc automaton
 class STATES(Enum):
-    PIC = 1 # Pilot in command
-    FIND = 2
-    TRACK = 3
-    LOCALIZE = 4
-    JOINT = 5
-    PANIC = 6
+    FIND_1 = 1
+    TRACK_1 = 2
 
 # Struct for UAS state
 @dataclass
