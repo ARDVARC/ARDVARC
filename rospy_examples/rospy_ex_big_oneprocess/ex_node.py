@@ -2,6 +2,9 @@ import rospy
 import std_msgs.msg
 
 
+# These are a bunch of different callbacks that each subscriber uses.
+# This is probably not a very good way to do this but it works for
+# the example. 
 def print_callback_1(message):
     print("Node 1 - Got a callback!:")
     print(message)
@@ -42,6 +45,8 @@ def print_callback_5(message):
     )
 
 
+# This process will just have one node but it will have a bunch of different
+# publishers and subscribers talking to each other over different topics
 rospy.init_node("ex_node")
 pub1 = rospy.Publisher("topic_1", std_msgs.msg.Int8, queue_size=1)
 sub1 = rospy.Subscriber("topic_5", std_msgs.msg.Int8, print_callback_1)
@@ -54,9 +59,13 @@ sub4 = rospy.Subscriber("topic_3", std_msgs.msg.Int8, print_callback_4)
 pub5 = rospy.Publisher("topic_5", std_msgs.msg.Int8, queue_size=1)
 sub5 = rospy.Subscriber("topic_4", std_msgs.msg.Int8, print_callback_5)
 rate = rospy.Rate(1)
+
+# To kickstart the loop, one message is sent to topic_1
 rospy.sleep(3)
 pub1.publish(
     std_msgs.msg.Int8(1)
 )
+
+# Spin until killed
 while not rospy.is_shutdown():
     rospy.spin()

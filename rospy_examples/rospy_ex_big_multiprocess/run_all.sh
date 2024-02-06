@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Starts roscore along with all 5 processes
 roscore &
 python3 node_1.py &
 python3 node_2.py &
