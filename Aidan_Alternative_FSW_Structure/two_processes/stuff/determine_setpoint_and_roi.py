@@ -12,7 +12,7 @@ def setup():
         pass
 
     def mission_state_callback(msg):
-        rospy.loginfo("'determine_setpoint_and_roi' is publishing setpoint and roi")
+        rospy.loginfo("'Determine Setpoint and ROI' is publishing setpoint and roi")
         setpoint_pub.publish(msg)
         roi_pub.publish(msg)
         pass

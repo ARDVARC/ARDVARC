@@ -22,3 +22,5 @@ To visualize this, you can run
 rqt_graph
 ```
 in a new terminal window. I also recommend switching from `Nodes only` to `Nodes/Topic (All)` in the rqt_graph GUI.
+# Review Logs
+ROS logs for the most recent execution are saved in `~/.ros/log/latest/rosout.log`.

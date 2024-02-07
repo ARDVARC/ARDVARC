@@ -17,7 +17,7 @@ def setup():
         while (time.time() - now) < 0.001:
             x = 123.45 ** 67 + x / 8 ** 90
         
-        rospy.loginfo(f"Prcoess bluetooth finished processing bluetooth measurement #{msg.seq} at {time.time()}")
+        rospy.loginfo(f"'Process Bluetooth' finished processing bluetooth measurement #{msg.seq} at {time.time()}")
         pub.publish(msg)
 
 
