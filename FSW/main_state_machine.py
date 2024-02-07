@@ -16,21 +16,36 @@ Notes:
 """
 
 # local imports
-from config.states import STATES
+from config.structures import STATES
 
 # third part imports
 import numpy as np
+import rospy
+from rosardvarc.msg import AnnotatedCameraFrame
 
 # stl imports
 import time
 
+# TODO(LF): move whatever this ends up being to util
+most_recent_message = None
+def print_callback(message):
+    print("bruh moment!")
+    print(message)
+    global most_recent_message
+    most_recent_message = message
 
 
 """Assignment of first state"""
-main_state = STATES.TAKEOFF
+main_state = STATES.FIND_1
 
 """Assignment of mission start time"""
 mission_start_time = time.time()
+
+
+print("creating ROS node and subscribing")
+rospy.init_node("fsm_node")
+sub = rospy.Subscriber("AnnotatedCameraFrame_topic", AnnotatedCameraFrame, print_callback)
+print("subscribed to cv topic")
 
 while(True):
 
@@ -38,15 +53,22 @@ while(True):
     # ! Notional state machine example, not for flight use
 
     # Stuff that always happens
-    current_uplink_msg = read_uplink_data()
+    # pass
 
-    if main_state == STATES.TAKEOFF:
+    if main_state == STATES.FIND_1:
+        print("sleeping for 5 seconds")
+        time.sleep(5)
+        print("done sleeping, on to the next state")
+        main_state = STATES.TRACK_1
 
-        is_PIC = current_uplink_msg.is_PIC
+    if main_state == STATES.TRACK_1:
+        print("here's the most recent message: ")
+        print(most_recent_message)
 
-        if (height >= mission_heights and !PIC):
-            main_state = STATES.TRACK
+    # rn, only way to exit fsm is by killing ros
+    if rospy.is_shutdown():
+        print("ros is dead, exiting fsm")
+        break
 
-    if main_state == STATES.TRACK:
-        pass
-            
+    # update rate of fsm
+    time.sleep(1)
