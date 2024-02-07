@@ -1,8 +1,26 @@
-""" This is the CV node, it takes in the camera feed from ROS and annotates it for analysis, 
-    then publishes the annotated feed to the main state machine. It also performs calculations to 
-    determine the angular position of the ArUco markers. It will then publish the pointing vector 
-    to an appropriate ROS topic along with a recent sightings boolean to indicate if the marker has
-    been seen recently."""
+""" 
+
+ARDVARC Flight Software
+
+Author: Tim Behrer
+email: Timothy.Behrer@colorado.edu
+
+Description:This is the CV node, it takes in the camera feed from ROS and annotates it for analysis, 
+then publishes the annotated feed to the main state machine. It also performs calculations to 
+determine the angular position of the ArUco markers. It will then publish the pointing vector 
+to an appropriate ROS topic along with a recent sightings boolean to indicate if the marker has
+been seen recently.
+
+## Notes
+- This node will be executed in parrallel with the main state machine.
+
+## TODO create the ArUco marker detection and annotation function
+## TODO create the pointing vector calculation function
+## TODO create the recent sightings boolean function
+"""
+
+
+
 
 ## Imports
 import time
@@ -16,7 +34,7 @@ from rosardvarc.msg import AnnotatedCameraFrame
 import math
 
 ## TODO Create the callback for the camera frame subscriber.
-## TODO Implement the write to flash fucntion within this callback
+## TODO Call the write to flash fucntion within this callback
 """
 def print_callback(message):
     print("bruh moment!")
