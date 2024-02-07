@@ -28,7 +28,10 @@ been seen recently.
 import time
 import rospy
 import genpy
-from rosardvarc.msg import AnnotatedCameraFrame
+from rosardvarc.msg import AnnotatedCameraFrame, RecentSighting
+from std_msgs.msg import Header, Time
+from sensor_msgs.msg import Image
+from functional.process_frame import detect_ArUco
 ## TODO Import the necessary message types.
 """from rosardvarc.msg import RawCameraFrame""" ## This is the subscriber to the camera frame.
 """from rosardvarc.msg import RecentSighting""" ## This is the publisher for the recent sightings.
@@ -46,24 +49,27 @@ import argparse
 
 ## TODO Create the callback for the camera frame subscriber.
 ## TODO Call the write to flash function within this callback
-"""
-def print_callback(message):
-    print("bruh moment!")
-    print(message)
-"""
+
+
+def frame_callback(msg):
+    if (rospy.Time.now() - msg.timestamp).to_sec() > 1/60:
+        # rospy.loginfo(f"Skipping frame #{msg.seq}")
+        return
+    (frame, ids, pose) = detect_ArUco(msg.image)
+    pub_frame.publish(frame)
+    pub_sightings.publish(ids)
+    pub_vector.publish(pose)
+
 
 ## Initialize the necessary nodes and the publishers.
 rospy.init_node("cv_node")
 pub_frame = rospy.Publisher("AnnotatedCameraFrame_topic", AnnotatedCameraFrame, queue_size=1)
 ## TODO Implement the publisher for the recent sightings.
-"""pub_sightings = rospy.Publisher("RecentSightings_topic", RecentSighting, queue_size=1)"""
+pub_sightings = rospy.Publisher("RecentSightings_topic", RecentSighting, queue_size=1)
 ## TODO Implement the publisher for the pointing vector.
-"""pub_vector = rospy.Publisher("PointingVector_topic", Uas2RgvPointingVector, queue_size=1)"""
+pub_vector = rospy.Publisher("PointingVector_topic", Header, queue_size=1)
 ## TODO Implement the subscriber for the camera frame.
-"""sub_frame = rospy.Subscriber("RawCameraFrame_topic", RawCameraFrame, print_callback)"""
-
-## Set the rate of the publisher.
-rate = rospy.Rate(1)
+sub_frame = rospy.Subscriber("RawCameraFrame_topic", Image, frame_callback)
 
 ## Initialize arUco marker detection
 dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
@@ -73,17 +79,4 @@ detector = cv2.aruco.ArucoDetector(dictionary, parameters)
 
 ## Begin the while loop to publish the AnnotatedCameraFrame message.
 while not rospy.is_shutdown():
-    ## Get the time
-    now = time.time()
-    now_sec = int(math.floor(now))
-    now_nano = int((now-math.floor(now))*1e9)
-    ## Publish the AnnotatedCameraFrame message.
-    pub_frame.publish(
-        AnnotatedCameraFrame(
-            timestamp=genpy.Time(now_sec, now_nano),
-            rgv_id=AnnotatedCameraFrame.RGV_1,
-            annotated_image=69
-        )
-    )
-    ## Sleep for the rate.
-    rate.sleep()
+    rospy.spin()

@@ -31,13 +31,6 @@ from std_msgs.msg import Header, Time
 ## TODO Make sure all imports are correct
 
 
-def frame_callback(msg):
-    if (rospy.Time.now() - msg.timestamp).to_sec() > 1/60:
-        # rospy.loginfo(f"Skipping frame #{msg.seq}")
-        return
-    detect_ArUco(msg.image)
-
-
 ## Function to detect ArUco markers
 def detect_ArUco(frame):  
     parameters =  cv2.aruco.DetectorParameters()
@@ -71,15 +64,9 @@ def detect_ArUco(frame):
             cX = int((topLeft[0] + bottomRight[0]) / 2.0)
             cY = int((topLeft[1] + bottomRight[1]) / 2.0)
             cv2.circle(frame, (cX, cY), 4, (0, 0, 255), -1)
-            
-    annotated_frame_pub.publish(frame)
-    
     # Do math to get pose/direction_vector (TBD)
     # pose = math math math
-    direction_vector_pub.publish(pose)
-    
-    for id in ids:
-        rgv_sightings_pub.publish(id)
+    return (frame, ids, pose)
 
 
 class Camera:
@@ -95,15 +82,3 @@ class Camera:
         if not self.camera.isOpened():
             print("Error opening video file")
             sys.exit()
-
-
-rospy.init_node("process_frame")
-camera = Camera(1)
-annotated_frame_pub = rospy.Publisher("camera/annotated_frames", AnnotatedCameraFrame, queue_size=1)
-rgv_sightings_pub = rospy.Publisher("camera/rgv_sightings", RecentSighting, queue_size=1)
-direction_vector_pub = rospy.Publisher("estimation/direction_vectors_uas", Header, queue_size=1)
-frame_sub = rospy.Subscriber("camera/frames", Image, frame_callback)
-
-
-while not rospy.is_shutdown():
-    rospy.spin()
