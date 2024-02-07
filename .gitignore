@@ -1,3 +1,14 @@
+# vim buffer ignore
+*.swp
+
+#python ignores
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints
+.mypy_cache/
+
+
 # Windows default autosave extension
 *.asv
 
