@@ -17,6 +17,8 @@ been seen recently.
 ## TODO create the ArUco marker detection and annotation function
 ## TODO create the pointing vector calculation function
 ## TODO create the recent sightings boolean function
+## TODO Clean up the imports and improve the ArUco marker detection and annotation function
+## TODO Ensure that coding is sufficiently modular and split into functions
 """
 
 
@@ -32,15 +34,23 @@ from rosardvarc.msg import AnnotatedCameraFrame
 """from rosardvarc.msg import RecentSighting""" ## This is the publisher for the recent sightings.
 """from rosardvarc.msg import Uas2RgvPointingVector""" ## This is the publisher for the pointing vector.
 import math
+## Imports from the existing ArUco marker detection and annotation function
+import sys
+import cv2
+from cv2 import aruco
+import numpy as np
+import os
+import argparse
+## TODO Make sure all imports are correct
+
 
 ## TODO Create the callback for the camera frame subscriber.
-## TODO Call the write to flash fucntion within this callback
+## TODO Call the write to flash function within this callback
 """
 def print_callback(message):
     print("bruh moment!")
     print(message)
 """
-
 
 ## Initialize the necessary nodes and the publishers.
 rospy.init_node("cv_node")
@@ -54,6 +64,12 @@ pub_frame = rospy.Publisher("AnnotatedCameraFrame_topic", AnnotatedCameraFrame, 
 
 ## Set the rate of the publisher.
 rate = rospy.Rate(1)
+
+## Initialize arUco marker detection
+dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
+parameters =  cv2.aruco.DetectorParameters()
+detector = cv2.aruco.ArucoDetector(dictionary, parameters)
+
 
 ## Begin the while loop to publish the AnnotatedCameraFrame message.
 while not rospy.is_shutdown():
