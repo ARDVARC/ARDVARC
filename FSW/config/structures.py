@@ -20,7 +20,7 @@ import sys
 
 
 # All possible states of Ardvarc automaton
-class MissionState(Enum):
+class MissionStates(Enum):
     FIND_RGV_1 = 0
     TRACK_RGV_1 = 1
     LOCALIZE_RGV_1 = 2

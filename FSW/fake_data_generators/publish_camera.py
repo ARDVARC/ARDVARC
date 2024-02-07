@@ -1,21 +1,16 @@
 import rospy
-from std_msgs.msg import Header
+from config.topic_names import CAMERA_FRAMES
+from sensor_msgs.msg import Image
 
 
 rospy.init_node("camera")
-pub = rospy.Publisher("camera/frames", Header, queue_size=1)
+pub = rospy.Publisher(CAMERA_FRAMES, Image, queue_size=1)
 rate = rospy.Rate(60)
-frame_count = 1
 while not rospy.is_shutdown():
     now = rospy.Time.now()
     pub.publish(
-        Header(
-            seq = frame_count,
-            stamp = now,
-            frame_id=""
+        Image(
+            # TODO: Make this something reasonable
         )
     )
-    # rospy.loginfo(f"Camera published frame #{frame_count} at t={now}")
-    
-    frame_count += 1
     rate.sleep()
