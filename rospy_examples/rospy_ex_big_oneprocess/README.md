@@ -1,7 +1,7 @@
 # How to Run
 Run this example with:
 ```
-.\run.sh
+./run.sh
 ```
 # How to Kill
 You should be able to stop it with `Ctrl-C` though we've had mixed success. If that doesn't kill everything,
