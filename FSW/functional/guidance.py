@@ -11,8 +11,36 @@ Notes:
     - 
 """
 
+import rospy
+from std_msgs.msg import Header
 
-def calc_orbit_setpoint(None) -> None:
+
+def _pos_callback(msg):
+    # Probably save to a buffer?
+    pass
+
+def _mission_state_callback(msg):
+    # Do some stuff to prepare calc_orbit_setpoint
+    rgv = None
+    uas = None
+    t = None
+    
+    # Call calc_orbit_setpoint
+    orbit_setpoint = _calc_orbit_setpoint(rgv, uas, t)
+    # roi = calc_roi(???)
+    
+    # Publish the setpoint and ROI
+    _setpoint_pub.publish(orbit_setpoint)
+    # roi_pub.publish(roi)
+
+
+_setpoint_pub = rospy.Publisher("pixhawk/setpoints", Header, queue_size=1)
+_roi_pub = rospy.Publisher("pixhawk/rois", Header, queue_size=1)
+_pos_sub = rospy.Subscriber("estimation/estimated_rgv_positions", Header, _pos_callback)
+_mission_state_sub = rospy.Subscriber("main_state_machine/mission_states", Header, _mission_state_callback)
+
+
+def _calc_orbit_setpoint(RGV, UAS, t):
     """ Calculates the orbit set point
 
     This function takes the RGV & UAS states, as well as time to calculate a 
