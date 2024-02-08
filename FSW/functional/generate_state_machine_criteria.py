@@ -13,6 +13,7 @@ def _estimated_rgv_state_callback(msg: EstimatedRgvState):
     # math math math
     
     # Publish state machine criteria
+    rospy.loginfo("State machine criteria generator published mission state criteria")
     _state_machine_criteria_pub.publish(
         StateMachineCriteria(
             # TODO: Make this something reasonable
@@ -21,12 +22,14 @@ def _estimated_rgv_state_callback(msg: EstimatedRgvState):
 
 
 def _sightings_callback(msg: RecentSighting):
-    # Put in a cache
+    # Put in a buffer
+    rospy.loginfo("State machine criteria generator saved a recent sighting")
     _sightings_buffer.appendleft(msg)
 
 
 def _mission_state_callback(msg: MissionState):
-    # Put in a cache
+    # Put in a buffer
+    rospy.loginfo("State machine criteria generator saved a mission state")
     _mission_state_buffer.appendleft(msg)
 
 

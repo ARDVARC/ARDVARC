@@ -18,6 +18,7 @@ def _state_machine_criteria_callback(msg: StateMachineCriteria):
             # TODO: Make this something reasonable
         )
     )
+    rospy.loginfo("Misison state published")
 
 
 _mission_state_pub = rospy.Publisher(MISSION_STATES, MissionState, queue_size=1)

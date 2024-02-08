@@ -27,6 +27,7 @@ _uas_pose_buffer: Deque[PoseStamped] = collections.deque([], 50)
 
 
 def _estimated_rgv_state_callback(msg: EstimatedRgvState):
+    rospy.loginfo("Guidance saved an estimated RGV state")
     _estimated_rgv_state_buffer.appendleft(msg)
     pass
 
@@ -34,6 +35,7 @@ def _mission_state_callback(msg: MissionState):
     # Do some stuff to prepare calc_orbit_setpoint
     # TODO - This is just an example:
     if len(_estimated_rgv_state_buffer) == 0 or len(_uas_pose_buffer) == 0:
+        rospy.loginfo("Guidance ignored a mission state update")
         return
     rgv = _estimated_rgv_state_buffer[0]
     uas = _uas_pose_buffer[0]
@@ -45,11 +47,13 @@ def _mission_state_callback(msg: MissionState):
     # roi = calc_roi(???)
     
     # Publish the setpoint and ROI
+    rospy.loginfo("Guidance published an orbit setpoint")
     _setpoint_pub.publish(orbit_setpoint)
     # _roi_pub.publish(roi)
 
 def _uas_pose_callback(msg: PoseStamped):
     _uas_pose_buffer.appendleft(msg)
+    rospy.loginfo("Guidance saved a UAS pose")
     pass
 
 _setpoint_pub = rospy.Publisher(SETPOINTS, Setpoint, queue_size=1)

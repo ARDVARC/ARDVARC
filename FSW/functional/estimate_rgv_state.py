@@ -11,10 +11,12 @@ _direction_vector_buffer = collections.deque([], 50)
 
 def _uas_state_callback(msg: PoseStamped):
     _uas_state_buffer.appendleft(msg)
+    rospy.loginfo("RGV state estimator saved UAS state")
 
 
 def _direction_vector_callback(msg: UasToRgvDirectionVectorUasFrame):
     _direction_vector_buffer.appendleft(msg)
+    rospy.loginfo("RGV state estimator saved direction vector")
 
 
 _estimated_rgv_state_pub = rospy.Publisher(ESTIMATED_RGV_STATES, EstimatedRgvState, queue_size=1)
@@ -31,6 +33,7 @@ def estimate_rgv_state():
     # math math math
     
     # Publish estimate
+    rospy.loginfo("RGV state estimator published an RGV state estimate")
     _estimated_rgv_state_pub.publish(
         EstimatedRgvState(
             # TODO: Make this something reasonable
