@@ -1,6 +1,6 @@
 import rospy
 import collections
-from config.topic_names import STATE_MACHINE_CRITERIA, ESTIMATED_RGV_STATES, RECENT_RGV_SIGHTINGS, MISSION_STATES
+from ..config.topic_names import STATE_MACHINE_CRITERIA, ESTIMATED_RGV_STATES, RECENT_RGV_SIGHTINGS, MISSION_STATES
 from rosardvarc.msg import StateMachineCriteria, EstimatedRgvState, RecentSighting, MissionState
 
 

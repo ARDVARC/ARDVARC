@@ -34,5 +34,4 @@ VIDEO_FPS: int = 60 # frames per second
 
 
 """ArUco"""
-## TODO Verify that int is the correct type
-DICTIONARY: int = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
+DICTIONARY: cv2.aruco.Dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)

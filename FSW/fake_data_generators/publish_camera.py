@@ -1,5 +1,5 @@
 import rospy
-from config.topic_names import CAMERA_FRAMES
+from ..config.topic_names import CAMERA_FRAMES
 from sensor_msgs.msg import Image
 
 
@@ -13,4 +13,5 @@ while not rospy.is_shutdown():
             # TODO: Make this something reasonable
         )
     )
+    # rospy.loginfo("Camera is publishing frame")
     rate.sleep()

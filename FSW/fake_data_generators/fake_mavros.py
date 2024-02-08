@@ -1,15 +1,17 @@
 import rospy
-from config.topic_names import UAS_POSES, SETPOINTS, REGIONS_OF_INTEREST
+from ..config.topic_names import UAS_POSES, SETPOINTS, REGIONS_OF_INTEREST
 from geometry_msgs.msg import PoseStamped
 from rosardvarc.msg import Setpoint, RegionOfInterest
 
 
 def setpoints_callback(msg: Setpoint):
-    rospy.loginfo("MAVROS received a setpoint, sending to pixhawk")
+    # rospy.loginfo("MAVROS received a setpoint, sending to pixhawk")
+    pass
 
 
 def roi_callback(msg: RegionOfInterest):
-    rospy.loginfo("MAVROS received an ROI, sending to pixhawk")
+    # rospy.loginfo("MAVROS received an ROI, sending to pixhawk")
+    pass
 
 
 rospy.init_node("fake_mavros")

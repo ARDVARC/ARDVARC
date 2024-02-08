@@ -1,6 +1,6 @@
 import rospy
 import collections
-from config.topic_names import ESTIMATED_RGV_STATES, UAS_POSES, UAS_TO_RGV_DIRECTION_VECTORS
+from ..config.topic_names import ESTIMATED_RGV_STATES, UAS_POSES, UAS_TO_RGV_DIRECTION_VECTORS
 from rosardvarc.msg import EstimatedRgvState, UasToRgvDirectionVectorUasFrame
 from geometry_msgs.msg import PoseStamped
 

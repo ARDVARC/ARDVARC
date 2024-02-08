@@ -22,7 +22,7 @@ import rospy
 rospy.init_node("everything_else")
 
 # local imports
-from functional import determine_mission_state, guidance, estimate_rgv_state, generate_state_machine_criteria, process_bluetooth
+from .functional import determine_mission_state, guidance, estimate_rgv_state, generate_state_machine_criteria, process_bluetooth
 
 # third part imports
 import numpy as np

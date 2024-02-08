@@ -28,10 +28,10 @@ been seen recently.
 import time
 import rospy
 import genpy
-from rosardvarc.msg import AnnotatedCameraFrame, RecentSighting
-from std_msgs.msg import Header, Time
+from .config.topic_names import ANNOTATED_CAMERA_FRAMES, RECENT_RGV_SIGHTINGS, UAS_TO_RGV_DIRECTION_VECTORS, CAMERA_FRAMES
+from rosardvarc.msg import AnnotatedCameraFrame, RecentSighting, UasToRgvDirectionVectorUasFrame
 from sensor_msgs.msg import Image
-from functional.process_frame import detect_ArUco
+from .functional.process_frame import detect_ArUco
 ## TODO Import the necessary message types.
 """from rosardvarc.msg import RawCameraFrame""" ## This is the subscriber to the camera frame.
 """from rosardvarc.msg import RecentSighting""" ## This is the publisher for the recent sightings.
@@ -51,32 +51,40 @@ import argparse
 ## TODO Call the write to flash function within this callback
 
 
-def frame_callback(msg):
-    if (rospy.Time.now() - msg.timestamp).to_sec() > 1/60:
-        # rospy.loginfo(f"Skipping frame #{msg.seq}")
+def frame_callback(msg: Image):
+    if (rospy.Time.now() - msg.header.stamp).to_sec() > 1/60:
         return
-    (frame, ids, pose) = detect_ArUco(msg.image)
-    pub_frame.publish(frame)
-    pub_sightings.publish(ids)
-    pub_vector.publish(pose)
+    data = np.array(msg.data, dtype=np.uint8)
+    frame = np.reshape(data, (msg.width, msg.height, 3))
+    detection_info = detect_ArUco(frame)
+    if detection_info == None:
+        return
+    annotated_frame = AnnotatedCameraFrame(
+        # TODO: Make this something reasonable based on detection_info.annotated_camera_frame
+    )
+    for id in detection_info.ids:
+        sighting = RecentSighting(
+            # TODO: Make this something reasonable based on id
+        )
+        pub_sightings.publish(sighting)
+    for direction_vector in detection_info.direction_vectors:
+        direction_vector_msg = UasToRgvDirectionVectorUasFrame(
+            # TODO: Make this something reasonable based on direction_vector
+        )
+        pub_vector.publish(direction_vector_msg)
 
 
 ## Initialize the necessary nodes and the publishers.
 rospy.init_node("cv_node")
-pub_frame = rospy.Publisher("AnnotatedCameraFrame_topic", AnnotatedCameraFrame, queue_size=1)
+pub_frame = rospy.Publisher(ANNOTATED_CAMERA_FRAMES, AnnotatedCameraFrame, queue_size=1)
 ## TODO Implement the publisher for the recent sightings.
-pub_sightings = rospy.Publisher("RecentSightings_topic", RecentSighting, queue_size=1)
+pub_sightings = rospy.Publisher(RECENT_RGV_SIGHTINGS, RecentSighting, queue_size=1)
 ## TODO Implement the publisher for the pointing vector.
-pub_vector = rospy.Publisher("PointingVector_topic", Header, queue_size=1)
+pub_vector = rospy.Publisher(UAS_TO_RGV_DIRECTION_VECTORS, UasToRgvDirectionVectorUasFrame, queue_size=1)
 ## TODO Implement the subscriber for the camera frame.
-sub_frame = rospy.Subscriber("RawCameraFrame_topic", Image, frame_callback)
-
-## Initialize arUco marker detection
-dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
-parameters =  cv2.aruco.DetectorParameters()
-detector = cv2.aruco.ArucoDetector(dictionary, parameters)
+sub_frame = rospy.Subscriber(CAMERA_FRAMES, Image, frame_callback)
 
 
-## Begin the while loop to publish the AnnotatedCameraFrame message.
+## Spin until killed
 while not rospy.is_shutdown():
     rospy.spin()

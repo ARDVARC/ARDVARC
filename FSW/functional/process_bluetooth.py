@@ -1,24 +1,17 @@
-import time
 import rospy
-from std_msgs.msg import Header
+from rosardvarc.msg import UasToRgvDirectionVectorUasFrame, BluetoothAzimuthElevation
+from ..config.topic_names import UAS_TO_RGV_DIRECTION_VECTORS, RAW_BLUETOOTH
 
 
-def callback(msg):
-    # Skip this bluetooth measurement if it is too old
-    if (rospy.Time.now() - msg.stamp).to_sec() > 0.1:
-        rospy.loginfo(f"Skipping bluetooth measurement #{msg.seq}")
-        return
+def _bluetooth_callback(msg: BluetoothAzimuthElevation):
+    # math math math
     
-    now = time.time()
-    
-    # Do 1 ms worth of junk
-    x = 0
-    while (time.time() - now) < 0.001:
-        x = 123.45 ** 67 + x / 8 ** 90
-    
-    rospy.loginfo(f"'Process Bluetooth' finished processing bluetooth measurement #{msg.seq} at {time.time()}")
-    pub.publish(msg)
+    _direction_vector_pub.publish(
+        UasToRgvDirectionVectorUasFrame(
+            # TODO: Make this something reasonable
+        )
+    )
 
 
-pub = rospy.Publisher("estimation/direction_vectors_uas", Header, queue_size=1)
-sub = rospy.Subscriber("bluetooth/az_els", Header, callback)
+_direction_vector_pub = rospy.Publisher(UAS_TO_RGV_DIRECTION_VECTORS, UasToRgvDirectionVectorUasFrame, queue_size=1)
+_bluetooth_sub = rospy.Subscriber(RAW_BLUETOOTH, BluetoothAzimuthElevation, _bluetooth_callback)

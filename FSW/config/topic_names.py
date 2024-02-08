@@ -1,5 +1,5 @@
 # Topic names
-ANNOTATED_CAMERA_FRAMES = "camera/frames"
+ANNOTATED_CAMERA_FRAMES = "camera/annotated_frames"
 CAMERA_FRAMES = "camera/frames"
 UAS_POSES = "mavros/local_position/pose"
 RECENT_RGV_SIGHTINGS = "camera/recent_rgv_sightings"

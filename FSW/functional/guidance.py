@@ -12,18 +12,33 @@ Notes:
 """
 
 import rospy
-from std_msgs.msg import Header
+from rosardvarc.msg import Setpoint, RegionOfInterest, EstimatedRgvState, MissionState
+from geometry_msgs.msg import PoseStamped
+from genpy import Time
+from ..config.topic_names import SETPOINTS, REGIONS_OF_INTEREST, ESTIMATED_RGV_STATES, MISSION_STATES, UAS_POSES
+import collections
+from typing import Deque
 
 
-def _pos_callback(msg):
-    # Probably save to a buffer?
+# TODO- Probably no need to keep more than one?
+_estimated_rgv_state_buffer: Deque[EstimatedRgvState] = collections.deque([], 50)
+# TODO- Probably no need to keep more than one?
+_uas_pose_buffer: Deque[PoseStamped] = collections.deque([], 50)
+
+
+def _estimated_rgv_state_callback(msg: EstimatedRgvState):
+    _estimated_rgv_state_buffer.appendleft(msg)
     pass
 
-def _mission_state_callback(msg):
+def _mission_state_callback(msg: MissionState):
     # Do some stuff to prepare calc_orbit_setpoint
-    rgv = None
-    uas = None
-    t = None
+    # TODO - This is just an example:
+    if len(_estimated_rgv_state_buffer) == 0 or len(_uas_pose_buffer) == 0:
+        return
+    rgv = _estimated_rgv_state_buffer[0]
+    uas = _uas_pose_buffer[0]
+    t = msg.timestamp
+    # Probably also want to care about the new mission state in msg
     
     # Call calc_orbit_setpoint
     orbit_setpoint = _calc_orbit_setpoint(rgv, uas, t)
@@ -31,16 +46,20 @@ def _mission_state_callback(msg):
     
     # Publish the setpoint and ROI
     _setpoint_pub.publish(orbit_setpoint)
-    # roi_pub.publish(roi)
+    # _roi_pub.publish(roi)
+
+def _uas_pose_callback(msg: PoseStamped):
+    _uas_pose_buffer.appendleft(msg)
+    pass
+
+_setpoint_pub = rospy.Publisher(SETPOINTS, Setpoint, queue_size=1)
+_roi_pub = rospy.Publisher(REGIONS_OF_INTEREST, RegionOfInterest, queue_size=1)
+_estimated_rgv_state_sub = rospy.Subscriber(ESTIMATED_RGV_STATES, EstimatedRgvState, _estimated_rgv_state_callback)
+_mission_state_sub = rospy.Subscriber(MISSION_STATES, MissionState, _mission_state_callback)
+_uas_pose_sub = rospy.Subscriber(UAS_POSES, PoseStamped, _uas_pose_callback)
 
 
-_setpoint_pub = rospy.Publisher("pixhawk/setpoints", Header, queue_size=1)
-_roi_pub = rospy.Publisher("pixhawk/rois", Header, queue_size=1)
-_pos_sub = rospy.Subscriber("estimation/estimated_rgv_positions", Header, _pos_callback)
-_mission_state_sub = rospy.Subscriber("main_state_machine/mission_states", Header, _mission_state_callback)
-
-
-def _calc_orbit_setpoint(RGV, UAS, t):
+def _calc_orbit_setpoint(RGV: EstimatedRgvState, UAS: PoseStamped, t: Time) -> Setpoint:
     """ Calculates the orbit set point
 
     This function takes the RGV & UAS states, as well as time to calculate a 
@@ -58,5 +77,8 @@ def _calc_orbit_setpoint(RGV, UAS, t):
         None: Raises None at the moment (TBR)
     """
 
-
-    pass
+    # math math math
+    
+    return Setpoint(
+        # TODO: Make this something reasonable
+    )

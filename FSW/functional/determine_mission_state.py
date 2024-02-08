@@ -1,6 +1,6 @@
 import rospy
-from config.structures import MissionStates
-from config.topic_names import MISSION_STATES, STATE_MACHINE_CRITERIA
+from ..config.structures import MissionStates
+from ..config.topic_names import MISSION_STATES, STATE_MACHINE_CRITERIA
 from rosardvarc.msg import MissionState, StateMachineCriteria
 
 

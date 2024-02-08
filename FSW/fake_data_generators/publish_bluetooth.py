@@ -1,5 +1,5 @@
 import rospy
-from config.topic_names import RAW_BLUETOOTH
+from ..config.topic_names import RAW_BLUETOOTH
 from rosardvarc.msg import BluetoothAzimuthElevation
 
 

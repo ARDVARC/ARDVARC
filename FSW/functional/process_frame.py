@@ -23,16 +23,22 @@ import numpy as np
 import os
 import argparse
 from dataclasses import dataclass
-from config import constants
+from ..config import constants
 import rospy
-from rosardvarc.msg import AnnotatedCameraFrame, RecentSighting
-from sensor_msgs.msg import Image
-from std_msgs.msg import Header, Time
+from rosardvarc.msg import UasToRgvDirectionVectorUasFrame
+from typing import Optional, List
 ## TODO Make sure all imports are correct
 
 
+@dataclass
+class DetectionInfo():
+    annotated_camera_frame: cv2.typing.MatLike
+    ids: cv2.typing.MatLike
+    direction_vectors: List[UasToRgvDirectionVectorUasFrame]
+
+
 ## Function to detect ArUco markers
-def detect_ArUco(frame):  
+def detect_ArUco(frame: cv2.typing.MatLike) -> Optional[DetectionInfo]:  
     parameters =  cv2.aruco.DetectorParameters()
     detector = cv2.aruco.ArucoDetector(constants.DICTIONARY, parameters)  
     
@@ -41,6 +47,7 @@ def detect_ArUco(frame):
 
     # verify *at least* one ArUco marker was detected
     if len(corners) > 0:
+        direction_vectors = []
         # flatten the ArUco IDs list
         ids = ids.flatten()
         # loop over the detected ArUCo corners
@@ -64,9 +71,16 @@ def detect_ArUco(frame):
             cX = int((topLeft[0] + bottomRight[0]) / 2.0)
             cY = int((topLeft[1] + bottomRight[1]) / 2.0)
             cv2.circle(frame, (cX, cY), 4, (0, 0, 255), -1)
-    # Do math to get pose/direction_vector (TBD)
-    # pose = math math math
-    return (frame, ids, pose)
+            
+            
+            # Do math to get poses/direction_vectors (TBD)
+            direction_vectors.append(
+                UasToRgvDirectionVectorUasFrame(
+                    # TODO: Make this something reasonable
+                )
+            )
+            
+        return DetectionInfo(frame, ids, direction_vectors)
 
 
 class Camera:
