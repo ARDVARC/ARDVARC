@@ -93,5 +93,4 @@ sub_frame = rospy.Subscriber(CAMERA_FRAMES, Image, frame_callback)
 
 
 ## Spin until killed
-while not rospy.is_shutdown():
-    rospy.spin()
+rospy.spin()
