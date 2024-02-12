@@ -58,17 +58,17 @@ def determine_next_mission_state(current_state: MissionStates, criteria: StateMa
             # Stay in FIND_RGV_1
             return MissionStates.FIND_RGV_1
     elif current_state is MissionStates.TRACK_RGV_1:
-        if ~criteria.recent_rgv_1_estimate:
+        if not criteria.recent_rgv_1_estimate:
             # Change to FIND_RGV_1
             return MissionStates.FIND_RGV_1
-        elif criteria.rgv_1_is_moving or ~criteria.rgv_1_sighted:
+        elif criteria.rgv_1_is_moving or not criteria.rgv_1_sighted:
             # Stay in TRACK_RGV_1
             return MissionStates.TRACK_RGV_1
         else:
             # Change to LOCALIZE_RGV_1
             return MissionStates.LOCALIZE_RGV_1
     elif current_state is MissionStates.LOCALIZE_RGV_1:
-        if ~criteria.recent_rgv_1_estimate:
+        if not criteria.recent_rgv_1_estimate:
             # Change to FIND_RGV_1
             return MissionStates.FIND_RGV_1
         if criteria.rgv_1_localized:
@@ -81,7 +81,7 @@ def determine_next_mission_state(current_state: MissionStates, criteria: StateMa
                 return MissionStates.FIND_RGV_2
         else:
             # Stay on RGV 1
-            if (criteria.rgv_1_is_moving and ~criteria.minimum_localize_time_reached) or ~criteria.rgv_1_sighted:
+            if (criteria.rgv_1_is_moving and not criteria.minimum_localize_time_reached) or not criteria.rgv_1_sighted:
                 # Change to TRACK_RGV_1
                 return MissionStates.TRACK_RGV_1
             else:
@@ -95,17 +95,17 @@ def determine_next_mission_state(current_state: MissionStates, criteria: StateMa
             # Stay in FIND_RGV_2
             return MissionStates.FIND_RGV_2
     elif current_state is MissionStates.TRACK_RGV_2:
-        if ~criteria.recent_rgv_2_estimate:
+        if not criteria.recent_rgv_2_estimate:
             # Change to FIND_RGV_2
             return MissionStates.FIND_RGV_2
-        elif criteria.rgv_2_is_moving or ~criteria.rgv_2_sighted:
+        elif criteria.rgv_2_is_moving or not criteria.rgv_2_sighted:
             # Stay in TRACK_RGV_2
             return MissionStates.TRACK_RGV_2
         else:
             # Change to LOCALIZE_RGV_2
             return MissionStates.LOCALIZE_RGV_2
     elif current_state is MissionStates.LOCALIZE_RGV_2:
-        if ~criteria.recent_rgv_2_estimate:
+        if not criteria.recent_rgv_2_estimate:
             # Change to FIND_RGV_2
             return MissionStates.FIND_RGV_2
         if criteria.rgv_2_localized:
@@ -113,7 +113,7 @@ def determine_next_mission_state(current_state: MissionStates, criteria: StateMa
             return MissionStates.JOINT_LOCALIZE
         else:
             # Stay on RGV 2
-            if (criteria.rgv_2_is_moving and ~criteria.minimum_localize_time_reached) or ~criteria.rgv_2_sighted:
+            if (criteria.rgv_2_is_moving and not criteria.minimum_localize_time_reached) or not criteria.rgv_2_sighted:
                 # Change to TRACK_RGV_2
                 return MissionStates.TRACK_RGV_2
             else:

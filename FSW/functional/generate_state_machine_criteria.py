@@ -68,7 +68,7 @@ def _sightings_callback(msg: RecentSighting):
     global _time_of_most_recent_rgv_1_sighting, _time_of_most_recent_rgv_2_sighting
     
     rospy.loginfo("State machine criteria generator saved a recent sighting")
-    if ~msg.rgv_seen:
+    if not msg.rgv_seen:
         # Nothing was seen, so ignore
         return
     
