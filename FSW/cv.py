@@ -44,6 +44,7 @@ from cv2 import aruco
 import numpy as np
 import os
 import argparse
+from cv_bridge import CvBridge
 ## TODO Make sure all imports are correct
 
 
@@ -56,8 +57,7 @@ def frame_callback(msg: Image):
     if (now - msg.header.stamp).to_sec() > 1/60:
         rospy.loginfo(f"CV skipped a frame ({now} vs {msg.header.stamp})")
         return
-    data = np.frombuffer(msg.data, dtype=np.uint8)
-    frame = np.reshape(data, (msg.width, msg.height, 3))
+    frame = bridge.imgmsg_to_cv2(msg)
     detection_info = detect_ArUco(frame)
     if detection_info == None:
         rospy.loginfo("CV processed a frame but found nothing")
@@ -83,6 +83,7 @@ def frame_callback(msg: Image):
 
 ## Initialize the necessary nodes and the publishers.
 rospy.init_node("cv_node")
+bridge = CvBridge()
 pub_frame = rospy.Publisher(ANNOTATED_CAMERA_FRAMES, AnnotatedCameraFrame, queue_size=1)
 ## TODO Implement the publisher for the recent sightings.
 pub_sightings = rospy.Publisher(RECENT_RGV_SIGHTINGS, RecentSighting, queue_size=1)
