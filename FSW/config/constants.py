@@ -35,3 +35,13 @@ VIDEO_FPS: int = 60 # frames per second
 
 """ArUco"""
 DICTIONARY: cv2.aruco.Dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
+
+
+"""State Machine Criteria"""
+STANDING_STILL_SPEED_THRESHOLD: float = 0.3 # m/s
+RECENT_ESTIMATE_TIME_CUTOFF: float = 2 # s
+LOCALIZE_DURATION: float = 90 # s
+JOINT_DURATION: float = 240 # s
+RECENT_SIGHTING_TIME_CUTOFF: float = 2 # s
+BATTERY_LOW_CHARGE_PCT_CUTOFF: float = 0.05 # Percent from 0 to 1
+MINIMUM_LOCALIZE_DURATION: float = 60 # s
