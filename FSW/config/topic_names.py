@@ -1,0 +1,12 @@
+# Topic names
+ANNOTATED_CAMERA_FRAMES = "camera/annotated_frames"
+CAMERA_FRAMES = "camera/frames"
+UAS_POSES = "mavros/local_position/pose"
+RECENT_RGV_SIGHTINGS = "camera/recent_rgv_sightings"
+RAW_BLUETOOTH = "bluetooth/az_els"
+UAS_TO_RGV_DIRECTION_VECTORS = "estimation/direction_vectors_uas"
+ESTIMATED_RGV_STATES = "estimation/estimated_rgv_states"
+MISSION_STATES = "state_machine/mission_states"
+STATE_MACHINE_CRITERIA = "state_machine/state_machine_criteria"
+SETPOINTS = "pixhawk/setpoints"
+REGIONS_OF_INTEREST = "pixhawk/regions_of_interest"

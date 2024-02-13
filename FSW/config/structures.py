@@ -20,40 +20,12 @@ import sys
 
 
 # All possible states of Ardvarc automaton
-class STATES(Enum):
-    PIC = 1 # Pilot in command
-    FIND = 2
-    TRACK = 3
-    LOCALIZE = 4
-    JOINT = 5
-    PANIC = 6
-
-# Struct for UAS state
-@dataclass
-class UAS_t:
-
-    # Physical State
-    pos_org2uas_in_enu: np.ndarray
-    vel_uas_in_enu: np.ndarray
-
-    # Temporal State
-    mission_time_start: float
-    mission_time: float
-
-    # Whether we've completed the mission
-        # Start with neither having already been loacalized
-    RGV_1_localized: bool = False
-    RGV_2_localized: bool = False
-    JOINT_localized: bool = False
-
-    # Always default to PIC on initialization
-    STATE: STATES = STATES.PIC
-    
-
-if __name__ == "__main__":
-
-    UAS = UAS_t(np.array([1.,2.,3.]), np.array([.1,.2,.3]), 0.0, 0.0)
-    print(UAS)
-    print(sys.getsizeof(UAS))
-
-
+class MissionStates(Enum):
+    FIND_RGV_1 = 0
+    TRACK_RGV_1 = 1
+    LOCALIZE_RGV_1 = 2
+    FIND_RGV_2 = 3
+    TRACK_RGV_2 = 4
+    LOCALIZE_RGV_2 = 5
+    JOINT_LOCALIZE = 6
+    GO_HOME = 7
