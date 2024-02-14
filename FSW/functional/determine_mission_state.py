@@ -21,5 +21,15 @@ def _state_machine_criteria_callback(msg: StateMachineCriteria):
     rospy.loginfo("Misison state published")
 
 
-_mission_state_pub = rospy.Publisher(MISSION_STATES, MissionState, queue_size=1)
-_state_machine_criteria_sub = rospy.Subscriber(STATE_MACHINE_CRITERIA, StateMachineCriteria, _state_machine_criteria_callback)
+def setup():
+    """
+    Setup publishers and subscribers for determine_mission_state.py
+    """
+    
+    global _mission_state_pub, _state_machine_criteria_sub
+    _mission_state_pub = rospy.Publisher(MISSION_STATES, MissionState, queue_size=1)
+    _state_machine_criteria_sub = rospy.Subscriber(STATE_MACHINE_CRITERIA, StateMachineCriteria, _state_machine_criteria_callback)
+    
+
+_mission_state_pub: rospy.Publisher
+_state_machine_criteria_sub: rospy.Subscriber
