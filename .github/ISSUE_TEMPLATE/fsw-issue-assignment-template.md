@@ -2,7 +2,7 @@
 name: FSW Issue Assignment Template
 about: Template for FSW Checkpoint Assignments
 title: "[FSW] - SUMMARY"
-labels: ''
+labels: '["FSW","Assignment"]'
 assignees: ''
 
 ---
