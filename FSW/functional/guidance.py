@@ -18,6 +18,8 @@ from genpy import Time
 from ..config.topic_names import SETPOINTS, REGIONS_OF_INTEREST, ESTIMATED_RGV_STATES, MISSION_STATES, UAS_POSES
 import collections
 from typing import Deque
+from ..config.constants import *
+import ..config.constants as const
 
 
 # TODO- Probably no need to keep more than one?
@@ -70,8 +72,8 @@ def _calc_orbit_setpoint(RGV: EstimatedRgvState, UAS: PoseStamped, t: Time) -> S
     setpoint that can be given to the Pixhawk.
 
     Args:
-        RGV: struct containing RGV state information
-        UAS: struct containing UAS state information
+        RGV: ROS message type containing RGV state information
+        UAS: ROS message type containing UAS state information
         t: time elapsed since start of mission time
 
     Returns: 

@@ -35,3 +35,15 @@ VIDEO_FPS: int = 60 # frames per second
 
 """ArUco"""
 DICTIONARY: cv2.aruco.Dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
+
+
+"""Guidance"""
+# TODO(LF) review this
+# ask Rob what this should be for optimal bluetooth measurements 
+ORBITAL_RADIUS_SINGLE = 10.0 # meters (ground distance)
+
+# TODO(LF) review this
+ORBITAL_RADIUS_JOINT = 10.0 # meters (ground distance)
+
+# TODO(LF) review this
+UAS_ALTITUDE_SETPOINT = 9.144 # meters (30 ft)
