@@ -25,6 +25,11 @@ _low_battery: bool = False
 
 
 def _estimated_rgv_state_callback(msg: EstimatedRgvState):
+    """
+    This is the callback for the RGV state estimation subscriber. It updates the RGV-state
+    globals (RGV speeds) and th contructs and publishes a StateMachineCriteria message.
+    """
+    
     global _time_of_most_recent_rgv_1_estimate, _time_of_most_recent_rgv_2_estimate, _rgv_1_speed, _rgv_2_speed
     
     # Update time-of-estimate globals
@@ -38,6 +43,19 @@ def _estimated_rgv_state_callback(msg: EstimatedRgvState):
         raise Exception(f"Unrecognized RGV id {msg.rgv_id}")
     
     # Determine state machine criteria
+    state_machine_criteria = _build_state_machine_criteria_message()
+    
+    # Publish state machine criteria
+    rospy.loginfo("State machine criteria generator published mission state criteria")
+    _state_machine_criteria_pub.publish(state_machine_criteria)
+
+
+def _build_state_machine_criteria_message() -> StateMachineCriteria:
+    """
+    Generates a StateMachineCriteria message based off of the various global variables in
+    this module.
+    """
+    
     now = rospy.Time.now()
     state_machine_criteria = StateMachineCriteria()
     state_machine_criteria.timestamp = now
@@ -52,11 +70,7 @@ def _estimated_rgv_state_callback(msg: EstimatedRgvState):
     state_machine_criteria.rgv_2_sighted = _time_of_most_recent_rgv_2_sighting is not None and (now - _time_of_most_recent_rgv_2_sighting).to_sec() <= RECENT_SIGHTING_TIME_CUTOFF
     state_machine_criteria.minimum_localize_time_reached = (_current_mission_state is MissionStates.LOCALIZE_RGV_1 or _current_mission_state is MissionStates.LOCALIZE_RGV_2) and _current_mission_state_time_spent >= MINIMUM_LOCALIZE_DURATION
     state_machine_criteria.battery_low = _low_battery
-    
-    # Publish state machine criteria
-    rospy.loginfo("State machine criteria generator published mission state criteria")
-    _state_machine_criteria_pub.publish(state_machine_criteria)
-
+    return state_machine_criteria
 
 def _sightings_callback(msg: RecentSighting):
     """
