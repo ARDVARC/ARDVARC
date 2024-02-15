@@ -25,20 +25,6 @@ def _state_machine_criteria_callback(msg: StateMachineCriteria):
     rospy.loginfo("Mission state published")
 
 
-def setup():
-    """
-    Setup publishers and subscribers for determine_mission_state.py
-    """
-    
-    global _mission_state_pub, _state_machine_criteria_sub
-    _mission_state_pub = rospy.Publisher(MISSION_STATES, MissionState, queue_size=1)
-    _state_machine_criteria_sub = rospy.Subscriber(STATE_MACHINE_CRITERIA, StateMachineCriteria, _state_machine_criteria_callback)
-    
-
-_mission_state_pub: rospy.Publisher
-_state_machine_criteria_sub: rospy.Subscriber
-
-
 def determine_next_mission_state(current_state: MissionStates, criteria: StateMachineCriteria) -> MissionStates:
     """
     Determines what the next mission state should be based on the current mission state and a set of
@@ -128,3 +114,17 @@ def determine_next_mission_state(current_state: MissionStates, criteria: StateMa
             return MissionStates.JOINT_LOCALIZE
     
     raise Exception("determine_next_mission_state did not return")
+
+
+def setup():
+    """
+    Setup publishers and subscribers for determine_mission_state.py
+    """
+    
+    global _mission_state_pub, _state_machine_criteria_sub
+    _mission_state_pub = rospy.Publisher(MISSION_STATES, MissionState, queue_size=1)
+    _state_machine_criteria_sub = rospy.Subscriber(STATE_MACHINE_CRITERIA, StateMachineCriteria, _state_machine_criteria_callback)
+    
+
+_mission_state_pub: rospy.Publisher
+_state_machine_criteria_sub: rospy.Subscriber
