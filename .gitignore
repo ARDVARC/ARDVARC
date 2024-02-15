@@ -40,3 +40,6 @@ codegen/
 
 # Octave session info
 octave-workspace
+
+# VSCode junk
+.vscode/*
