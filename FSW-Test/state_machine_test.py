@@ -2,6 +2,7 @@ import unittest
 from FSW.config.structures import MissionStates
 from FSW.config.constants import LOCALIZE_DURATION
 import rospy
+from rosardvarc.msg import StateMachineCriteria
 
 class TestStateMachineCriteriaGenerator(unittest.TestCase):
     def test_finish_localizing_after_time(self):
@@ -34,4 +35,84 @@ class TestStateMachineCriteriaGenerator(unittest.TestCase):
         # Check that the message does not say that we are done localizing
         self.assertFalse(msg.rgv_1_localized)
         
+
+class TestDetermineMissionState(unittest.TestCase):
+    def test_transition_from_track_to_localize(self):
+        import FSW.functional.determine_mission_state as dms
         
+        # Set current state to TRACK_RGV_1
+        current_state = MissionStates.TRACK_RGV_1
+        
+        # Create a criteria message that should trigger the transition to
+        # LOCALIZE_RGV_1
+        criteria = StateMachineCriteria()
+        criteria.timestamp = rospy.Time.from_sec(1000)
+        criteria.recent_rgv_1_estimate = True
+        criteria.recent_rgv_2_estimate = True
+        criteria.rgv_1_is_moving = False
+        criteria.rgv_2_is_moving = True
+        criteria.rgv_1_localized = False
+        criteria.rgv_2_localized = False
+        criteria.joint_localized = False
+        criteria.rgv_1_sighted = True
+        criteria.rgv_2_sighted = False
+        criteria.minimum_localize_time_reached = False
+        criteria.battery_low = False
+        
+        # Check that the next generated mission state is LOCALIZE_RGV_1
+        next_mission_state = dms._determine_next_mission_state(current_state, criteria)
+        self.assertEqual(next_mission_state, MissionStates.LOCALIZE_RGV_1)
+    
+    
+    def test_transition_from_localize_1_to_find_2(self):
+        import FSW.functional.determine_mission_state as dms
+        
+        # Set current state to LOCALIZE_RGV_1
+        current_state = MissionStates.LOCALIZE_RGV_1
+        
+        # Create a criteria message that should trigger the transition to
+        # FIND_RGV_2
+        criteria = StateMachineCriteria()
+        criteria.timestamp = rospy.Time.from_sec(1000)
+        criteria.recent_rgv_1_estimate = True
+        criteria.recent_rgv_2_estimate = False
+        criteria.rgv_1_is_moving = False
+        criteria.rgv_2_is_moving = False
+        criteria.rgv_1_localized = True
+        criteria.rgv_2_localized = False
+        criteria.joint_localized = False
+        criteria.rgv_1_sighted = True
+        criteria.rgv_2_sighted = False
+        criteria.minimum_localize_time_reached = False
+        criteria.battery_low = False
+        
+        # Check that the next generated mission state is FIND_RGV_2
+        next_mission_state = dms._determine_next_mission_state(current_state, criteria)
+        self.assertEqual(next_mission_state, MissionStates.FIND_RGV_2)
+    
+    
+    def test_transition_from_localize_1_to_go_home(self):
+        import FSW.functional.determine_mission_state as dms
+        
+        # Set current state to LOCALIZE_RGV_1
+        current_state = MissionStates.LOCALIZE_RGV_1
+        
+        # Create a criteria message that should trigger the transition to
+        # GO_HOME
+        criteria = StateMachineCriteria()
+        criteria.timestamp = rospy.Time.from_sec(1000)
+        criteria.recent_rgv_1_estimate = True
+        criteria.recent_rgv_2_estimate = False
+        criteria.rgv_1_is_moving = False
+        criteria.rgv_2_is_moving = False
+        criteria.rgv_1_localized = False
+        criteria.rgv_2_localized = False
+        criteria.joint_localized = False
+        criteria.rgv_1_sighted = True
+        criteria.rgv_2_sighted = False
+        criteria.minimum_localize_time_reached = False
+        criteria.battery_low = True
+        
+        # Check that the next generated mission state is GO_HOME
+        next_mission_state = dms._determine_next_mission_state(current_state, criteria)
+        self.assertEqual(next_mission_state, MissionStates.GO_HOME)

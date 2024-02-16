@@ -15,7 +15,7 @@ def _state_machine_criteria_callback(msg: StateMachineCriteria):
     
     global _current_state
     # Choose the next mission state based on _current_state and msg
-    _current_state = determine_next_mission_state(_current_state, msg)
+    _current_state = _determine_next_mission_state(_current_state, msg)
     
     # Publish new mission state
     mission_state_msg = MissionState()
@@ -25,7 +25,7 @@ def _state_machine_criteria_callback(msg: StateMachineCriteria):
     rospy.loginfo("Mission state published")
 
 
-def determine_next_mission_state(current_state: MissionStates, criteria: StateMachineCriteria) -> MissionStates:
+def _determine_next_mission_state(current_state: MissionStates, criteria: StateMachineCriteria) -> MissionStates:
     """
     Determines what the next mission state should be based on the current mission state and a set of
     state machine criteria. This is meant to identically implement the state machine design in the
