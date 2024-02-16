@@ -116,3 +116,37 @@ class TestDetermineMissionState(unittest.TestCase):
         # Check that the next generated mission state is GO_HOME
         next_mission_state = dms._determine_next_mission_state(current_state, criteria)
         self.assertEqual(next_mission_state, MissionStates.GO_HOME)
+
+
+class TestStateMachineInternalIntegration(unittest.TestCase):
+    def test_low_battery_causes_go_home(self):
+        import FSW.functional.generate_state_machine_criteria as gsmc
+        import FSW.functional.determine_mission_state as dms
+        
+        # General preparation
+        now = rospy.Time.from_sec(1000)
+        current_state = MissionStates.LOCALIZE_RGV_1
+        
+        # Prepare gsmc
+        gsmc._time_of_most_recent_rgv_1_sighting = now - rospy.Duration.from_sec(0.1)
+        gsmc._time_of_most_recent_rgv_2_sighting = None
+        gsmc._current_mission_state = current_state
+        gsmc._current_mission_state_start_time = now - rospy.Duration.from_sec(5)
+        gsmc._time_of_most_recent_rgv_1_estimate = now - rospy.Duration.from_sec(0.1)
+        gsmc._time_of_most_recent_rgv_2_estimate = None
+        gsmc._rgv_1_speed = 0.01
+        gsmc._rgv_2_speed = None
+        gsmc._low_battery = True
+        
+        # Prepare dms
+        dms._current_state = current_state
+        
+        
+        # Create the criteria message
+        criteria = gsmc._build_state_machine_criteria_message(now)
+        
+        # Determine the next state
+        next_mission_state = dms._determine_next_mission_state(current_state, criteria)
+        
+        # Check that the next generated mission state is GO_HOME
+        self.assertEqual(next_mission_state, MissionStates.GO_HOME)
