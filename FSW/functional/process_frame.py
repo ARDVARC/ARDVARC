@@ -40,7 +40,8 @@ class DetectionInfo():
 ## Function to detect ArUco markers
 def detect_ArUco(frame: cv2.typing.MatLike) -> Optional[DetectionInfo]:  
     parameters =  cv2.aruco.DetectorParameters()
-    detector = cv2.aruco.ArucoDetector(constants.DICTIONARY, parameters)  
+    dictionary = cv2.aruco.getPredefinedDictionary(constants.ARUCO_DICT.items["DICT_6X6_50"])
+    detector = cv2.aruco.ArucoDetector(dictionary, parameters)  
     
     ## Get the ArUco directory
     (corners, ids, rejected) = detector.detectMarkers(frame)
@@ -83,6 +84,7 @@ def detect_ArUco(frame: cv2.typing.MatLike) -> Optional[DetectionInfo]:
         return DetectionInfo(frame, ids, direction_vectors)
 
 
+## TODO Get rid of this
 class Camera:
     """Class for camera vison object recognition software"""
 
@@ -96,3 +98,27 @@ class Camera:
         if not self.camera.isOpened():
             print("Error opening video file")
             sys.exit()
+
+"""Unit Test Code
+if __name__ == "__main__":
+
+    image_path = r"arucoMarkers/singlemarkersoriginal.jpg"
+
+    intrinsic_camera = np.array(((933.15867, 0, 657.59), (0, 933.1586, 400.36993), (0, 0, 1)))
+    distortion = np.array((-0.43948, 0.18514, 0, 0))
+
+    cap = cv2.VideoCapture(0)
+
+    while cap.isOpened():
+        ret, image = cap.read()
+
+        for aruco_type in detect_markers(image):
+             image = pose_estimation(image, ARUCO_DICT[aruco_type], intrinsic_camera, distortion)
+             
+        cv2.imshow('Estimated Pose', image)
+                
+        if cv2.waitKey(50) & 0xFF == 27:
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()"""

@@ -20,7 +20,7 @@ frame_width = int(cap.get(3))
 frame_height = int(cap.get(4)) 
 print(frame_width, frame_height)
 size = (frame_width, frame_height) 
-result = cv2.VideoWriter('DJI_0011_AR_2_30_S_-_Trim_Annotated.avi', cv2.VideoWriter_fourcc(*'MJPG'),10, size) #XVID/MJPG
+# result = cv2.VideoWriter('DJI_0011_AR_2_30_S_-_Trim_Annotated.avi', cv2.VideoWriter_fourcc(*'MJPG'),10, size) #XVID/MJPG
 # Check if camera opened successfully 
 if (cap.isOpened()== False): 
     print("Error opening video file") 
@@ -66,7 +66,7 @@ while(cap.isOpened()):
                 # Label the ArUco marker
                 print("[INFO] ArUco marker ID: {}".format(markerID))
             
-        result.write(frame) 
+        # result.write(frame) 
         end_time = time.time()
         elapsed_time = end_time - start_time
         print("Time: ", elapsed_time)
@@ -82,7 +82,7 @@ while(cap.isOpened()):
 # When everything done, release 
 # the video capture object 
 cap.release() 
-result.release() 
+# result.release() 
 
 end_time = time.time()
 elapsed_time = end_time - start_time

@@ -5,7 +5,7 @@ ARDVARC Flight Software
 Author: Tim Behrer
 email: Timothy.Behrer@colorado.edu
 
-Description:This is the CV node, it takes in the camera feed from ROS and annotates it for analysis, 
+Description: This is the CV node, it takes in the camera feed from ROS and annotates it for analysis, 
 then publishes the annotated feed to the main state machine. It also performs calculations to 
 determine the angular position of the ArUco markers. It will then publish the pointing vector 
 to an appropriate ROS topic along with a recent sightings boolean to indicate if the marker has
@@ -32,10 +32,6 @@ from .config.topic_names import ANNOTATED_CAMERA_FRAMES, RECENT_RGV_SIGHTINGS, U
 from rosardvarc.msg import AnnotatedCameraFrame, RecentSighting, UasToRgvDirectionVectorUasFrame
 from sensor_msgs.msg import Image
 from .functional.process_frame import detect_ArUco
-## TODO Import the necessary message types.
-"""from rosardvarc.msg import RawCameraFrame""" ## This is the subscriber to the camera frame.
-"""from rosardvarc.msg import RecentSighting""" ## This is the publisher for the recent sightings.
-"""from rosardvarc.msg import Uas2RgvPointingVector""" ## This is the publisher for the pointing vector.
 import math
 ## Imports from the existing ArUco marker detection and annotation function
 import sys
@@ -46,8 +42,6 @@ import os
 import argparse
 from cv_bridge import CvBridge
 ## TODO Make sure all imports are correct
-
-
 ## TODO Create the callback for the camera frame subscriber.
 ## TODO Call the write to flash function within this callback
 
