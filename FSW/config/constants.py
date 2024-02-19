@@ -16,26 +16,34 @@ from cv2 import aruco
 import numpy as np
 import os
 import argparse
+import numpy.typing as npt
 from dataclasses import dataclass
 ## TODO Check that all imports are correct
 
 
-"""Intrinsics"""
-FOCAL_LENGTH: float = 1.4 # mm
+"""Pi Camera Parameters"""
+##### Old Camera Parameters #####
+"""FOCAL_LENGTH: float = 1.4 # mm
 CAMERA_SENSOR_WIDTH: float = 3.6 # mm
 CAMERA_SENSOR_HEIGHT: float = 2.4 # mm
 FRAME_WIDTH: int = 640 # pixels
 FRAME_HEIGHT: int = 480 # pixels
 CAMERA_SIZE: list = [FRAME_WIDTH, FRAME_HEIGHT] # pixels x pixels
-VIDEO_FPS: int = 60 # frames per second
-
-
-"""Extrinsics"""
+VIDEO_FPS: int = 60 # frames per second"""
+##### Old Camera Parameters #####
+## TODO This Needs to be updated to the true camera intrinsic parameters
+INTRINSICS_PI_CAMERA: npt.NDArray = np.array(((933.15867, 0, 657.59), (0, 933.1586, 400.36993), (0, 0, 1)))
+## TODO This Needs to be updated to the true camera distortion parameters
+DISTORTION: npt.NDArray = np.array((0.0, 0.0, 0.0, 0.0))
+## TODO Update the formatting of the camera extrinsic parameters
+EXTRINSICS_PI_CAMERA: npt.NDArray = np.array(((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0))) #Extrinsics of the camera
 
 
 """ArUco"""
 # DICTIONARY: cv2.aruco.Dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
 #Define the dictionary of ArUco markers Possible
+## TODO Comment out the ArUco dictionary that is not being used
+## TODO Determine the best ArUco dictionary to use
 ARUCO_DICT = {
 	"DICT_4X4_50": cv2.aruco.DICT_4X4_50,
 	"DICT_4X4_100": cv2.aruco.DICT_4X4_100,

@@ -38,49 +38,79 @@ class DetectionInfo():
 
 
 ## Function to detect ArUco markers
-def detect_ArUco(frame: cv2.typing.MatLike) -> Optional[DetectionInfo]:  
-    parameters =  cv2.aruco.DetectorParameters()
-    dictionary = cv2.aruco.getPredefinedDictionary(constants.ARUCO_DICT.items["DICT_6X6_50"])
-    detector = cv2.aruco.ArucoDetector(dictionary, parameters)  
-    
-    ## Get the ArUco directory
-    (corners, ids, rejected) = detector.detectMarkers(frame)
+def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> Optional[DetectionInfo]: 
+    aruco_type_list = [] 
+    for aruco_type, dictionary_id in constants.ARUCO_DICT.items():
 
-    # verify *at least* one ArUco marker was detected
-    if len(corners) > 0:
-        direction_vectors = []
-        # flatten the ArUco IDs list
-        ids = ids.flatten()
-        # loop over the detected ArUCo corners
-        for (markerCorner, markerID) in zip(corners, ids):
-            # extract the marker corners (which are always returned in
-            # top-left, top-right, bottom-right, and bottom-left order)
-            corners = markerCorner.reshape((4, 2))
-            (topLeft, topRight, bottomRight, bottomLeft) = corners
-            # convert each of the (x, y)-coordinate pairs to integers
-            topRight = (int(topRight[0]), int(topRight[1]))
-            bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
-            bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
-            topLeft = (int(topLeft[0]), int(topLeft[1]))
-            # draw the bounding box of the ArUCo detection in RED
-            cv2.line(frame, topLeft, topRight, (0, 0, 255), 2)
-            cv2.line(frame, topRight, bottomRight, (0, 0, 255), 2)
-            cv2.line(frame, bottomRight, bottomLeft, (0, 0, 255), 2)
-            cv2.line(frame, bottomLeft, topLeft, (0, 0, 255), 2)
-            # compute and draw the center (x, y)-coordinates of the ArUco
-            # marker
-            cX = int((topLeft[0] + bottomRight[0]) / 2.0)
-            cY = int((topLeft[1] + bottomRight[1]) / 2.0)
-            cv2.circle(frame, (cX, cY), 4, (0, 0, 255), -1)
-            
-            
-            # Do math to get poses/direction_vectors (TBD)
-            direction_vectors.append(
-                UasToRgvDirectionVectorUasFrame(
-                    # TODO: Make this something reasonable
+        parameters =  cv2.aruco.DetectorParameters()
+        dictionary = cv2.aruco.getPredefinedDictionary(dictionary_id)
+        detector = cv2.aruco.ArucoDetector(dictionary, parameters)  
+        
+        ## Get the ArUco directory
+        corners, ids, _ = detector.detectMarkers(frame)
+
+        # verify *at least* one ArUco marker was detected
+        if len(corners) > 0:
+            direction_vectors = []
+            aruco_type_list.append(aruco_type)
+            """ Not Sure I wanna keep this yet, depending on how I want to store the ids
+            # flatten the ArUco IDs list
+            ids = ids.flatten()
+            """
+            # loop over the detected ArUCo corners
+            for (markerCorner, markerID) in zip(corners, ids.flatten()):
+                # extract the marker corners (which are always returned in
+                # top-left, top-right, bottom-right, and bottom-left order)
+                corners_reshaped = markerCorner.reshape((4, 2))
+                (topLeft, topRight, bottomRight, bottomLeft) = corners_reshaped
+                # convert each of the (x, y)-coordinate pairs to integers
+
+                ###### Unnecessary Code ######
+                """topRight = (int(topRight[0]), int(topRight[1]))
+                bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
+                bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
+                topLeft = (int(topLeft[0]), int(topLeft[1]))"""
+                ###### Unnecessary Code ######
+
+                ###### OLD OLD Line Marking Code ######
+                # draw the bounding box of the ArUCo detection in RED
+                """cv2.line(frame, topLeft, topRight, (0, 0, 255), 2)
+                cv2.line(frame, topRight, bottomRight, (0, 0, 255), 2)
+                cv2.line(frame, bottomRight, bottomLeft, (0, 0, 255), 2)
+                cv2.line(frame, bottomLeft, topLeft, (0, 0, 255), 2)"""
+                ###### OLD OLD Line Marking Code ######
+
+
+                # compute and draw the center (x, y)-coordinates of the ArUco marker
+                cX = int((topLeft[0] + bottomRight[0]) / 2)
+                cY = int((topLeft[1] + bottomRight[1]) / 2)
+
+                ###### Old Line Marking Code ######
+                #cv2.polylines(frame, [markerCorner.astype(int)], True, (0, 0, 255), 2)
+                #cv2.circle(frame, (cX, cY), 5, (0, 0, 255), -1)
+                ###### Old Line Marking Code ######
+
+                ## TODO Do math to get direction_vectors (TBD)
+                direction_vectors.append(
+                    UasToRgvDirectionVectorUasFrame(
+                        # TODO: Make this something reasonable
+                    )
                 )
-            )
+
+                ## TODO Might want to put this in the for loop for FrameAxes
+                cv2.aruco.drawDetectedMarkers(frame, corners) #Draw the detected markers
+
+                
+
+            #Compute the pose of the aruco
+            for i in range(0, len(ids)):
+                rvec, tvec, markerPoints = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.025, constants.INTRINSICS_PI_CAMERA, constants.DISTORTION)
+
+                cv2.drawFrameAxes(frame, constants.INTRINSICS_PI_CAMERA, constants.DISTORTION, rvec, tvec, 0.01) 
             
+            
+
+                
         return DetectionInfo(frame, ids, direction_vectors)
 
 
