@@ -22,6 +22,7 @@ from dataclasses import dataclass
 
 
 """Pi Camera Parameters"""
+## TODO (TB) Delete this when expired and new is updated
 ##### Old Camera Parameters #####
 """FOCAL_LENGTH: float = 1.4 # mm
 CAMERA_SENSOR_WIDTH: float = 3.6 # mm
@@ -31,16 +32,17 @@ FRAME_HEIGHT: int = 480 # pixels
 CAMERA_SIZE: list = [FRAME_WIDTH, FRAME_HEIGHT] # pixels x pixels
 VIDEO_FPS: int = 60 # frames per second"""
 ##### Old Camera Parameters #####
+
 ## TODO Could be determined from the camera calibration function from cv2.aruco
 ## TODO This Needs to be updated to the true camera intrinsic parameters
-INTRINSICS_PI_CAMERA: npt.NDArray = np.array(((933.15867, 0, 657.59), (0, 933.1586, 400.36993), (0, 0, 1)))
+INTRINSICS_PI_CAMERA: npt.NDArray = np.array([[933.15867, 0, 657.59], [0, 933.1586, 400.36993], [0, 0, 1]])
 ## TODO This Needs to be updated to the true camera distortion parameters
 ## TODO Could be determined from the camera calibration function from cv2.aruco
-DISTORTION: npt.NDArray = np.array((0.0, 0.0, 0.0, 0.0))
+DISTORTION: npt.NDArray = np.array([0.0, 0.0, 0.0, 0.0])
 ## TODO Update the formatting of the camera extrinsic parameters
 ## TODO Configure a way to get the camera extrinsic parameters accurately
-EXTRINSICS_PI_CAMERA_DCM: npt.NDArray = np.array(((0, 0, 0), (0, 0, 0),(0, 0, 0))) #rvec,tvec for Camera from to UAS Frame
-EXTRINSICS_PI_CAMERA_TVEC: npt.NDArray = np.array((0, 0, 0)) #tvec for Camera from to UAS Frame
+EXTRINSICS_PI_CAMERA_DCM: npt.NDArray = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]) #DCM From UAS 2 Camera
+EXTRINSICS_PI_CAMERA_TVEC: npt.NDArray = np.array([0.0, 0.0, 0.0]) #tvec for Camera from UAS in UAS Frame
 
 """ArUco"""
 # DICTIONARY: cv2.aruco.Dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)

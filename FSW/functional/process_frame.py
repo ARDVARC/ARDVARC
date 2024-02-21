@@ -34,12 +34,14 @@ from typing import Optional, List
 class DetectionInfo():
     annotated_camera_frame: cv2.typing.MatLike
     ids: cv2.typing.MatLike
-    direction_vectors: List[UasToRgvDirectionVectorUasFrame]
+    direction_vector: List[UasToRgvDirectionVectorUasFrame]
 
 
 ## Function to detect ArUco markers
 def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> Optional[DetectionInfo]: 
     aruco_type_list = [] 
+    direction_vector = []
+
     for aruco_type, dictionary_id in constants.ARUCO_DICT.items():
 
         parameters =  cv2.aruco.DetectorParameters()
@@ -51,7 +53,6 @@ def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> Optional[Detec
 
         # verify *at least* one ArUco marker was detected
         if len(corners) > 0:
-            direction_vectors = []
             aruco_type_list.append(aruco_type)
             """ 
             Not Sure I wanna keep this yet, depending on how I want to store the ids
@@ -105,35 +106,57 @@ def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> Optional[Detec
             #Compute the pose of the aruco: rvec = Rotation Vector, tvec = Translation Vector
             for i in range(0, len(ids)):
 
-                rvec, tvec = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.025, constants.INTRINSICS_PI_CAMERA, constants.DISTORTION)                
-
+                (rvec, tvec, _) = my_estimatePoseSingleMarkers(corners[i], 0.025, constants.INTRINSICS_PI_CAMERA, constants.DISTORTION)                
+                rvec = np.array(rvec)
+                tvec = np.array(tvec)
                 cv2.drawFrameAxes(frame, constants.INTRINSICS_PI_CAMERA, constants.DISTORTION, rvec, tvec, 0.01) 
         
-                ## TODO Do math to get direction_vectors (TB 2021-09-20: Added a MVP implementation of the possible DCM and Translation Vector)
-                ## TODO Configure the direction_vectors to be in the UAS Frame (TB 2021-09-20: Roughly Executed)
-                direction_vectors.append(
-                    UasToRgvDirectionVectorUasFrame(
-                        # TODO: Make this something reasonable
-                        ## TODO (TB) Ask Aidan how I should do this
-                        #Convert the Position Vector of the RGV to the UAS Frame
-                        tvec_UASFrame = camera_frame_to_UAS_frame(tvec)
-
-                    )
-                )
-            
-
+                ## TODO Do math to get direction_vector (TB 2021-09-20: Added a MVP implementation of the possible DCM and Translation Vector)
+                ## TODO Configure the direction_vector to be in the UAS Frame (TB 2021-09-20: Roughly Executed)
+                tvec_UASFrame = camera_frame_to_UAS_frame(tvec)
+                direction_vector.append(tvec_UASFrame)
                 
-        return DetectionInfo(frame, ids, direction_vectors)
+        return DetectionInfo(frame, ids, direction_vector)
 
 
 def camera_frame_to_UAS_frame(position: np.typing.NDArray) -> np.typing.NDArray:
     #Position: 3x1 vector of the vector given in the camera frame transformed to the UAS frame
     ## TODO Implement this function(TB 2021-09-20: MVP Complete)
+    ## TODO Make sure the matrix mult is right
 
     #Convert from rotation Vector to Rotation Matrix
     position_UASFrame = constants.EXTRINSICS_PI_CAMERA_DCM * (position) + constants.EXTRINSICS_PI_CAMERA_TVEC
 
     return position_UASFrame
+
+## TODO (TB) Test this function as It was done by someone else:
+
+def my_estimatePoseSingleMarkers(corners, marker_size, mtx, distortion):
+    """https://stackoverflow.com/questions/75750177/solve-pnp-or-estimate-pose-single-markers-which-is-better"""
+
+    '''
+    This will estimate the rvec and tvec for each of the marker corners detected by:
+       corners, ids, rejectedImgPoints = detector.detectMarkers(image)
+    corners - is an array of detected corners for each detected marker in the image
+    marker_size - is the size of the detected markers
+    mtx - is the camera matrix
+    distortion - is the camera distortion matrix
+    RETURN list of rvecs, tvecs, and trash (so that it corresponds to the old estimatePoseSingleMarkers())
+    '''
+    marker_points = np.array([[-marker_size / 2, marker_size / 2, 0],
+                              [marker_size / 2, marker_size / 2, 0],
+                              [marker_size / 2, -marker_size / 2, 0],
+                              [-marker_size / 2, -marker_size / 2, 0]], dtype=np.float32)
+    trash = []
+    rvecs = []
+    tvecs = []
+    
+    for ii in corners:
+        nada, R, t = cv2.solvePnP(marker_points, ii, mtx, distortion, False, cv2.SOLVEPNP_IPPE_SQUARE)
+        rvecs.append(R)
+        tvecs.append(t)
+        trash.append(nada)
+    return rvecs, tvecs, trash
 
 
 #Unit Test Code
@@ -141,13 +164,15 @@ def camera_frame_to_UAS_frame(position: np.typing.NDArray) -> np.typing.NDArray:
 if __name__ == "__main__":
 
     ## TODO Test and Implement various videos and images
-    image_path = r"arucoMarkers/singlemarkersoriginal.jpg"
+    image_path = "FSW/fake_data_generators/DJI_0011_AR_2_30_S_-_Trim.mp4"
 
     cap = cv2.VideoCapture(image_path)
 
     while cap.isOpened():
         ret, image = cap.read()
-
+        if not ret:
+            break
+        
         Detection_Info = detect_ArUco_Direction_and_Pose(image)
              
         image = Detection_Info.annotated_camera_frame
