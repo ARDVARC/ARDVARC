@@ -40,7 +40,7 @@ DISTORTION: npt.NDArray = np.array((0.0, 0.0, 0.0, 0.0))
 ## TODO Update the formatting of the camera extrinsic parameters
 ## TODO Configure a way to get the camera extrinsic parameters accurately
 EXTRINSICS_PI_CAMERA_DCM: npt.NDArray = np.array(((0, 0, 0), (0, 0, 0),(0, 0, 0))) #rvec,tvec for Camera from to UAS Frame
-EXTRINSICS_PI_CAMERA_TVEC: npt.NDArray = np.array((0, 0, 0)) #rvec,tvec for Camera from to UAS Frame
+EXTRINSICS_PI_CAMERA_TVEC: npt.NDArray = np.array((0, 0, 0)) #tvec for Camera from to UAS Frame
 
 """ArUco"""
 # DICTIONARY: cv2.aruco.Dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
