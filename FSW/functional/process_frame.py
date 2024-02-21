@@ -13,6 +13,7 @@ Notes:
     TODO Implement camera variance (TB 2021-09-20: constants.DISTORTION)
     TODO Implement frame transition and UAS state to backout the RGV inertial position(TB 2021-09-20: MVP Complete)
     TODO Clean out old code after a review and unit testing
+    TODO Get rid of possible appends
     """
 # Python 3.7
 ## Imports from the existing ArUco marker detection and annotation function
@@ -143,6 +144,9 @@ def my_estimatePoseSingleMarkers(corners, marker_size, mtx, distortion):
     distortion - is the camera distortion matrix
     RETURN list of rvecs, tvecs, and trash (so that it corresponds to the old estimatePoseSingleMarkers())
     '''
+
+    ## TODO (TB) Clean up this and preallocate function
+
     marker_points = np.array([[-marker_size / 2, marker_size / 2, 0],
                               [marker_size / 2, marker_size / 2, 0],
                               [marker_size / 2, -marker_size / 2, 0],
@@ -150,12 +154,14 @@ def my_estimatePoseSingleMarkers(corners, marker_size, mtx, distortion):
     trash = []
     rvecs = []
     tvecs = []
+
+    # rvecs = np.zeros(len(corners), 3)
     
     for ii in corners:
-        nada, R, t = cv2.solvePnP(marker_points, ii, mtx, distortion, False, cv2.SOLVEPNP_IPPE_SQUARE)
+        _, R, t = cv2.solvePnP(marker_points, ii, mtx, distortion, False, cv2.SOLVEPNP_IPPE_SQUARE)
         rvecs.append(R)
         tvecs.append(t)
-        trash.append(nada)
+       # trash.append(nada)
     return rvecs, tvecs, trash
 
 
