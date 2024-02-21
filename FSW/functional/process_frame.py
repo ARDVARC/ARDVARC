@@ -26,8 +26,8 @@ import argparse
 from dataclasses import dataclass
 from ..config import constants
 # from config import constants
-import rospy
-from rosardvarc.msg import UasToRgvDirectionVectorUasFrame
+import rospy """Comment out for windows unit test"""
+from rosardvarc.msg import UasToRgvDirectionVectorUasFrame """Comment out for windows unit test"""
 from typing import Optional, List
 ## TODO Make sure all imports are correct
 
@@ -37,6 +37,11 @@ class DetectionInfo():
     annotated_camera_frame: cv2.typing.MatLike
     ids: cv2.typing.MatLike
     direction_vector: List[UasToRgvDirectionVectorUasFrame]
+    
+    """
+    Windows Unit Test Version
+    direction_vector: List
+    """
 
 
 ## Function to detect ArUco markers
@@ -171,7 +176,7 @@ def my_estimatePoseSingleMarkers(corners, marker_size, mtx, distortion):
 if __name__ == "__main__":
 
     ## TODO Test and Implement various videos and images
-    image_path = "FSW/fake_data_generators/DJI_0011_AR_2_30_S_-_Trim.mp4"
+    image_path = "FSW/fake_data_generators/DJI_0022_AR_2_30_V.MP4" #"FSW/fake_data_generators/DJI_0011_AR_2_30_S_-_Trim.mp4"
 
     cap = cv2.VideoCapture(image_path)
 
@@ -185,9 +190,12 @@ if __name__ == "__main__":
         image = Detection_Info.annotated_camera_frame
         ##Show the image with the estimated pose, USE IF ONLY FEW IMAGE
         cv2.imshow('Estimated Pose', image)
+        print(Detection_Info.ids)
+        print(Detection_Info.direction_vector)
+
 
                 
-        if cv2.waitKey(0) & 0xFF == 27:
+        if cv2.waitKey(1) & 0xFF == 27:
             break
 
     cap.release()
