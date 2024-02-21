@@ -25,6 +25,7 @@ import os
 import argparse
 from dataclasses import dataclass
 from ..config import constants
+# from config import constants
 import rospy
 from rosardvarc.msg import UasToRgvDirectionVectorUasFrame
 from typing import Optional, List
@@ -186,7 +187,7 @@ if __name__ == "__main__":
         cv2.imshow('Estimated Pose', image)
 
                 
-        if cv2.waitKey(50) & 0xFF == 27:
+        if cv2.waitKey(0) & 0xFF == 27:
             break
 
     cap.release()
