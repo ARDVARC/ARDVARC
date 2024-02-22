@@ -36,12 +36,13 @@ from typing import Optional, List
 class DetectionInfo():
     annotated_camera_frame: cv2.typing.MatLike
     ids: cv2.typing.MatLike
+    
+    #ROS Version
     direction_vector: List[UasToRgvDirectionVectorUasFrame]
     
-    """
-    Windows Unit Test Version
-    direction_vector: List
-    """
+    #Windows Unit Test Version
+    #direction_vector: List
+    
 
 
 ## Function to detect ArUco markers
@@ -61,6 +62,7 @@ def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> Optional[Detec
         # verify *at least* one ArUco marker was detected
         if len(corners) > 0:
             aruco_type_list.append(aruco_type)
+            print(f"Detected {aruco_type_list} ArUco markers")
             """ 
             Not Sure I wanna keep this yet, depending on how I want to store the ids
             # flatten the ArUco IDs list
