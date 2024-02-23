@@ -132,8 +132,8 @@ class TestStateMachineInternalIntegration(unittest.TestCase):
         gsmc._time_of_most_recent_rgv_2_sighting = None
         gsmc._current_mission_state = current_state
         gsmc._current_mission_state_start_time = now - rospy.Duration.from_sec(5)
-        gsmc._time_of_most_recent_rgv_1_estimate = now - rospy.Duration.from_sec(0.1)
-        gsmc._time_of_most_recent_rgv_2_estimate = None
+        gsmc._time_of_most_recent_confident_rgv_1_estimate = now - rospy.Duration.from_sec(0.1)
+        gsmc._time_of_most_recent_confident_rgv_2_estimate = None
         gsmc._rgv_1_speed = 0.01
         gsmc._rgv_2_speed = None
         gsmc._low_battery = True
