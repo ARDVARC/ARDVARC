@@ -31,8 +31,9 @@ import genpy
 from .config.topic_names import ANNOTATED_CAMERA_FRAMES, RECENT_RGV_SIGHTINGS, UAS_TO_RGV_DIRECTION_VECTORS, CAMERA_FRAMES
 from rosardvarc.msg import AnnotatedCameraFrame, RecentSighting, UasToRgvDirectionVectorUasFrame
 from sensor_msgs.msg import Image
-from .functional.process_frame import detect_ArUco
+from .functional.process_frame import detect_ArUco_Direction_and_Pose, camera_frame_to_UAS_frame,my_estimatePoseSingleMarkers
 import math
+from ..config import constants
 ## Imports from the existing ArUco marker detection and annotation function
 import sys
 import cv2
@@ -46,31 +47,41 @@ from cv_bridge import CvBridge
 ## TODO Call the write to flash function within this callback
 
 
+## TODO (02/26 - TB) Finish the cv.py message publishing 
+
 def frame_callback(msg: Image):
     now = rospy.Time.now()
     if (now - msg.header.stamp).to_sec() > 1/60:
         rospy.loginfo(f"CV skipped a frame ({now} vs {msg.header.stamp})")
         return
     frame = bridge.imgmsg_to_cv2(msg)
-    detection_info = detect_ArUco(frame)
+
+    detection_info = detect_ArUco_Direction_and_Pose(frame)
     if detection_info == None:
         rospy.loginfo("CV processed a frame but found nothing")
         return
-    annotated_frame = AnnotatedCameraFrame(
-        # TODO: Make this something reasonable based on detection_info.annotated_camera_frame
-    )
-    rospy.loginfo("CV published an annotated frame")
-    pub_frame.publish(annotated_frame)
+    
+    
+
     for id in detection_info.ids:
-        sighting = RecentSighting(
-            # TODO: Make this something reasonable based on id
-        )
+        if id in constants.ARUCO_ID2RGV_DICT.keys():
+            detection_info.annotated_camera_frame
+            annotated_frame = AnnotatedCameraFrame()
+            annotated_frame.timestamp = rospy.Time.now
+            annotated_frame.rgv_id = constants.ARUCO_ID2RGV_DICT[id]
+            
+            # TODO: Make this something reasonable based on detection_info.annotated_camera_frame (TB 2021-04-07: I think that this is right but im not sure that this is the correct way to do this)
+            rospy.loginfo("CV published an annotated frame")
+            pub_frame.publish(annotated_frame)
+
+        sighting = RecentSighting(id)
+        # TODO: Make this something reasonable based on id (TB 2021-04-07: I think that this is right but im not sure that this is the correct way to do this)
         rospy.loginfo("CV published an RGV sighting")
         pub_sightings.publish(sighting)
+
     for direction_vector in detection_info.direction_vectors:
-        direction_vector_msg = UasToRgvDirectionVectorUasFrame(
-            # TODO: Make this something reasonable based on direction_vector
-        )
+        direction_vector_msg = UasToRgvDirectionVectorUasFrame(direction_vector)
+        # TODO: Make this something reasonable based on direction_vector (TB 2024-02-26: I think that this is right but im not sure that this is the correct way to do this)
         rospy.loginfo("CV published a direction vector")
         pub_vector.publish(direction_vector_msg)
 
