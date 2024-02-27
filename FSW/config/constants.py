@@ -39,7 +39,6 @@ DICTIONARY: cv2.aruco.Dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.D
 
 
 """State Machine Criteria"""
-STANDING_STILL_SPEED_THRESHOLD: float = 0.3 # m/s
 RECENT_ESTIMATE_TIME_CUTOFF: rospy.Duration = rospy.Duration.from_sec(2)
 LOCALIZE_DURATION: rospy.Duration = rospy.Duration.from_sec(90)
 JOINT_DURATION: rospy.Duration = rospy.Duration.from_sec(240)

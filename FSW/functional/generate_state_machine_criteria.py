@@ -3,7 +3,7 @@ import rospy
 import genpy
 from ..config.structures import MissionStates
 from ..config.topic_names import STATE_MACHINE_CRITERIA, ESTIMATED_RGV_STATES, RECENT_RGV_SIGHTINGS, MISSION_STATES, BATTERY
-from ..config.constants import STANDING_STILL_SPEED_THRESHOLD, RECENT_ESTIMATE_TIME_CUTOFF, LOCALIZE_DURATION, JOINT_DURATION, RECENT_SIGHTING_TIME_CUTOFF, BATTERY_LOW_CHARGE_PCT_CUTOFF, MINIMUM_LOCALIZE_DURATION, CONFIDENT_ESTIMATE_THRESHOLD
+from ..config.constants import RECENT_ESTIMATE_TIME_CUTOFF, LOCALIZE_DURATION, JOINT_DURATION, RECENT_SIGHTING_TIME_CUTOFF, BATTERY_LOW_CHARGE_PCT_CUTOFF, MINIMUM_LOCALIZE_DURATION, CONFIDENT_ESTIMATE_THRESHOLD
 from rosardvarc.msg import StateMachineCriteria, EstimatedRgvState, RecentSighting, MissionState
 from sensor_msgs.msg import BatteryState
 import numpy as np
@@ -17,8 +17,8 @@ _current_mission_state_start_time: genpy.Time
 
 _time_of_most_recent_confident_rgv_1_estimate: Optional[genpy.Time] = None
 _time_of_most_recent_confident_rgv_2_estimate: Optional[genpy.Time] = None
-_rgv_1_speed: Optional[float] = None
-_rgv_2_speed: Optional[float] = None
+_rgv_1_moving: bool = True
+_rgv_2_moving: bool = True
 
 _low_battery: bool = False
 
@@ -33,15 +33,15 @@ def _estimated_rgv_state_callback(msg: EstimatedRgvState):
     globals (RGV speeds) and th contructs and publishes a StateMachineCriteria message.
     """
     
-    global _time_of_most_recent_confident_rgv_1_estimate, _time_of_most_recent_confident_rgv_2_estimate, _rgv_1_speed, _rgv_2_speed
+    global _time_of_most_recent_confident_rgv_1_estimate, _time_of_most_recent_confident_rgv_2_estimate, _rgv_1_moving, _rgv_2_moving
     
     # Update time-of-estimate globals
     if msg.rgv1_confidence >= CONFIDENT_ESTIMATE_THRESHOLD:
         _time_of_most_recent_confident_rgv_1_estimate = msg.timestamp
-        _rgv_1_speed = float(np.linalg.norm(msg.rgv1_velocity))
+        _rgv_1_moving = msg.rgv1_moving
     if msg.rgv2_confidence >= CONFIDENT_ESTIMATE_THRESHOLD:
         _time_of_most_recent_confident_rgv_2_estimate = msg.timestamp
-        _rgv_2_speed = float(np.linalg.norm(msg.rgv2_velocity))
+        _rgv_2_moving = msg.rgv2_moving
     
     # Determine state machine criteria
     state_machine_criteria = _build_state_machine_criteria_message(rospy.Time.now())
@@ -63,8 +63,8 @@ def _build_state_machine_criteria_message(now: rospy.Time) -> StateMachineCriter
     state_machine_criteria.timestamp = now
     state_machine_criteria.recent_rgv_1_estimate = _time_of_most_recent_confident_rgv_1_estimate is not None and now - _time_of_most_recent_confident_rgv_1_estimate <= RECENT_ESTIMATE_TIME_CUTOFF
     state_machine_criteria.recent_rgv_2_estimate = _time_of_most_recent_confident_rgv_2_estimate is not None and now - _time_of_most_recent_confident_rgv_2_estimate <= RECENT_ESTIMATE_TIME_CUTOFF
-    state_machine_criteria.rgv_1_is_moving = _rgv_1_speed is None or _rgv_1_speed >= STANDING_STILL_SPEED_THRESHOLD
-    state_machine_criteria.rgv_2_is_moving = _rgv_2_speed is None or _rgv_2_speed >= STANDING_STILL_SPEED_THRESHOLD
+    state_machine_criteria.rgv_1_is_moving = _rgv_1_moving
+    state_machine_criteria.rgv_2_is_moving = _rgv_2_moving
     state_machine_criteria.rgv_1_localized = _current_mission_state is MissionStates.LOCALIZE_RGV_1 and current_mission_state_time_spent >= LOCALIZE_DURATION
     state_machine_criteria.rgv_2_localized = _current_mission_state is MissionStates.LOCALIZE_RGV_2 and current_mission_state_time_spent >= LOCALIZE_DURATION
     state_machine_criteria.joint_localized = _current_mission_state is MissionStates.JOINT_LOCALIZE and current_mission_state_time_spent >= JOINT_DURATION
