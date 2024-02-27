@@ -33,7 +33,7 @@ from rosardvarc.msg import AnnotatedCameraFrame, RecentSighting, UasToRgvDirecti
 from sensor_msgs.msg import Image
 from .functional.process_frame import detect_ArUco_Direction_and_Pose, camera_frame_to_UAS_frame,my_estimatePoseSingleMarkers
 import math
-from ..config import constants
+from .config import constants
 ## Imports from the existing ArUco marker detection and annotation function
 import sys
 import cv2
@@ -51,22 +51,27 @@ from cv_bridge import CvBridge
 
 def frame_callback(msg: Image):
     now = rospy.Time.now()
-    if (now - msg.header.stamp).to_sec() > 1/60:
-        rospy.loginfo(f"CV skipped a frame ({now} vs {msg.header.stamp})")
+    if (now - msg.header.stamp).to_sec() > 1/2:
+        rospy.loginfo(f"CV skipped a frame ({now.to_sec()} vs {msg.header.stamp.to_sec()})")
         return
+    
+    rospy.loginfo(f"I AM NOT SKIPPING AHHHHHHHHHHHHHHH")
     frame = bridge.imgmsg_to_cv2(msg)
 
     detection_info = detect_ArUco_Direction_and_Pose(frame)
-    if len(detection_info.ids) == 0:
-        rospy.loginfo("CV processed a frame but found nothing")
-    
-##Annotated Frame Message Definition
+
+    ##Annotated Frame Message Definition
     # TODO: Make this something reasonable based on detection_info.annotated_camera_frame (TB 2021-04-07: I think that this is right but im not sure that this is the correct way to do this)
     annotated_frame = AnnotatedCameraFrame()
     annotated_frame.timestamp = rospy.Time.now()
-    annotated_frame.annotated_image = detection_info.annotated_camera_frame
+    annotated_frame.annotated_image = bridge.cv2_to_imgmsg(detection_info.annotated_camera_frame)
     pub_frame.publish(annotated_frame)
     rospy.loginfo("CV published an annotated frame")
+
+
+    if detection_info.ids is None:
+        rospy.loginfo("CV processed a frame but found nothing")
+        return
 
     i = 0
     for id in detection_info.ids:

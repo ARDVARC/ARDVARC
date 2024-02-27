@@ -129,8 +129,11 @@ def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> DetectionInfo:
         
                 ## TODO Do math to get direction_vector (TB 2021-09-20: Added a MVP implementation of the possible DCM and Translation Vector)
                 ## TODO Configure the direction_vector to be in the UAS Frame (TB 2021-09-20: Roughly Executed)
+                ##Export the tvec in the UAS frame
                 tvec_UASFrame = camera_frame_to_UAS_frame(tvec)
-                direction_vector.append(tvec_UASFrame)
+                ##Convert the tvec to a unit vector
+                tvec_hat_UASFrame = tvec_UASFrame / np.linalg.norm(tvec_UASFrame)
+                direction_vector.append(tvec_hat_UASFrame)
                 
         return DetectionInfo(frame, ids, direction_vector)
 
