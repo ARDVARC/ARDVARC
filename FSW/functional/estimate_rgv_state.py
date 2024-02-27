@@ -45,6 +45,8 @@ def estimate_rgv_state():
     
     # Publish estimate
     rospy.loginfo("RGV state estimator published an RGV state estimate")
-    estimated_rgv_state = EstimatedRgvState()
-    estimated_rgv_state.timestamp = rospy.Time.now()
-    _estimated_rgv_state_pub.publish(estimated_rgv_state)
+    _estimated_rgv_state_pub.publish(
+        EstimatedRgvState(
+            # TODO: Make this something reasonable
+        )
+    )
