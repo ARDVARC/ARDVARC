@@ -17,6 +17,8 @@ Notes:
     TODO Get rid of possible appends
     TODO Create a camera calibration function using the aruco markers
     TODO Figure out UAS frame to inertial frame transition
+    TODO Output direction vector as a unit/pointing vector
+    TODO List of tuples
     """
 # Python 3.7
 ## Imports from the existing ArUco marker detection and annotation function
@@ -37,9 +39,9 @@ from typing import Optional, List
 
 @dataclass
 class DetectionInfo():
+    ##TODO Combine the IDS and Dir Vecs into a list of tuples
     annotated_camera_frame: cv2.typing.MatLike
     ids: cv2.typing.MatLike
-    
     #ROS Version
     direction_vector: List[UasToRgvDirectionVectorUasFrame]
     
@@ -49,7 +51,7 @@ class DetectionInfo():
 
 
 ## Function to detect ArUco markers
-def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> Optional[DetectionInfo]: 
+def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> DetectionInfo: 
     aruco_type_list = [] 
     direction_vector = []
 
@@ -64,6 +66,7 @@ def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> Optional[Detec
 
         # verify *at least* one ArUco marker was detected
         if len(corners) > 0:
+            ## TODO (TB) Wipe this before Final FSW\/
             aruco_type_list.append(aruco_type)
             print(f"Detected {aruco_type_list} ArUco markers")
             """ 

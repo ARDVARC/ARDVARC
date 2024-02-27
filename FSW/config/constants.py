@@ -22,6 +22,12 @@ from dataclasses import dataclass
 ## TODO Check that all imports are correct
 
 
+"""System"""
+# Possible values of the `measurement_source` field
+MEAS_FROM_CAMERA: int = 10
+MEAS_FROM_BLUETOOTH: int = 11
+
+
 """Pi Camera Parameters"""
 ## TODO Could be determined from the camera calibration function from cv2.aruco
 ## TODO This Needs to be updated to the true camera intrinsic parameters
@@ -45,6 +51,7 @@ ARUCO_ID2RGV_DICT = {
 	24: RGV_ID.RGV1,
     25: RGV_ID.RGV2
 }
+
     
 
 
