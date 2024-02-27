@@ -30,7 +30,8 @@ def _get_current_mission_state_time_spent(now: rospy.Time) -> rospy.Duration:
 def _estimated_rgv_state_callback(msg: EstimatedRgvState):
     """
     This is the callback for the RGV state estimation subscriber. It updates the RGV-state
-    globals (RGV speeds) and th contructs and publishes a StateMachineCriteria message.
+    globals (recent_confident_estimate and moving) and then constructs and publishes a
+    StateMachineCriteria message.
     """
     
     global _time_of_most_recent_confident_rgv_1_estimate, _time_of_most_recent_confident_rgv_2_estimate, _rgv_1_moving, _rgv_2_moving
