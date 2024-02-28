@@ -83,3 +83,22 @@ ARUCO_DICT = {
 	"DICT_APRILTAG_36h10": cv2.aruco.DICT_APRILTAG_36h10,
 	"DICT_APRILTAG_36h11": cv2.aruco.DICT_APRILTAG_36h11
 }
+DICTIONARY: cv2.aruco.Dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
+
+
+"""Guidance"""
+# TODO(LF) review this
+# ask Rob what this should be for optimal bluetooth measurements 
+# Aidan has some numbers that closer is better
+ORBITAL_RADIUS_SINGLE = 1.0 # meters (ground distance)
+
+# TODO(LF) review this
+ORBITAL_RADIUS_JOINT = 10.0 # meters (ground distance)
+
+# TODO(LF) review this
+UAS_ALTITUDE_SETPOINT = 9.144 # meters (30 ft)
+
+# Magic Number that's the center of the aerospace backyard in lat/long
+# This is decimal lat/long, NOT mins, secs
+AERO_BACKYARD_APPROX_CENTER = [40.010886, -105.243878]
+AERO_BACKYARD_APPROX_ALT = 1614.001932 # meters

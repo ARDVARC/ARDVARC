@@ -8,7 +8,7 @@ pub = rospy.Publisher(RAW_BLUETOOTH, BluetoothAzimuthElevation, queue_size=1)
 rate = rospy.Rate(5)
 while not rospy.is_shutdown():
     now = rospy.Time.now()
-    rospy.loginfo("Raw bluetooth data published")
+    rospy.logdebug("Raw bluetooth data published")
     bt_msg = BluetoothAzimuthElevation(
         # TODO: Make this something reasonable
     )

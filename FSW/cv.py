@@ -52,12 +52,12 @@ from cv_bridge import CvBridge
 def frame_callback(msg: Image):
     now = rospy.Time.now()
     if (now - msg.header.stamp).to_sec() > 1/2:
-        rospy.loginfo(f"CV skipped a frame ({now.to_sec()} vs {msg.header.stamp.to_sec()})")
+        rospy.logdebug(f"CV skipped a frame ({now.to_sec()} vs {msg.header.stamp.to_sec()})")
         return
     
     rospy.loginfo(f"I AM NOT SKIPPING AHHHHHHHHHHHHHHH")
     frame = bridge.imgmsg_to_cv2(msg)
-
+    
     detection_info = detect_ArUco_Direction_and_Pose(frame)
 
     ##Annotated Frame Message Definition
@@ -66,11 +66,11 @@ def frame_callback(msg: Image):
     annotated_frame.timestamp = rospy.Time.now()
     annotated_frame.annotated_image = bridge.cv2_to_imgmsg(detection_info.annotated_camera_frame)
     pub_frame.publish(annotated_frame)
-    rospy.loginfo("CV published an annotated frame")
+    rospy.logdebug("CV published an annotated frame")
 
 
     if detection_info.ids is None:
-        rospy.loginfo("CV processed a frame but found nothing")
+        rospy.logdebug("CV processed a frame but found nothing")
         return
 
     i = 0
@@ -82,14 +82,14 @@ def frame_callback(msg: Image):
             sighting.timestamp = rospy.Time.now()
             sighting.rgv_id = constants.ARUCO_ID2RGV_DICT[id]
             # TODO: Make this something reasonable based on id (TB 2021-04-07: I think that this is right but im not sure that this is the correct way to do this)
-            rospy.loginfo("CV published an RGV sighting")
+            rospy.logdebug("CV published an RGV sighting")
             pub_sightings.publish(sighting)
          # for direction_vector in detection_info.direction_vectors:
             direction_vector_msg = UasToRgvDirectionVectorUasFrame()
             direction_vector_msg.timestamp = rospy.Time.now()
             direction_vector_msg.direction = detection_info.direction_vectors[i]
             # TODO: Make this something reasonable based on direction_vector (TB 2024-02-26: I think that this is right but im not sure that this is the correct way to do this)
-            rospy.loginfo("CV published a direction vector")
+            rospy.logdebug("CV published a direction vector")
             pub_vector.publish(direction_vector_msg)    
         i += 1
 

@@ -33,7 +33,20 @@ def _mission_state_callback(msg: MissionState):
     _mission_state_buffer.appendleft(msg)
 
 
-_state_machine_criteria_pub = rospy.Publisher(STATE_MACHINE_CRITERIA, StateMachineCriteria, queue_size=1)
-_estimated_rgv_state_sub = rospy.Subscriber(ESTIMATED_RGV_STATES, EstimatedRgvState, _estimated_rgv_state_callback)
-_sightings_sub = rospy.Subscriber(RECENT_RGV_SIGHTINGS, RecentSighting, _sightings_callback)
-_mission_state_sub = rospy.Subscriber(MISSION_STATES, MissionState, _mission_state_callback)
+def setup():
+    """
+    Setup publishers and subscribers for generate_state_machine_criteria.py
+    """
+    
+    global _state_machine_criteria_pub, _estimated_rgv_state_sub, _sightings_sub, _mission_state_sub
+    
+    _state_machine_criteria_pub = rospy.Publisher(STATE_MACHINE_CRITERIA, StateMachineCriteria, queue_size=1)
+    _estimated_rgv_state_sub = rospy.Subscriber(ESTIMATED_RGV_STATES, EstimatedRgvState, _estimated_rgv_state_callback)
+    _sightings_sub = rospy.Subscriber(RECENT_RGV_SIGHTINGS, RecentSighting, _sightings_callback)
+    _mission_state_sub = rospy.Subscriber(MISSION_STATES, MissionState, _mission_state_callback)
+
+
+_state_machine_criteria_pub: rospy.Publisher
+_estimated_rgv_state_sub: rospy.Subscriber
+_sightings_sub: rospy.Subscriber
+_mission_state_sub: rospy.Subscriber
