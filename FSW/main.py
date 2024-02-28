@@ -31,6 +31,13 @@ from rosardvarc.msg import AnnotatedCameraFrame
 # stl imports
 import time
 
+# Call all the setups
+determine_mission_state.setup()
+guidance.setup()
+estimate_rgv_state.setup()
+generate_state_machine_criteria.setup()
+process_bluetooth.setup()
+
 # Run the estimation loop until we die
 rate = rospy.Rate(3)
 now = rospy.Time.now()
