@@ -17,6 +17,7 @@ import numpy as np
 import os
 import argparse
 from dataclasses import dataclass
+import rospy
 ## TODO Check that all imports are correct
 
 
@@ -36,6 +37,14 @@ VIDEO_FPS: int = 60 # frames per second
 """ArUco"""
 DICTIONARY: cv2.aruco.Dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
 
+"""State Machine Criteria"""
+RECENT_ESTIMATE_TIME_CUTOFF: rospy.Duration = rospy.Duration.from_sec(2)
+LOCALIZE_DURATION: rospy.Duration = rospy.Duration.from_sec(90)
+JOINT_DURATION: rospy.Duration = rospy.Duration.from_sec(240)
+RECENT_SIGHTING_TIME_CUTOFF: rospy.Duration = rospy.Duration.from_sec(2)
+BATTERY_LOW_CHARGE_PCT_CUTOFF: float = 0.05 # Percent from 0 to 1
+MINIMUM_LOCALIZE_DURATION: rospy.Duration = rospy.Duration.from_sec(60)
+CONFIDENT_ESTIMATE_THRESHOLD: float = 0.2
 
 """Guidance"""
 # TODO(LF) review this
