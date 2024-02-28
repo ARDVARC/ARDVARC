@@ -3,7 +3,7 @@ import rospy
 import genpy
 from ..config.structures import MissionStates
 from ..config.topic_names import STATE_MACHINE_CRITERIA, ESTIMATED_RGV_STATES, RECENT_RGV_SIGHTINGS, MISSION_STATES, BATTERY
-from ..config.constants import RECENT_ESTIMATE_TIME_CUTOFF, LOCALIZE_DURATION, JOINT_DURATION, RECENT_SIGHTING_TIME_CUTOFF, BATTERY_LOW_CHARGE_PCT_CUTOFF, MINIMUM_LOCALIZE_DURATION, CONFIDENT_ESTIMATE_THRESHOLD
+from ..config.constants import RGV_ID, RECENT_ESTIMATE_TIME_CUTOFF, LOCALIZE_DURATION, JOINT_DURATION, RECENT_SIGHTING_TIME_CUTOFF, BATTERY_LOW_CHARGE_PCT_CUTOFF, MINIMUM_LOCALIZE_DURATION, CONFIDENT_ESTIMATE_THRESHOLD
 from rosardvarc.msg import StateMachineCriteria, EstimatedRgvState, RecentSighting, MissionState
 from sensor_msgs.msg import BatteryState
 import numpy as np
@@ -86,11 +86,11 @@ def _sightings_callback(msg: RecentSighting):
     global _time_of_most_recent_rgv_1_sighting, _time_of_most_recent_rgv_2_sighting
     
     rospy.loginfo("State machine criteria generator saved a recent sighting")
-    if msg.rgv_id is msg.RGV_1:
+    if msg.rgv_id is RGV_ID.RGV1:
         _time_of_most_recent_rgv_1_sighting = msg.timestamp
-    elif msg.rgv_id is msg.RGV_2:
+    elif msg.rgv_id is RGV_ID.RGV2:
         _time_of_most_recent_rgv_2_sighting = msg.timestamp
-    elif msg.rgv_id is msg.RGV_BOTH:
+    elif msg.rgv_id is RGV_ID.RGVBOTH:
         _time_of_most_recent_rgv_1_sighting = msg.timestamp
         _time_of_most_recent_rgv_2_sighting = msg.timestamp
     else:

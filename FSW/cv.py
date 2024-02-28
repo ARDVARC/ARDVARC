@@ -5,7 +5,7 @@ ARDVARC Flight Software
 Author: Tim Behrer
 email: Timothy.Behrer@colorado.edu
 
-Description:This is the CV node, it takes in the camera feed from ROS and annotates it for analysis, 
+Description: This is the CV node, it takes in the camera feed from ROS and annotates it for analysis, 
 then publishes the annotated feed to the main state machine. It also performs calculations to 
 determine the angular position of the ArUco markers. It will then publish the pointing vector 
 to an appropriate ROS topic along with a recent sightings boolean to indicate if the marker has
@@ -31,12 +31,9 @@ import genpy
 from .config.topic_names import ANNOTATED_CAMERA_FRAMES, RECENT_RGV_SIGHTINGS, UAS_TO_RGV_DIRECTION_VECTORS, CAMERA_FRAMES
 from rosardvarc.msg import AnnotatedCameraFrame, RecentSighting, UasToRgvDirectionVectorUasFrame
 from sensor_msgs.msg import Image
-from .functional.process_frame import detect_ArUco
-## TODO Import the necessary message types.
-"""from rosardvarc.msg import RawCameraFrame""" ## This is the subscriber to the camera frame.
-"""from rosardvarc.msg import RecentSighting""" ## This is the publisher for the recent sightings.
-"""from rosardvarc.msg import Uas2RgvPointingVector""" ## This is the publisher for the pointing vector.
+from .functional.process_frame import detect_ArUco_Direction_and_Pose, camera_frame_to_UAS_frame,my_estimatePoseSingleMarkers
 import math
+from .config import constants
 ## Imports from the existing ArUco marker detection and annotation function
 import sys
 import cv2
@@ -46,45 +43,59 @@ import os
 import argparse
 from cv_bridge import CvBridge
 ## TODO Make sure all imports are correct
-
-
 ## TODO Create the callback for the camera frame subscriber.
 ## TODO Call the write to flash function within this callback
 
 
+## TODO (02/26 - TB) Finish the cv.py message publishing 
+
 def frame_callback(msg: Image):
     now = rospy.Time.now()
-    if (now - msg.header.stamp).to_sec() > 1/60:
-        rospy.logdebug(f"CV skipped a frame ({now} vs {msg.header.stamp})")
+    if (now - msg.header.stamp).to_sec() > 1/2:
+        rospy.logdebug(f"CV skipped a frame ({now.to_sec()} vs {msg.header.stamp.to_sec()})")
         return
+    
+    rospy.logdebug(f"I AM NOT SKIPPING AHHHHHHHHHHHHHHH")
     frame = bridge.imgmsg_to_cv2(msg)
-    detection_info = detect_ArUco(frame)
-    if detection_info == None:
+    
+    detection_info = detect_ArUco_Direction_and_Pose(frame)
+
+    ##Annotated Frame Message Definition
+    # TODO: Make this something reasonable based on detection_info.annotated_camera_frame (TB 2021-04-07: I think that this is right but im not sure that this is the correct way to do this)
+    annotated_frame = bridge.cv2_to_imgmsg(detection_info.annotated_camera_frame, encoding="bgr8")
+    pub_frame.publish(annotated_frame)
+    rospy.logdebug("CV published an annotated frame")
+
+
+    if detection_info.ids is None:
         rospy.logdebug("CV processed a frame but found nothing")
         return
-    annotated_frame = AnnotatedCameraFrame(
-        # TODO: Make this something reasonable based on detection_info.annotated_camera_frame
-    )
-    rospy.logdebug("CV published an annotated frame")
-    pub_frame.publish(annotated_frame)
+
+    i = 0
     for id in detection_info.ids:
-        sighting = RecentSighting(
-            # TODO: Make this something reasonable based on id
-        )
-        rospy.logdebug("CV published an RGV sighting")
-        pub_sightings.publish(sighting)
-    for direction_vector in detection_info.direction_vectors:
-        direction_vector_msg = UasToRgvDirectionVectorUasFrame(
-            # TODO: Make this something reasonable based on direction_vector
-        )
-        rospy.logdebug("CV published a direction vector")
-        pub_vector.publish(direction_vector_msg)
+        ##If condition to check for valid ID
+        if constants.ARUCO_ID2RGV_DICT.__contains__(id):
+            ##Recent Sighting Message Definition
+            sighting = RecentSighting()
+            sighting.timestamp = rospy.Time.now()
+            sighting.rgv_id = constants.ARUCO_ID2RGV_DICT[id]
+            # TODO: Make this something reasonable based on id (TB 2021-04-07: I think that this is right but im not sure that this is the correct way to do this)
+            rospy.logdebug("CV published an RGV sighting")
+            pub_sightings.publish(sighting)
+         # for direction_vector in detection_info.direction_vectors:
+            direction_vector_msg = UasToRgvDirectionVectorUasFrame()
+            direction_vector_msg.timestamp = rospy.Time.now()
+            direction_vector_msg.direction = detection_info.direction_vectors[i]
+            # TODO: Make this something reasonable based on direction_vector (TB 2024-02-26: I think that this is right but im not sure that this is the correct way to do this)
+            rospy.logdebug("CV published a direction vector")
+            pub_vector.publish(direction_vector_msg)    
+        i += 1
 
 
 ## Initialize the necessary nodes and the publishers.
 rospy.init_node("cv_node")
 bridge = CvBridge()
-pub_frame = rospy.Publisher(ANNOTATED_CAMERA_FRAMES, AnnotatedCameraFrame, queue_size=1)
+pub_frame = rospy.Publisher(ANNOTATED_CAMERA_FRAMES, Image, queue_size=1)
 ## TODO Implement the publisher for the recent sightings.
 pub_sightings = rospy.Publisher(RECENT_RGV_SIGHTINGS, RecentSighting, queue_size=1)
 ## TODO Implement the publisher for the pointing vector.
