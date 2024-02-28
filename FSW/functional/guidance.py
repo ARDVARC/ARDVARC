@@ -73,6 +73,15 @@ last_req = rospy.Time.now()
 # this is the setpoint that will be written
 toBeWritten_setpoint = PoseStamped()
 
+
+_setpoint_pub: rospy.Publisher
+_estimated_rgv_state_sub: rospy.Subscriber
+_mission_state_sub: rospy.Subscriber
+_uas_pose_sub: rospy.Subscriber
+_uas_arming_state_sub: rospy.Subscriber
+
+
+
 def _UAS_arming_state_callback(msg: State):
     global current_UAS_arming_state
     current_UAS_arming_state = msg
@@ -140,21 +149,6 @@ def _timer_callback(event=None):
 rospy.Timer(rospy.Duration(0.05), _timer_callback)
 
 
-# Send a few setpoints before starting
-# because can't switch to offboard until after some setpoints have been given
-for i in range(100):
-    if(rospy.is_shutdown()):
-        break
-    #TODO(LF) make this publish the current UAS state for the first however many commands
-    dummy_set_point = PoseStamped()
-    dummy_set_point.pose.position.x = 0
-    dummy_set_point.pose.position.y = 0
-    dummy_set_point.pose.position.z = 0
-
-    rate = rospy.Rate(20)
-    _setpoint_pub.publish(dummy_set_point)
-    rate.sleep()
-
 def setup():
     """
     Setup publishers and subscribers for guidance.py
@@ -170,11 +164,21 @@ def setup():
     _uas_pose_sub = rospy.Subscriber(UAS_POSES, PoseStamped, _uas_pose_callback)
     _uas_arming_state_sub = rospy.Subscriber(UAS_ARMING_STATE, State,_UAS_arming_state_callback)
 
-_setpoint_pub: rospy.Publisher
-_estimated_rgv_state_sub: rospy.Subscriber
-_mission_state_sub: rospy.Subscriber
-_uas_pose_sub: rospy.Subscriber
-_uas_arming_state_sub: rospy.Subscriber
+    # Send a few setpoints before starting
+    # because can't switch to offboard until after some setpoints have been given
+    for i in range(100):
+        if(rospy.is_shutdown()):
+            break
+        #TODO(LF) make this publish the current UAS state for the first however many commands
+        dummy_set_point = PoseStamped()
+        dummy_set_point.pose.position.x = 0
+        dummy_set_point.pose.position.y = 0
+        dummy_set_point.pose.position.z = 0
+
+        rate = rospy.Rate(20)
+        _setpoint_pub.publish(dummy_set_point)
+        rate.sleep()
+
 
 
 def _calc_orbit_setpoint(RGV: EstimatedRgvState, UAS: PoseStamped, t: Time) -> Setpoint:
