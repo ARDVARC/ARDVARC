@@ -7,10 +7,8 @@ from ..config.topic_names import ESTIMATED_RGV_STATES, UAS_POSES, UAS_TO_RGV_DIR
 from geometry_msgs.msg import PoseStamped
 # import navpy
 
-## vel, pos in and out 
-## add uncertainty - maybe brute force for now 
-## 0 to 1 appended as a 7th term for confidence
-# output threshholded velocity  - boolean 1/ true for moving (0 for stopped)
+# TODO import previous rgv and uas states for ismoving
+
 
 _uas_state_buffer = collections.deque([], 50)
 _direction_vector_buffer = collections.deque([], 50)
