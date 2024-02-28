@@ -5,7 +5,7 @@ import numpy as np
 from rosardvarc.msg import EstimatedRgvState, UasToRgvDirectionVectorUasFrame
 from ..config.topic_names import ESTIMATED_RGV_STATES, UAS_POSES, UAS_TO_RGV_DIRECTION_VECTORS
 from geometry_msgs.msg import PoseStamped
-import navpy
+# import navpy
 
 ## vel, pos in and out 
 ## add uncertainty - maybe brute force for now 
@@ -55,19 +55,8 @@ def estimate_rgv_state():
 
     # Estimate the RGV state
 
-    # Bring in vars from messages
-    ### TODO - MESSAGES CHANGING
-    # Convert to ecef for ease of computations
-    # [uas_state_x, uas_state_y, uas_alt]lla_to_ecef(lat, lon, alt)
-    # as_to_rgv_az =   # [0, 2pi] check with rob
-    # as_to_rgv_el  l =   # [-pi/2, pi/2]
-    # # UAS yaw angle
-    # uas_yaw  = 
-    # # UAS height above ground 
-    # uas_height = uas_alt - uas_starting_alt
-    # # Assume azimuth is always in line with UAS
-    # # Elevation angle bluetooth sensor is at (straight down = 0) (rad)
-    # # Hardcode for now 
+    # Sensor angles relative to down z vector
+    # Hardcode for now 
     bluetooth_angle = 0 
     camera_angle = 85*np.pi/180
     # Is timestamp old?
@@ -81,8 +70,10 @@ def estimate_rgv_state():
     uas_to_rgv2_az = UasToRgvDirectionVectorUasFrame.bluetooth.rgv2.angle1
     uas_to_rgv2_el = UasToRgvDirectionVectorUasFrame.bluetooth.rgv2.angle2
 
-    # TEMP -- PULL IN UAS POSITION
+    # TEMP -- PULL IN UAS POSITION AND ATT
     uas_pos = [0,0,10]
+    uas_attitude = [0,0,0]
+    uas_yaw = uas_attitude[2]
 
     # Define if bluetooth and camera signals are new or not
     if UasToRgvDirectionVectorUasFrame.bluetooth.rgv1_timestamp <= old_metric:
