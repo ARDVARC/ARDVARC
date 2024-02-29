@@ -85,7 +85,7 @@ def frame_callback(msg: Image):
          # for direction_vector in detection_info.direction_vectors:
             direction_vector_msg = UasToRgvDirectionVectorUasFrame()
             direction_vector_msg.timestamp = rospy.Time.now()
-            direction_vector_msg.direction = detection_info.direction_vectors[i]
+            direction_vector_msg.direction = detection_info.direction_vectors[i].flatten().tolist()
             # TODO: Make this something reasonable based on direction_vector (TB 2024-02-26: I think that this is right but im not sure that this is the correct way to do this)
             rospy.logdebug("CV published a direction vector")
             pub_vector.publish(direction_vector_msg)    
