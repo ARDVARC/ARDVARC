@@ -43,7 +43,7 @@ class DetectionInfo():
     annotated_camera_frame: cv2.typing.MatLike
     ids: List[int]
     #ROS Version
-    direction_vectors: List[UasToRgvDirectionVectorUasFrame]
+    direction_vectors: List[np.ndarray]
     
     #Windows Unit Test Version
     #direction_vector: List
@@ -52,8 +52,8 @@ class DetectionInfo():
 
 ## Function to detect ArUco markers
 def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> DetectionInfo: 
-    direction_vectors = []
-    ids_list = []
+    direction_vectors: List[np.ndarray] = []
+    ids_list: List[int] = []
     frame_copy = frame.copy()
 
     for aruco_type, dictionary_id in constants.ARUCO_DICT.items():
@@ -75,7 +75,7 @@ def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> DetectionInfo:
             ids = ids.flatten()
             """
             # loop over the detected ArUCo corners
-            for (markerCorner, markerID) in zip(corners, ids.flatten()):
+            for (markerCorner, markerID) in zip(corners, ids.flatten().tolist()):
                 # extract the marker corners (which are always returned in
                 # top-left, top-right, bottom-right, and bottom-left order)
                 corners_reshaped = markerCorner.reshape((4, 2))
@@ -120,10 +120,9 @@ def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> DetectionInfo:
                 
 
             #Compute the pose of the aruco: rvec = Rotation Vector, tvec = Translation Vector
-            for i in range(0, len(ids)):
-                ids_list.append(int(ids[i]))
+                ids_list.append(int(markerID))
 
-                (rvec, tvec, _) = my_estimatePoseSingleMarkers(corners[i], 0.025, constants.INTRINSICS_PI_CAMERA, constants.DISTORTION)                
+                (rvec, tvec, _) = my_estimatePoseSingleMarkers(markerCorner, 0.025, constants.INTRINSICS_PI_CAMERA, constants.DISTORTION)                
                 rvec = np.array(rvec)
                 tvec = np.array(tvec)
                 cv2.drawFrameAxes(frame_copy, constants.INTRINSICS_PI_CAMERA, constants.DISTORTION, rvec, tvec, 0.01) 
@@ -145,7 +144,7 @@ def camera_frame_to_UAS_frame(position: np.ndarray) -> np.ndarray:
     ## TODO Make sure the matrix mult is right
 
     #Convert from rotation Vector to Rotation Matrix
-    position_UASFrame = constants.EXTRINSICS_PI_CAMERA_DCM * (position) + constants.EXTRINSICS_PI_CAMERA_TVEC
+    position_UASFrame = np.matmul(constants.EXTRINSICS_PI_CAMERA_DCM, position) + constants.EXTRINSICS_PI_CAMERA_TVEC
 
     return position_UASFrame
 

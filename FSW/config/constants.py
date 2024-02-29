@@ -39,7 +39,7 @@ DISTORTION: npt.NDArray = np.array([0.0, 0.0, 0.0, 0.0])
 ## TODO Update the formatting of the camera extrinsic parameters
 ## TODO Configure a way to get the camera extrinsic parameters accurately
 EXTRINSICS_PI_CAMERA_DCM: npt.NDArray = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]) #DCM From UAS 2 Camera
-EXTRINSICS_PI_CAMERA_TVEC: npt.NDArray = np.array([0.0, 0.0, 0.0]) #tvec for Camera from UAS in UAS Frame
+EXTRINSICS_PI_CAMERA_TVEC: npt.NDArray = np.array([[0.0], [0.0], [0.0]]) #tvec for Camera from UAS in UAS Frame
 
 
 """RGV"""
