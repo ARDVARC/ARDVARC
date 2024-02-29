@@ -86,11 +86,11 @@ def _sightings_callback(msg: RecentSighting):
     global _time_of_most_recent_rgv_1_sighting, _time_of_most_recent_rgv_2_sighting
     
     rospy.loginfo("State machine criteria generator saved a recent sighting")
-    if msg.rgv_id is RGV_ID.RGV1:
+    if msg.rgv_id == RGV_ID.RGV1:
         _time_of_most_recent_rgv_1_sighting = msg.timestamp
-    elif msg.rgv_id is RGV_ID.RGV2:
+    elif msg.rgv_id == RGV_ID.RGV2:
         _time_of_most_recent_rgv_2_sighting = msg.timestamp
-    elif msg.rgv_id is RGV_ID.RGVBOTH:
+    elif msg.rgv_id == RGV_ID.RGVBOTH:
         _time_of_most_recent_rgv_1_sighting = msg.timestamp
         _time_of_most_recent_rgv_2_sighting = msg.timestamp
     else:
