@@ -32,7 +32,7 @@ while not rospy.is_shutdown():
     image_msg = bridge.cv2_to_imgmsg(cvim=frame, encoding='bgr8')
     image_msg.header.stamp = now
     
-    rospy.loginfo("Camera is publishing a frame")
+    rospy.logdebug("Camera is publishing a frame")
     pub.publish(image_msg)
     
     rate.sleep()

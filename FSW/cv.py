@@ -55,29 +55,29 @@ from cv_bridge import CvBridge
 def frame_callback(msg: Image):
     now = rospy.Time.now()
     if (now - msg.header.stamp).to_sec() > 1/60:
-        rospy.loginfo(f"CV skipped a frame ({now} vs {msg.header.stamp})")
+        rospy.logdebug(f"CV skipped a frame ({now} vs {msg.header.stamp})")
         return
     frame = bridge.imgmsg_to_cv2(msg)
     detection_info = detect_ArUco(frame)
     if detection_info == None:
-        rospy.loginfo("CV processed a frame but found nothing")
+        rospy.logdebug("CV processed a frame but found nothing")
         return
     annotated_frame = AnnotatedCameraFrame(
         # TODO: Make this something reasonable based on detection_info.annotated_camera_frame
     )
-    rospy.loginfo("CV published an annotated frame")
+    rospy.logdebug("CV published an annotated frame")
     pub_frame.publish(annotated_frame)
     for id in detection_info.ids:
         sighting = RecentSighting(
             # TODO: Make this something reasonable based on id
         )
-        rospy.loginfo("CV published an RGV sighting")
+        rospy.logdebug("CV published an RGV sighting")
         pub_sightings.publish(sighting)
     for direction_vector in detection_info.direction_vectors:
         direction_vector_msg = UasToRgvDirectionVectorUasFrame(
             # TODO: Make this something reasonable based on direction_vector
         )
-        rospy.loginfo("CV published a direction vector")
+        rospy.logdebug("CV published a direction vector")
         pub_vector.publish(direction_vector_msg)
 
 
