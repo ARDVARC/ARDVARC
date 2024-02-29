@@ -48,7 +48,7 @@ def _estimated_rgv_state_callback(msg: EstimatedRgvState):
     state_machine_criteria = _build_state_machine_criteria_message(rospy.Time.now())
     
     # Publish state machine criteria
-    rospy.loginfo("State machine criteria generator published mission state criteria")
+    rospy.logdebug("State machine criteria generator published mission state criteria")
     _state_machine_criteria_pub.publish(state_machine_criteria)
 
 
