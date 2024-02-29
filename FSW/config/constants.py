@@ -17,7 +17,7 @@ import numpy as np
 import os
 import argparse
 import numpy.typing as npt
-from enum import Enum
+from enum import IntEnum
 from dataclasses import dataclass
 import rospy
 ## TODO Check that all imports are correct
@@ -43,7 +43,7 @@ EXTRINSICS_PI_CAMERA_TVEC: npt.NDArray = np.array([0.0, 0.0, 0.0]) #tvec for Cam
 
 
 """RGV"""
-class RGV_ID(Enum):
+class RGV_ID(IntEnum):
     RGV1 = 1
     RGV2 = 2
     RGVBOTH = 3

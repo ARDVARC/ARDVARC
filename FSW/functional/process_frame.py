@@ -41,9 +41,9 @@ from typing import Optional, List
 class DetectionInfo():
     ##TODO Combine the IDS and Dir Vecs into a list of tuples
     annotated_camera_frame: cv2.typing.MatLike
-    ids: cv2.typing.MatLike
+    ids: List[int]
     #ROS Version
-    direction_vector: List[UasToRgvDirectionVectorUasFrame]
+    direction_vectors: List[UasToRgvDirectionVectorUasFrame]
     
     #Windows Unit Test Version
     #direction_vector: List
@@ -52,8 +52,9 @@ class DetectionInfo():
 
 ## Function to detect ArUco markers
 def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> DetectionInfo: 
-    aruco_type_list = [] 
-    direction_vector = []
+    direction_vectors = []
+    ids_list = []
+    frame_copy = frame.copy()
 
     for aruco_type, dictionary_id in constants.ARUCO_DICT.items():
 
@@ -67,8 +68,7 @@ def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> DetectionInfo:
         # verify *at least* one ArUco marker was detected
         if len(corners) > 0:
             ## TODO (TB) Wipe this before Final FSW\/
-            aruco_type_list.append(aruco_type)
-            print(f"Detected {aruco_type_list} ArUco markers")
+            rospy.logdebug(f"Detected {aruco_type} ArUco markers")
             """ 
             Not Sure I wanna keep this yet, depending on how I want to store the ids
             # flatten the ArUco IDs list
@@ -112,20 +112,21 @@ def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> DetectionInfo:
                 # compute and draw the center (x, y)-coordinates of the ArUco marker
                 cX = int((topLeft[0] + bottomRight[0]) / 2)
                 cY = int((topLeft[1] + bottomRight[1]) / 2)
-                print(f"ArUco ID: {markerID} Center: ({cX}, {cY})")
+                rospy.logdebug(f"ArUco ID: {markerID} Center: ({cX}, {cY})")
 
                 ## TODO Might want to put this in the for loop for FrameAxes
-                cv2.aruco.drawDetectedMarkers(frame, corners) #Draw the detected markers
+                cv2.aruco.drawDetectedMarkers(frame_copy, corners) #Draw the detected markers
 
                 
 
             #Compute the pose of the aruco: rvec = Rotation Vector, tvec = Translation Vector
             for i in range(0, len(ids)):
+                ids_list.append(int(ids[i]))
 
                 (rvec, tvec, _) = my_estimatePoseSingleMarkers(corners[i], 0.025, constants.INTRINSICS_PI_CAMERA, constants.DISTORTION)                
                 rvec = np.array(rvec)
                 tvec = np.array(tvec)
-                cv2.drawFrameAxes(frame, constants.INTRINSICS_PI_CAMERA, constants.DISTORTION, rvec, tvec, 0.01) 
+                cv2.drawFrameAxes(frame_copy, constants.INTRINSICS_PI_CAMERA, constants.DISTORTION, rvec, tvec, 0.01) 
         
                 ## TODO Do math to get direction_vector (TB 2021-09-20: Added a MVP implementation of the possible DCM and Translation Vector)
                 ## TODO Configure the direction_vector to be in the UAS Frame (TB 2021-09-20: Roughly Executed)
@@ -133,12 +134,12 @@ def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> DetectionInfo:
                 tvec_UASFrame = camera_frame_to_UAS_frame(tvec)
                 ##Convert the tvec to a unit vector
                 tvec_hat_UASFrame = tvec_UASFrame / np.linalg.norm(tvec_UASFrame)
-                direction_vector.append(tvec_hat_UASFrame)
+                direction_vectors.append(tvec_hat_UASFrame)
                 
-        return DetectionInfo(frame, ids, direction_vector)
+    return DetectionInfo(frame_copy, ids_list, direction_vectors)
 
 
-def camera_frame_to_UAS_frame(position: np.typing.NDArray) -> np.typing.NDArray:
+def camera_frame_to_UAS_frame(position: np.ndarray) -> np.ndarray:
     #Position: 3x1 vector of the vector given in the camera frame transformed to the UAS frame
     ## TODO Implement this function(TB 2021-09-20: MVP Complete)
     ## TODO Make sure the matrix mult is right
@@ -176,7 +177,7 @@ def my_estimatePoseSingleMarkers(corners, marker_size, mtx, distortion):
     # rvecs = np.zeros(len(corners), 3)
     
     for ii in corners:
-        _, R, t = cv2.solvePnP(marker_points, ii, mtx, distortion, False, cv2.SOLVEPNP_IPPE_SQUARE)
+        _, R, t = cv2.solvePnP(marker_points, ii, mtx, distortion, False, cv2.SOLVEPNP_IPPE_SQUARE) # type: ignore
         rvecs.append(R)
         tvecs.append(t)
        # trash.append(nada)
@@ -204,7 +205,7 @@ if __name__ == "__main__":
         ##Show the image with the estimated pose, USE IF ONLY FEW IMAGE
         cv2.imshow('Estimated Pose', image)
         print(Detection_Info.ids)
-        print(Detection_Info.direction_vector)
+        print(Detection_Info.direction_vectors)
 
 
                 

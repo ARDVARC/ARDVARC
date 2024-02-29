@@ -55,16 +55,14 @@ def frame_callback(msg: Image):
         rospy.logdebug(f"CV skipped a frame ({now.to_sec()} vs {msg.header.stamp.to_sec()})")
         return
     
-    rospy.loginfo(f"I AM NOT SKIPPING AHHHHHHHHHHHHHHH")
+    rospy.logdebug(f"I AM NOT SKIPPING AHHHHHHHHHHHHHHH")
     frame = bridge.imgmsg_to_cv2(msg)
     
     detection_info = detect_ArUco_Direction_and_Pose(frame)
 
     ##Annotated Frame Message Definition
     # TODO: Make this something reasonable based on detection_info.annotated_camera_frame (TB 2021-04-07: I think that this is right but im not sure that this is the correct way to do this)
-    annotated_frame = AnnotatedCameraFrame()
-    annotated_frame.timestamp = rospy.Time.now()
-    annotated_frame.annotated_image = bridge.cv2_to_imgmsg(detection_info.annotated_camera_frame)
+    annotated_frame = bridge.cv2_to_imgmsg(detection_info.annotated_camera_frame, encoding="bgr8")
     pub_frame.publish(annotated_frame)
     rospy.logdebug("CV published an annotated frame")
 
@@ -76,7 +74,7 @@ def frame_callback(msg: Image):
     i = 0
     for id in detection_info.ids:
         ##If condition to check for valid ID
-        if id in constants.ARUCO_ID2RGV_DICT.keys():
+        if constants.ARUCO_ID2RGV_DICT.__contains__(id):
             ##Recent Sighting Message Definition
             sighting = RecentSighting()
             sighting.timestamp = rospy.Time.now()
@@ -97,7 +95,7 @@ def frame_callback(msg: Image):
 ## Initialize the necessary nodes and the publishers.
 rospy.init_node("cv_node")
 bridge = CvBridge()
-pub_frame = rospy.Publisher(ANNOTATED_CAMERA_FRAMES, AnnotatedCameraFrame, queue_size=1)
+pub_frame = rospy.Publisher(ANNOTATED_CAMERA_FRAMES, Image, queue_size=1)
 ## TODO Implement the publisher for the recent sightings.
 pub_sightings = rospy.Publisher(RECENT_RGV_SIGHTINGS, RecentSighting, queue_size=1)
 ## TODO Implement the publisher for the pointing vector.
