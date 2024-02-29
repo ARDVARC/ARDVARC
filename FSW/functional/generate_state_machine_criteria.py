@@ -85,7 +85,7 @@ def _sightings_callback(msg: RecentSighting):
     
     global _time_of_most_recent_rgv_1_sighting, _time_of_most_recent_rgv_2_sighting
     
-    rospy.loginfo("State machine criteria generator saved a recent sighting")
+    rospy.logdebug("State machine criteria generator saved a recent sighting")
     if msg.rgv_id == RGV_ID.RGV1:
         _time_of_most_recent_rgv_1_sighting = msg.timestamp
     elif msg.rgv_id == RGV_ID.RGV2:
@@ -105,7 +105,7 @@ def _mission_state_callback(msg: MissionState):
     
     global _current_mission_state, _current_mission_state_start_time, _current_mission_state_time_spent
     
-    rospy.loginfo("State machine criteria generator saved a mission state")
+    rospy.logdebug("State machine criteria generator saved a mission state")
     new_mission_state = MissionStates(msg.mission_state)
     if new_mission_state != _current_mission_state:
         # Change to new mission state
@@ -121,7 +121,7 @@ def _battery_callback(msg: BatteryState):
     
     global _low_battery
     
-    rospy.loginfo("State machine criteria generator saved a battery state")
+    rospy.logdebug("State machine criteria generator saved a battery state")
     _low_battery = (msg.charge / msg.capacity) <= BATTERY_LOW_CHARGE_PCT_CUTOFF
         
 

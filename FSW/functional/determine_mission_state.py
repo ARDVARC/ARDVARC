@@ -22,7 +22,7 @@ def _state_machine_criteria_callback(msg: StateMachineCriteria):
     mission_state_msg.timestamp = msg.timestamp
     mission_state_msg.mission_state = _current_state.value
     _mission_state_pub.publish(mission_state_msg)
-    rospy.loginfo("Mission state published")
+    rospy.logdebug("Mission state published")
 
 
 def _determine_next_mission_state(current_state: MissionStates, criteria: StateMachineCriteria) -> MissionStates:

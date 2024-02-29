@@ -87,7 +87,7 @@ def _UAS_arming_state_callback(msg: State):
     current_UAS_arming_state = msg
 
 def _estimated_rgv_state_callback(msg: NavSatFix):
-    rospy.loginfo("Guidance saved an estimated RGV state")
+    rospy.logdebug("Guidance saved an estimated RGV state")
     rospy.logdebug(msg)
     
     global current_RGV_state_lla
@@ -119,7 +119,7 @@ def _mission_state_callback(msg: MissionState):
     #_setpoint_pub.publish(toBeWritten_setpoint)
 
 def _uas_pose_callback(msg: PoseStamped):
-    rospy.loginfo("Guidance saved a UAS pose")
+    rospy.logdebug("Guidance saved a UAS pose")
 
     global current_UAS_pose
     current_UAS_pose = msg
@@ -131,7 +131,7 @@ def _timer_callback(event=None):
     else: # publish the setpoint after doing some checking
         if(current_UAS_arming_state.mode != "OFFBOARD" and (rospy.Time.now() - last_req) > rospy.Duration(5.0)):
             if(set_mode_client.call(offb_set_mode).mode_sent == True):
-                rospy.loginfo("OFFBOARD enabled")
+                rospy.logdebug("OFFBOARD enabled")
 
             last_req = rospy.Time.now()
         else:
@@ -141,7 +141,7 @@ def _timer_callback(event=None):
 
                 last_req = rospy.Time.now()
 
-        rospy.loginfo("Guidance published an orbit setpoint")
+        rospy.logdebug("Guidance published an orbit setpoint")
         _setpoint_pub.publish(toBeWritten_setpoint)
 
 
