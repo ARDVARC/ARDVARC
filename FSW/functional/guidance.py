@@ -29,21 +29,6 @@ from sensor_msgs.msg import NavSatFix
 from mavros_msgs.msg import State
 from mavros_msgs.srv import CommandBool, CommandBoolRequest, SetMode, SetModeRequest
 
-
-
-## TODO- Probably no need to keep more than one?
-#_estimated_rgv_state_buffer: Deque[EstimatedRgvState] = collections.deque([], 50)
-## TODO- Probably no need to keep more than one?
-#_uas_pose_buffer: Deque[PoseStamped] = collections.deque([], 50)
-#
-
-#def _estimated_rgv_state_callback(msg: EstimatedRgvState):
-#    rospy.loginfo("Guidance saved an estimated RGV state")
-#    _estimated_rgv_state_buffer.appendleft(msg)
-#
-#    pass
-#
-
 # Clients for arming?
 rospy.wait_for_service(CLIENT_ARMING)
 arming_client = rospy.ServiceProxy(CLIENT_ARMING, CommandBool)
@@ -53,14 +38,6 @@ set_mode_client = rospy.ServiceProxy(CLIENT_SET_MODE, SetMode)
 
 # must be greater than 2 Hz however it ends up getting implemented
 guidance_update_rate = rospy.Rate(20)
-
-
-offb_set_mode = SetModeRequest()
-offb_set_mode.custom_mode = 'OFFBOARD'
-
-arm_cmd = CommandBoolRequest()
-arm_cmd.value = True
-
 
 current_UAS_arming_state = State()
 
@@ -73,13 +50,14 @@ last_req = rospy.Time.now()
 # this is the setpoint that will be written
 toBeWritten_setpoint = PoseStamped()
 
-
 _setpoint_pub: rospy.Publisher
 _estimated_rgv_state_sub: rospy.Subscriber
 _mission_state_sub: rospy.Subscriber
 _uas_pose_sub: rospy.Subscriber
 _uas_arming_state_sub: rospy.Subscriber
 
+
+offboard_start_time = None
 
 
 def _UAS_arming_state_callback(msg: State):
@@ -95,29 +73,11 @@ def _estimated_rgv_state_callback(msg: NavSatFix):
 
 def _mission_state_callback(msg: MissionState):
     # Do some stuff to prepare calc_orbit_setpoint
-    # TODO - This is just an example:
-#    if len(_estimated_rgv_state_buffer) == 0 or len(_uas_pose_buffer) == 0:
-#        rospy.loginfo("Guidance ignored a mission state update")
-#        return
-
     rgv = current_RGV_state_lla
     uas = current_UAS_pose
     t = msg.timestamp
     # Probably also want to care about the new mission state in msg
     
-    # Call calc_orbit_setpoint
-    x_set, y_set, z_set = _calc_orbit_setpoint(rgv, uas, t)
-    
-
-    # overwrite the global version
-    global toBeWritten_setpoint
-    toBeWritten_setpoint.pose.position.x = x_set
-    toBeWritten_setpoint.pose.position.y = y_set
-    toBeWritten_setpoint.pose.position.z = z_set
-
-    # moved to the timer callback
-    #_setpoint_pub.publish(toBeWritten_setpoint)
-
 def _uas_pose_callback(msg: PoseStamped):
     rospy.logdebug("Guidance saved a UAS pose")
 
@@ -125,29 +85,33 @@ def _uas_pose_callback(msg: PoseStamped):
     current_UAS_pose = msg
 
 def _timer_callback(event=None):
-    global last_req
+    global offboard_start_time
     if(rospy.is_shutdown()): # then leave bro
         return
-    else: # publish the setpoint after doing some checking
-        if(current_UAS_arming_state.mode != "OFFBOARD" and (rospy.Time.now() - last_req) > rospy.Duration(5.0)):
-            if(set_mode_client.call(offb_set_mode).mode_sent == True):
-                rospy.logdebug("OFFBOARD enabled")
+    else:
+        # bool for if we're offboard or not
+        offboard_status = (current_UAS_arming_state.mode == "OFFBOARD")
+        if offboard_status and offboard_start_time is None:
+            offboard_start_time = rospy.Time.now()
+        rospy.loginfo(offboard_status)
+        rospy.loginfo(offboard_start_time)
+        
+        # Call calc_orbit_setpoint
+        x_set, y_set, z_set = _calc_orbit_setpoint(0,0, offboard_start_time, offboard_status)
+         
+        current_setpoint = PoseStamped()
+        # set the fields of 
+        current_setpoint.pose.position.x = x_set
+        current_setpoint.pose.position.y = y_set
+        current_setpoint.pose.position.z = z_set
 
-            last_req = rospy.Time.now()
-        else:
-            if(not current_UAS_arming_state.armed and (rospy.Time.now() - last_req) > rospy.Duration(5.0)):
-                if(arming_client.call(arm_cmd).success == True):
-                    rospy.loginfo("Vehicle armed")
-
-                last_req = rospy.Time.now()
-
-        rospy.logdebug("Guidance published an orbit setpoint")
-        _setpoint_pub.publish(toBeWritten_setpoint)
+   
+        _setpoint_pub.publish(current_setpoint)
+        rospy.logdebug(f"Guidance published an orbit setpoint: {current_setpoint}")
 
 
 # make the timer?? real time?? Ahh manmade multithreading horrors beyond my comprehension
 rospy.Timer(rospy.Duration(0.05), _timer_callback)
-
 
 def setup():
     """
@@ -156,7 +120,6 @@ def setup():
     
     global _setpoint_pub, _estimated_rgv_state_sub, _mission_state_sub, _uas_pose_sub, _uas_arming_state_sub
  
-
     # make all subs and pubs
     _setpoint_pub = rospy.Publisher(UAS_SETPOINT_LOCAL, PoseStamped, queue_size=10)
     _estimated_rgv_state_sub = rospy.Subscriber(MAVROS_GPS_POS_FORTESTING, NavSatFix, _estimated_rgv_state_callback)
@@ -180,8 +143,7 @@ def setup():
         rate.sleep()
 
 
-
-def _calc_orbit_setpoint(RGV: EstimatedRgvState, UAS: PoseStamped, t: Time) -> Setpoint:
+def _calc_orbit_setpoint(RGV: EstimatedRgvState, UAS: PoseStamped, start_time: rospy.Time, offboard_status: bool) -> list:
     """ Calculates the orbit set point
 
     This function takes the RGV & UAS states, as well as time to calculate a 
@@ -198,10 +160,20 @@ def _calc_orbit_setpoint(RGV: EstimatedRgvState, UAS: PoseStamped, t: Time) -> S
     Raises:
         None: Raises None at the moment (TBR)
     """
-
-    # math math math
     
+    
+    now = rospy.Time.now()
 
-    new_y = 5 
+    if offboard_status:
+        if now > start_time + rospy.Duration(30):
+            setpoint = [2,0,2]
+        elif now > start_time + rospy.Duration(60):
+            setpoint = [-2,0,2]
+        else:
+            setpoint = [0,0,0]
+            rospy.logdebug("null setpoint returned")
+    else:
+        setpoint = [0,0,0]
 
-    return (2,new_y, 2)
+
+    return setpoint
