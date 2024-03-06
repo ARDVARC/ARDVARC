@@ -29,7 +29,7 @@ import time
 import rospy
 import genpy
 from .config.topic_names import ANNOTATED_CAMERA_FRAMES, RECENT_RGV_SIGHTINGS, UAS_TO_RGV_DIRECTION_VECTORS, CAMERA_FRAMES
-from rosardvarc.msg import AnnotatedCameraFrame, RecentSighting, UasToRgvDirectionVectorUasFrame
+from rosardvarc.msg import RecentSighting, UasToRgvDirectionVectorUasFrame
 from sensor_msgs.msg import Image
 from .functional.process_frame import detect_ArUco_Direction_and_Pose, camera_frame_to_UAS_frame,my_estimatePoseSingleMarkers
 import math
