@@ -26,7 +26,6 @@ from .functional import determine_mission_state, guidance, estimate_rgv_state, g
 
 # third part imports
 import numpy as np
-from rosardvarc.msg import AnnotatedCameraFrame
 
 # stl imports
 import time
