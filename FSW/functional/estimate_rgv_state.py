@@ -61,7 +61,7 @@ def estimate_rgv_state():
     old_metric = 0.1
     # for now say that the UAS is never moving - import UAS state at some point
     uas_moving = False
-#  change angle for bluetooth (use matlab angle who gives a fuck anymore)
+
     # import variables
     uas_to_rgv1_az = UasToRgvDirectionVectorUasFrame.bluetooth.rgv1.angle1
     uas_to_rgv1_el = UasToRgvDirectionVectorUasFrame.bluetooth.rgv1.angle2
@@ -108,6 +108,9 @@ def estimate_rgv_state():
         camera_pos_rgv1 = find_sensor_pos(camera_angle, uas_to_rgv1_az_cam, uas_to_rgv1_el_cam, uas_pos, uas_yaw)
     if camera_new_rgv2:
         camera_pos_rgv2 = find_sensor_pos(camera_angle, uas_to_rgv2_az_cam, uas_to_rgv2_el_cam, uas_pos, uas_yaw)
+        camera_pos_rgv1 = find_sensor_pos(camera_angle, uas_to_rgv1_az, uas_to_rgv1_el, uas_pos, uas_yaw)
+    if camera_new_rgv2:
+        camera_pos_rgv2 = find_sensor_pos(bluetooth_angle, uas_to_rgv2_az, uas_to_rgv2_el, uas_pos, uas_yaw)
     
     # find final position
     rgv1_position_x =  bluetooth_pos_rgv1[0] + camera_pos_rgv1[0]   
