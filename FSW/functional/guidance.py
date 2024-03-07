@@ -93,8 +93,6 @@ def _timer_callback(event=None):
         offboard_status = (current_UAS_arming_state.mode == "OFFBOARD")
         if offboard_status and offboard_start_time is None:
             offboard_start_time = rospy.Time.now()
-        rospy.loginfo(offboard_status)
-        rospy.loginfo(offboard_start_time)
         
         # Call calc_orbit_setpoint
         x_set, y_set, z_set = _calc_orbit_setpoint(0,0, offboard_start_time, offboard_status)
@@ -161,19 +159,17 @@ def _calc_orbit_setpoint(RGV: EstimatedRgvState, UAS: PoseStamped, start_time: r
         None: Raises None at the moment (TBR)
     """
     
-    
     now = rospy.Time.now()
 
     if offboard_status:
-        if now > start_time + rospy.Duration(30):
+        if now > start_time + rospy.Duration(5) and now < start_time + rospy.Duration(10):
             setpoint = [2,0,2]
-        elif now > start_time + rospy.Duration(60):
+        elif now > start_time + rospy.Duration(10):
             setpoint = [-2,0,2]
         else:
-            setpoint = [0,0,0]
+            setpoint = DEFAULT_SETPOINT
             rospy.logdebug("null setpoint returned")
     else:
-        setpoint = [0,0,0]
-
+        setpoint = DEFAULT_SETPOINT
 
     return setpoint
