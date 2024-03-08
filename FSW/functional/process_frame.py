@@ -137,7 +137,7 @@ def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> DetectionInfo:
                 
     return DetectionInfo(frame_copy, ids_list, direction_vectors)
 
-#rachel wuz here
+
 def camera_frame_to_UAS_frame(position: np.ndarray) -> np.ndarray:
     #Position: 3x1 vector of the vector given in the camera frame transformed to the UAS frame
     ## TODO Implement this function(TB 2021-09-20: MVP Complete)
