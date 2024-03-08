@@ -111,3 +111,12 @@ UAS_ALTITUDE_SETPOINT = 9.144 # meters (30 ft)
 # This is decimal lat/long, NOT mins, secs
 AERO_BACKYARD_APPROX_CENTER = [40.010886, -105.243878]
 AERO_BACKYARD_APPROX_ALT = 1614.001932 # meters
+
+
+# Initial setpoint at starting location so that pixhawk has setpoints in the buffer
+# before we switch into offboard mode
+# TODO(LF) review before flight because this will be the first setpoint sent and will also be
+# sent in null-type cases
+# this specifically is the point in local frame where the pilot is planning on having the drone in hold mode when the pilot switches to offboard mode
+DEFAULT_SETPOINT = [0,0,0]
+
