@@ -32,14 +32,17 @@ MEAS_FROM_BLUETOOTH: int = 11
 """Pi Camera Parameters"""
 ## TODO Could be determined from the camera calibration function from cv2.aruco
 ## TODO This Needs to be updated to the true camera intrinsic parameters
-INTRINSICS_PI_CAMERA: npt.NDArray = np.array([[933.15867, 0, 657.59], [0, 933.1586, 400.36993], [0, 0, 1]])
+## CALCULATED BASED ON TEST FOOTAGE
+INTRINSICS_PI_CAMERA: npt.NDArray = np.array([[1910.0, 0, 320], [0, 1910.0, 240], [0, 0, 1]])
 ## TODO This Needs to be updated to the true camera distortion parameters
 ## TODO Could be determined from the camera calibration function from cv2.aruco
-DISTORTION: npt.NDArray = np.array([0.0, 0.0, 0.0, 0.0])
+DISTORTION: npt.NDArray = np.array([0.0, 0.0, 0.0, 0.0])	
 ## TODO Update the formatting of the camera extrinsic parameters
 ## TODO Configure a way to get the camera extrinsic parameters accurately
 EXTRINSICS_PI_CAMERA_DCM: npt.NDArray = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]) #DCM From UAS 2 Camera
 EXTRINSICS_PI_CAMERA_TVEC: npt.NDArray = np.array([[0.0], [0.0], [0.0]]) #tvec for Camera from UAS in UAS Frame
+## TODO Verify the units on this, I think it needs to match the calibration units (mm)
+MARKER_SIZE: float = .381 # meters (15 inches)
 
 
 """RGV"""
