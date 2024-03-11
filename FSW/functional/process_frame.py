@@ -129,6 +129,7 @@ def detect_ArUco_Direction_and_Pose(frame: cv2.typing.MatLike) -> DetectionInfo:
                 tvec_UASFrame = camera_frame_to_UAS_frame(tvec)
                 ##Convert the tvec to a unit vector
                 print(f"{tvec_UASFrame*3.28084} : Tvec")
+                print(f"{corners_reshaped} : Corners")
                 tvec_hat_UASFrame = tvec_UASFrame / np.linalg.norm(tvec_UASFrame)
                 direction_vectors.append(tvec_hat_UASFrame)
                 
@@ -185,8 +186,8 @@ def my_estimatePoseSingleMarkers(corners, marker_size, mtx, distortion):
 ## TODO Unit test this code
 if __name__ == "__main__":
 
-    ## TODO Test and Implement various videos and images
-    image_path = "FSW/fake_data_generators/ARUCO_Test_90.mp4" #"FSW/fake_data_generators/DJI_0011_AR_2_30_S_-_Trim.mp4"
+    ## TODO Test and Implement various videos and images (TB 2021-09-20: Complete)
+    image_path = "FSW/fake_data_generators/ARUCO_Test_30 - Trim.mp4" #"FSW/fake_data_generators/DJI_0011_AR_2_30_S_-_Trim.mp4"
 
     cap = cv2.VideoCapture(image_path)
 
