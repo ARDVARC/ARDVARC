@@ -6,7 +6,7 @@ import cv2.aruco as aruco
 def calibrate_cam():
     # Define the dictionary
     aruco_dict = cv2.aruco.getPredefinedDictionary(aruco.DICT_6X6_250)
-    board = cv2.aruco.CharucoBoard((8, 11), .015, .011, aruco_dict)
+    board = cv2.aruco.CharucoBoard((11, 8), .015, .011, aruco_dict)
     params = cv2.aruco.DetectorParameters()
     detector = cv2.aruco.ArucoDetector(aruco_dict, params)
     charucodetector = cv2.aruco.CharucoDetector(board)
@@ -25,15 +25,24 @@ def calibrate_cam():
     for img in images:
         image = cv2.imread(img)
         image_copy = image.copy()
-
+        # cv2.imshow('CharUco Board', image_copy)
+        # cv2.waitKey(0)
+        
 
         (corners, ids, _) = detector.detectMarkers(image)
-
+        # print(f"corners: {len(corners)}, ids: {ids}") ## Corners are being detected
 
         if len(corners) > 0:
             cv2.aruco.drawDetectedMarkers(image_copy, corners, ids)
+            cv2.imshow('CharUco Board', image_copy)
+            cv2.waitKey(0)
+            ##All Ids are being detected
+
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            charuco_corners, charuco_ids, marker_corners, marker_ids = charucodetector.detectBoard(image)
+            # cv2.imshow('CharUco Board', image)
+            # cv2.waitKey(0)
+            charuco_corners, charuco_ids, marker_corners, marker_ids = charucodetector.detectBoard(image) #This is where the detector is breaking down
+            print(f"charuco_corners: {len(charuco_corners)}")
             all_corners.append(charuco_corners)
             all_ids.append(charuco_ids)
     # Calibrate the camera
