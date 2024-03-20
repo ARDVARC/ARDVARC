@@ -20,6 +20,7 @@ import numpy.typing as npt
 from enum import IntEnum
 from dataclasses import dataclass
 import rospy
+from typing import Dict, Tuple
 ## TODO Check that all imports are correct
 
 
@@ -48,9 +49,9 @@ class RGV_ID(IntEnum):
     RGV2 = 2
     RGVBOTH = 3
     
-ARUCO_ID2RGV_DICT = {
-	24: RGV_ID.RGV1,
-    25: RGV_ID.RGV2
+ARUCO_ID2RGV_DICT: Dict[Tuple[str, int], RGV_ID] = {
+	("DICT_6X6_100", 5): RGV_ID.RGV1,
+    ("DICT_APRILTAG_36h11", 5): RGV_ID.RGV2
 }
 
     
