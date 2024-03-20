@@ -59,6 +59,7 @@ _uas_arming_state_sub: rospy.Subscriber
 offboard_start_time = None
 
 RGV_state = EstimatedRgvState()
+mission_state = MissionState()
 
 def _UAS_arming_state_callback(msg: State):
     global current_UAS_arming_state
@@ -72,10 +73,11 @@ def _estimated_rgv_state_callback(msg: EstimatedRgvState):
 
 def _mission_state_callback(msg: MissionState):
     # Do some stuff to prepare calc_orbit_setpoint
-    rgv = RGV_state
-    uas = current_UAS_pose
-    t = msg.timestamp
-    # Probably also want to care about the new mission state in msg
+    # rgv = RGV_state
+    # uas = current_UAS_pose
+    # t = msg.timestamp
+    global mission_state
+    mission_state = msg
     
 def _uas_pose_callback(msg: PoseStamped):
     rospy.logdebug("Guidance saved a UAS pose")
@@ -93,10 +95,27 @@ def _timer_callback(event=None):
         if offboard_status and offboard_start_time is None:
             offboard_start_time = rospy.Time.now()
         
-        # Call calc_orbit_setpoint
-        # x_set, y_set, z_set = _calc_orbit_setpoint_localize(0,0, offboard_start_time, offboard_status)
-        x_set, y_set, z_set = _calc_orbit_setpoint_localize(RGV_state, current_UAS_pose, offboard_start_time, offboard_status)
+        # x_set, y_set, z_set = _calc_orbit_setpoint_localize(RGV_state, current_UAS_pose, offboard_start_time, offboard_status)
          
+        case = mission_state.mission_state
+
+        if case == mission_state.TRACK_RGV_1: # positive East
+            x_set, y_set, z_set = _calc_orbit_setpoint_track(mission_state,RGV_state, current_UAS_pose, offboard_start_time, offboard_status)
+
+        elif case == mission_state.TRACK_RGV_2: # positive North
+            x_set, y_set, z_set = _calc_orbit_setpoint_track(mission_state,RGV_state, current_UAS_pose, offboard_start_time, offboard_status)
+
+        elif case == mission_state.LOCALIZE_RGV_1: # West
+            x_set, y_set, z_set = _calc_orbit_setpoint_localize(mission_state,RGV_state, current_UAS_pose, offboard_start_time, offboard_status)
+
+        elif case == mission_state.LOCALIZE_RGV_2: # South
+            x_set, y_set, z_set = _calc_orbit_setpoint_localize(mission_state,RGV_state, current_UAS_pose, offboard_start_time, offboard_status)
+
+        else:
+            x_set, y_set, z_set = _calc_orbit_setpoint_track(mission_state,RGV_state, current_UAS_pose, offboard_start_time, offboard_status)
+            # rospy.logdebug("null setpoint returned")
+            # x_set, y_set, z_set = DEFAULT_SETPOINT
+
         current_setpoint = PoseStamped()
         # set the fields of 
         current_setpoint.pose.position.x = x_set
@@ -141,10 +160,38 @@ def setup():
         _setpoint_pub.publish(dummy_set_point)
         rate.sleep()
 
-def _calc_orbit_setpoint_localize(RGV: EstimatedRgvState, UAS: PoseStamped, start_time: rospy.Time, offboard_status: bool) -> list:
-   
+def _calc_orbit_setpoint_track(mission_state: MissionState, RGV: EstimatedRgvState, UAS: PoseStamped, start_time: rospy.Time, offboard_status: bool) -> list:
+    
     if offboard_status:
-        orbit_center = RGV.rgv1_position_local
+
+        if mission_state.mission_state == mission_state.TRACK_RGV_1:
+            orbit_center = RGV.rgv1_position_local
+        elif mission_state.mission_state == mission_state.TRACK_RGV_2:
+            orbit_center = RGV.rgv2_position_local
+        else:
+            orbit_center = RGV.rgv1_position_local
+
+        x_c = orbit_center[0] 
+        y_c = orbit_center[1] 
+
+        setpoint = [x_c, y_c, UAS_ALTITUDE_SETPOINT]
+    else:
+        rospy.logdebug("null setpoint returned")
+        setpoint = DEFAULT_SETPOINT
+
+    return setpoint
+
+
+def _calc_orbit_setpoint_localize(mission_state: MissionState, RGV: EstimatedRgvState, UAS: PoseStamped, start_time: rospy.Time, offboard_status: bool) -> list:
+    
+    if offboard_status:
+
+        if mission_state.mission_state == mission_state.LOCALIZE_RGV_1:
+            orbit_center = RGV.rgv1_position_local
+        elif mission_state.mission_state == mission_state.LOCALIZE_RGV_2:
+            orbit_center = RGV.rgv2_position_local
+        else:
+            orbit_center = RGV.rgv1_position_local
 
         x_c = orbit_center[0] 
         y_c = orbit_center[1] 
