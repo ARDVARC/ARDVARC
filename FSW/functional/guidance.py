@@ -22,8 +22,8 @@ from typing import Deque
 from ..config.constants import *
 # import ..config.constants as const
 
-# LYON used this message for testing
-from sensor_msgs.msg import NavSatFix
+# # LYON used this message for testing
+# from sensor_msgs.msg import NavSatFix
 
 # Needed for io with mavros
 from mavros_msgs.msg import State
@@ -36,14 +36,14 @@ arming_client = rospy.ServiceProxy(CLIENT_ARMING, CommandBool)
 rospy.wait_for_service(CLIENT_SET_MODE)
 set_mode_client = rospy.ServiceProxy(CLIENT_SET_MODE, SetMode)
 
+# current_RGV_state_lla = NavSatFix()
+
 # must be greater than 2 Hz however it ends up getting implemented
 guidance_update_rate = rospy.Rate(20)
 
 current_UAS_arming_state = State()
 
 current_UAS_pose = PoseStamped()
-
-current_RGV_state_lla = NavSatFix()
 
 last_req = rospy.Time.now()
 
@@ -56,24 +56,23 @@ _mission_state_sub: rospy.Subscriber
 _uas_pose_sub: rospy.Subscriber
 _uas_arming_state_sub: rospy.Subscriber
 
-
 offboard_start_time = None
 
+RGV_state = EstimatedRgvState()
 
 def _UAS_arming_state_callback(msg: State):
     global current_UAS_arming_state
     current_UAS_arming_state = msg
 
-def _estimated_rgv_state_callback(msg: NavSatFix):
+def _estimated_rgv_state_callback(msg: EstimatedRgvState):
     rospy.logdebug("Guidance saved an estimated RGV state")
     rospy.logdebug(msg)
-    
-    global current_RGV_state_lla
-    current_RGV_state_lla = msg
+    global RGV_state
+    RGV_state = msg
 
 def _mission_state_callback(msg: MissionState):
     # Do some stuff to prepare calc_orbit_setpoint
-    rgv = current_RGV_state_lla
+    rgv = RGV_state
     uas = current_UAS_pose
     t = msg.timestamp
     # Probably also want to care about the new mission state in msg
@@ -95,7 +94,8 @@ def _timer_callback(event=None):
             offboard_start_time = rospy.Time.now()
         
         # Call calc_orbit_setpoint
-        x_set, y_set, z_set = _calc_orbit_setpoint(0,0, offboard_start_time, offboard_status)
+        # x_set, y_set, z_set = _calc_orbit_setpoint_localize(0,0, offboard_start_time, offboard_status)
+        x_set, y_set, z_set = _calc_orbit_setpoint_localize(RGV_state, current_UAS_pose, offboard_start_time, offboard_status)
          
         current_setpoint = PoseStamped()
         # set the fields of 
@@ -120,7 +120,8 @@ def setup():
  
     # make all subs and pubs
     _setpoint_pub = rospy.Publisher(UAS_SETPOINT_LOCAL, PoseStamped, queue_size=10)
-    _estimated_rgv_state_sub = rospy.Subscriber(MAVROS_GPS_POS_FORTESTING, NavSatFix, _estimated_rgv_state_callback)
+    # _estimated_rgv_state_sub = rospy.Subscriber(MAVROS_GPS_POS_FORTESTING, NavSatFix, _estimated_rgv_state_callback)
+    _estimated_rgv_state_sub = rospy.Subscriber(ESTIMATED_RGV_STATES, EstimatedRgvState, _estimated_rgv_state_callback)
     _mission_state_sub = rospy.Subscriber(MISSION_STATES, MissionState, _mission_state_callback)
     _uas_pose_sub = rospy.Subscriber(UAS_POSES, PoseStamped, _uas_pose_callback)
     _uas_arming_state_sub = rospy.Subscriber(UAS_ARMING_STATE, State,_UAS_arming_state_callback)
@@ -140,8 +141,41 @@ def setup():
         _setpoint_pub.publish(dummy_set_point)
         rate.sleep()
 
+def _calc_orbit_setpoint_localize(RGV: EstimatedRgvState, UAS: PoseStamped, start_time: rospy.Time, offboard_status: bool) -> list:
+   
+    if offboard_status:
+        orbit_center = RGV.rgv1_position_local
 
-def _calc_orbit_setpoint(RGV: EstimatedRgvState, UAS: PoseStamped, start_time: rospy.Time, offboard_status: bool) -> list:
+        x_c = orbit_center[0] 
+        y_c = orbit_center[1] 
+
+        # used to test if we can orbit the origin
+        # x_c = 0.0
+        # y_c = 0.0
+
+        now = rospy.Time.now()
+        elapsed_time = (now - start_time).to_sec()
+
+        cardinal = int((elapsed_time % ORBITAL_PERIOD) // TIME_AT_ORBIT_POINT)
+
+        if cardinal == 0: # positive East
+            setpoint = [x_c + ORBITAL_RADIUS_SINGLE, y_c, UAS_ALTITUDE_SETPOINT]
+        elif cardinal == 1: # positive North
+            setpoint = [x_c, y_c + ORBITAL_RADIUS_SINGLE, UAS_ALTITUDE_SETPOINT]
+        elif cardinal == 2: # West
+            setpoint = [x_c - ORBITAL_RADIUS_SINGLE, y_c, UAS_ALTITUDE_SETPOINT]
+        elif cardinal == 3: # South
+            setpoint = [x_c, y_c - ORBITAL_RADIUS_SINGLE, UAS_ALTITUDE_SETPOINT]
+        else:
+            rospy.logdebug("null setpoint returned")
+            setpoint = DEFAULT_SETPOINT
+    else:
+        rospy.logdebug("null setpoint returned")
+        setpoint = DEFAULT_SETPOINT
+
+    return setpoint
+
+def _calc_orbit_setpoint_UpLeftRight(RGV: EstimatedRgvState, UAS: PoseStamped, start_time: rospy.Time, offboard_status: bool) -> list:
     """ Calculates the orbit set point
 
     This function takes the RGV & UAS states, as well as time to calculate a 

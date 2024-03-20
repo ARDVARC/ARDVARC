@@ -99,7 +99,12 @@ CONFIDENT_ESTIMATE_THRESHOLD: float = 0.2
 # TODO(LF) review this
 # ask Rob what this should be for optimal bluetooth measurements 
 # Aidan has some numbers that closer is better
-ORBITAL_RADIUS_SINGLE = 1.0 # meters (ground distance)
+# ORBITAL_RADIUS_SINGLE = 1.0 # meters (ground distance)
+ORBITAL_RADIUS_SINGLE = 0.5 # meters (ground distance)
+
+ORBITAL_PERIOD = 20  # seconds to complete a full orbit
+
+TIME_AT_ORBIT_POINT = 5  # [seconds] loiter at each point in the orbit for 5 seconds
 
 # TODO(LF) review this
 ORBITAL_RADIUS_JOINT = 10.0 # meters (ground distance)
