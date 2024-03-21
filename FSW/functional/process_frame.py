@@ -187,7 +187,7 @@ def my_estimatePoseSingleMarkers(corners, marker_size, mtx, distortion):
 if __name__ == "__main__":
 
     ## TODO Test and Implement various videos and images (TB 2021-09-20: Complete)
-    image_path = "FSW/fake_data_generators/ARUCO_Test_30 - Trim.mp4" #"FSW/fake_data_generators/DJI_0011_AR_2_30_S_-_Trim.mp4"
+    image_path = "FSW/fake_data_generators/ARUCO_Test_90.mp4" #"FSW/fake_data_generators/DJI_0011_AR_2_30_S_-_Trim.mp4"
 
     cap = cv2.VideoCapture(image_path)
 
