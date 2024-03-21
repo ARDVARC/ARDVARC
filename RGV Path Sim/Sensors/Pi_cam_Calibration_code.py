@@ -49,8 +49,8 @@ def calibrate_cam():
             cv2.aruco.drawDetectedMarkers(image_copy, marker_corners, marker_ids)
             # cv2.aruco.drawDetectedMarkers(image_copy, charuco_corners, charuco_ids)
             
-            cv2.imshow('CharUco Board', image_copy)
-            cv2.waitKey(0)
+            # cv2.imshow('CharUco Board', image_copy)
+            # cv2.waitKey(0)
             import ipdb; ipdb.set_trace()
             # print(f"charuco_corners: {len(charuco_corners)}")
             all_corners.append(charuco_corners)
