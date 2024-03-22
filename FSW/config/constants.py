@@ -30,13 +30,16 @@ MEAS_FROM_BLUETOOTH: int = 11
 
 
 """Pi Camera Parameters"""
-## TODO Could be determined from the camera calibration function from cv2.aruco
-## TODO This Needs to be updated to the true camera intrinsic parameters
 ## CALCULATED BASED ON TEST FOOTAGE fx = image width * focal length / sensor width
 INTRINSICS_PI_CAMERA: npt.NDArray = np.array([[1910.0, 0, 320], [0, 1910.0, 240], [0, 0, 1]])
-## TODO This Needs to be updated to the true camera distortion parameters
-## TODO Could be determined from the camera calibration function from cv2.aruco
-DISTORTION: npt.NDArray = np.array([0.0, 0.0, 0.0, 0.0])	
+## TODO This Needs to be updated to the true camera intrinsic parameters(TB - USED CHARUCO BOARD TO GET THIS VALUE FOR TELEPHOTO LENSE)
+# INTRINSICS_PI_CAMERA: npt.NDArray = np.array([[4.64564718e+03, 0.00000000e+00, 7.69641498e+02], [0.00000000e+00, 4.64673256e+03, 5.43461963e+02], [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
+DISTORTION: npt.NDArray = np.array([0.0, 0.0, 0.0, 0.0, 0.0]) # No distortion for testing
+
+## TODO This Needs to be updated to the true camera distortion parameters(TB - USED CHARUCO BOARD TO GET THIS VALUE FOR TELEPHOTO LENSE)
+# DISTORTION: npt.NDArray = np.array([-2.03742620e-01,  8.18152763e-01,  1.25496275e-04,  3.04049720e-03, 4.41302771e+00])	
+
+
 ## TODO Update the formatting of the camera extrinsic parameters
 ## TODO Configure a way to get the camera extrinsic parameters accurately
 EXTRINSICS_PI_CAMERA_DCM: npt.NDArray = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]) #DCM From UAS 2 Camera
