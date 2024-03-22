@@ -31,13 +31,19 @@ def calibrate_cam():
                 print("Interpolated!")
                 all_corners.append(charuco_corners)
                 all_ids.append(charuco_ids)
+                cv2.aruco.drawDetectedCornersCharuco(image, charuco_corners, charuco_ids, (0, 255, 0))
+                cv2.aruco.drawDetectedMarkers(image, corners, ids, (0, 0, 255))
+                cv2.imshow('Charuco Corners', image)
+                cv2.waitKey(0)
             else:
                 print("Failed to interpolate")
     
     # Calibrate the camera
 
     retval, camera_matrix, dist_coeffs, rvecs, tvecs = cv2.aruco.calibrateCameraCharuco(all_corners, all_ids, board, image.shape[:2], None, None)
-
+    if camera_matrix is not None:
+        print("Calibration successful!")
+        import ipdb; ipdb.set_trace()
     # Save calibration data
     np.save('camera_matrix.npy', camera_matrix)
     np.save('dist_coeffs.npy', dist_coeffs)
@@ -51,4 +57,3 @@ def calibrate_cam():
 
 
 calibrate_cam()
-
